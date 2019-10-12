@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -19,9 +20,11 @@ public class MainMenu : MonoBehaviour
     
     
     // Start is called before the first frame update
-    void Start()
+    async void Start()
     {
-        
+        DataManager.shared.EstablishAuth("lucaspopp0@gmail.com");
+        await DataManager.shared.FetchInitialUserData();
+        Debug.Log(DataManager.shared.GetCurrentUserID());
     }
 
     // Update is called once per frame

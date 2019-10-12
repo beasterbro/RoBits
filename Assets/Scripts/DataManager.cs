@@ -1,20 +1,41 @@
-﻿// Collects and manages necessary information that needs to be taken from the backend
-// to the frontend and vice versa.
+﻿using System;
+using System.Collections;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+
+using UnityEngine;
+using UnityEngine.Networking;
+
+using DB;
+
+// Collects and manages necessary information that needs to be taken from the backend to the frontend and vice versa.
 public class DataManager
 {
 
     public static DataManager shared = new DataManager();
 
+    private HttpClient api = new HttpClient();
+
     private int userCurrency, userXP;
-    // TODO: Create TeamInfo and BotInfo class
-    // private TeamInfo? userTeams;
     private string currentUserID;
-    // TODO: Create InventoryItem class
-    // private PartInfo[] inventory;
+    private TeamInfo[] userTeams;
+    private InventoryItem[] inventory;
+
+    public DataManager() {
+        api.BaseAddress = new Uri("http://robits.us-east-2.elasticbeanstalk.com");
+        api.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+    }
+
+    public void EstablishAuth(string token)
+    {
+        api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+    }
 
     public int GetUserCurrency()
     {
-        // TODO: Implement
+        return userCurrency;
     }
 
     public void SetUserCurrency(int amount)
@@ -25,6 +46,7 @@ public class DataManager
     public int GetUserLevel()
     {
         // TODO: Implement
+        return 0;
     }
 
     public void AddExperienceToUser(int xp)
@@ -32,34 +54,47 @@ public class DataManager
         // TODO: Implement
     }
 
-    public void GetUserInventory()
+    public InventoryItem[] GetUserInventory()
     {
         // TODO: Implement
+        return new InventoryItem[0];
     }
 
-    public void RemoveItemFromUserInventory()
+    public bool RemoveItemFromUserInventory(PartInfo item)
     {
         // TODO: Implement
+        return true;
     }
 
-    public void AddItemToUserInventory()
+    public bool AddItemToUserInventory(PartInfo item)
     {
         // TODO: Implement
+        return true;
     }
 
-    public void GetUserBotTeams()
+    public TeamInfo[] GetUserBotTeams()
     {
         // TODO: Implement
+        return new TeamInfo[0];
     }
 
-    public void UpdateUserBot()
+    public bool UpdateUserBot(BotInfo bot)
     {
         // TODO: Implement
+        return true;
     }
 
-    public void FetchInitialUserData()
+    public async Task FetchInitialUserData()
     {
-        // TODO: Implement
+        HttpResponseMessage response = await api.GetAsync("/api/user");
+
+        if (response.IsSuccessStatusCode)
+        {
+            DBUser userObj = JsonUtility.FromJson<DBUser>(await response.Content.ReadAsStringAsync());
+            this.userCurrency = userObj.currency;
+            this.userXP = userObj.xp;
+            this.currentUserID = userObj.uid;
+        }
     }
 
     public void UpdateUserData()
@@ -69,7 +104,7 @@ public class DataManager
 
     public string GetCurrentUserID()
     {
-        // TODO: Implement
+        return currentUserID;
     }
 
 }
