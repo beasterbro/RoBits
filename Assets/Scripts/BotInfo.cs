@@ -39,7 +39,7 @@ public class BotInfo
 
         foreach (int id in db.parts)
         {
-            foreach (PartInfo part in DataManager.shared.GetAllParts())
+            foreach (PartInfo part in DataManager.GetManager().GetAllParts())
             {
                 if (part.GetID() == id)
                 {

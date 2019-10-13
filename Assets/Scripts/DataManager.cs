@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -12,14 +13,14 @@ using UnityEngine.Networking;
 public class DataManager
 {
 
-    public static DataManager shared = new DataManager();
+    private static DataManager shared ;
 
     private HttpClient api = new HttpClient();
 
     private UserInfo currentUser;
 
     private TeamInfo[] userTeams;
-    private InventoryItem[] inventory;
+    private List<InventoryItem> inventory;
     private PartInfo[] allParts;
 
     public DataManager()
@@ -32,6 +33,16 @@ public class DataManager
     {
         api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
     }
+
+    public static DataManager GetManager()
+    {
+        if (shared == null)
+        {
+            shared = new DataManager();
+        }
+        return shared;
+    }
+    
 
     public async Task FetchInitialData()
     {
@@ -57,7 +68,7 @@ public class DataManager
 
         if (response.IsSuccessStatusCode)
         {
-            inventory = InventoryItem.FromJsonArray(await response.Content.ReadAsStringAsync());
+            inventory = new List<InventoryItem>(InventoryItem.FromJsonArray(await response.Content.ReadAsStringAsync()));
         }
     }
 
@@ -102,7 +113,7 @@ public class DataManager
         // TODO: Implement
     }
 
-    public InventoryItem[] GetUserInventory()
+    public List<InventoryItem> GetUserInventory()
     {
         return inventory;
     }

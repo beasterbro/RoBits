@@ -22,9 +22,9 @@ public class MainMenu : MonoBehaviour
     // Start is called before the first frame update
     async void Start()
     {
-        DataManager.shared.EstablishAuth("lucaspopp0@gmail.com");
-        await DataManager.shared.FetchInitialData();
-        Debug.Log(DataManager.shared.GetCurrentUserID());
+        DataManager.GetManager().EstablishAuth("lucaspopp0@gmail.com");
+        await DataManager.GetManager().FetchInitialData();
+        Debug.Log(DataManager.GetManager().GetCurrentUserID());
     }
 
     // Update is called once per frame
