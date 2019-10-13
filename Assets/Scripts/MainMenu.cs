@@ -23,8 +23,7 @@ public class MainMenu : MonoBehaviour
     async void Start()
     {
         DataManager.shared.EstablishAuth("lucaspopp0@gmail.com");
-        await DataManager.shared.FetchInitialUserData();
-        await DataManager.shared.FetchUserInventory();
+        await DataManager.shared.FetchInitialData();
         Debug.Log(DataManager.shared.GetCurrentUserID());
     }
 

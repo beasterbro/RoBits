@@ -20,8 +20,10 @@ public class DataManager
 
     private TeamInfo[] userTeams;
     private InventoryItem[] inventory;
+    private PartInfo[] allParts;
 
-    public DataManager() {
+    public DataManager()
+    {
         api.BaseAddress = new Uri("http://robits.us-east-2.elasticbeanstalk.com");
         api.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
     }
@@ -31,7 +33,14 @@ public class DataManager
         api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
     }
 
-    public async Task FetchInitialUserData()
+    public async Task FetchInitialData()
+    {
+        await FetchCurrentUser();
+        await FetchAllParts();
+        await FetchUserInventory();
+    }
+
+    public async Task FetchCurrentUser()
     {
         HttpResponseMessage response = await api.GetAsync("/api/user");
 
@@ -49,6 +58,16 @@ public class DataManager
         if (response.IsSuccessStatusCode)
         {
             inventory = InventoryItem.FromJsonArray(await response.Content.ReadAsStringAsync());
+        }
+    }
+
+    public async Task FetchAllParts()
+    {
+        HttpResponseMessage response = await api.GetAsync("/api/parts");
+
+        if (response.IsSuccessStatusCode)
+        {
+            allParts = PartInfo.FromJsonArray(await response.Content.ReadAsStringAsync());
         }
     }
 
@@ -110,6 +129,11 @@ public class DataManager
     {
         // TODO: Implement
         return true;
+    }
+
+    public PartInfo[] GetAllParts()
+    {
+        return allParts;
     }
 
 }
