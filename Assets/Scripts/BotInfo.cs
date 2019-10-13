@@ -39,18 +39,8 @@ public class BotInfo
 
         foreach (int id in db.parts)
         {
-            foreach (PartInfo part in DataManager.shared.GetAllParts())
-            {
-                if (part.GetID() == id)
-                {
-                    parts.Add(part);
-                }
-
-                if (part.GetID() == db.bodyType)
-                {
-                    bodyType = part;
-                }
-            }
+            PartInfo part = DataManager.shared.GetPartById(id);
+            if (part != null) parts.Add(part);
         }
 
         return new BotInfo(db.bid, db.name, db.tier, parts, bodyType);
