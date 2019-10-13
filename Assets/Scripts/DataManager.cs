@@ -142,6 +142,16 @@ public class DataManager
         return true;
     }
 
+    public PartInfo GetPartById(int id)
+    {
+        foreach (PartInfo part in allParts)
+        {
+            if (part.GetID() == id) return part;
+        }
+
+        return null;
+    }
+
     public PartInfo[] GetAllParts()
     {
         return allParts;
