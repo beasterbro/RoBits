@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using System.Text.RegularExpressions;
 
 public class PartInfo
 {
@@ -39,6 +40,17 @@ public class PartInfo
     public static PartInfo FromJson(string json) {
         DbPart db = JsonUtility.FromJson<DbPart>(json);
         return new PartInfo(db.pid, db.name, "", db.type, db.price, db.unlockLvl, false, db.stats, null);
+    }
+
+    public static PartInfo[] FromJsonArray(string json) {
+        string[] elements = Regex.Split(json.Substring(1, json.Length - 2).Trim(), "(?<=}),(?={\"pid\":)");
+        PartInfo[] parts = new PartInfo[elements.Length];
+
+        for (int i = 0;i < elements.Length;i++) {
+            parts[i] = PartInfo.FromJson(elements[i].Trim());
+        }
+
+        return parts;
     }
 
     public int GetID()
