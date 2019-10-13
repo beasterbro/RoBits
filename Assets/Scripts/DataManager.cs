@@ -8,8 +8,6 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
-using DB;
-
 // Collects and manages necessary information that needs to be taken from the backend to the frontend and vice versa.
 public class DataManager
 {
@@ -18,8 +16,8 @@ public class DataManager
 
     private HttpClient api = new HttpClient();
 
-    private int userCurrency, userXP;
-    private string currentUserID;
+    private UserInfo currentUser;
+
     private TeamInfo[] userTeams;
     private InventoryItem[] inventory;
 
@@ -33,9 +31,36 @@ public class DataManager
         api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
     }
 
+    public async Task FetchInitialUserData()
+    {
+        HttpResponseMessage response = await api.GetAsync("/api/user");
+
+        if (response.IsSuccessStatusCode)
+        {
+            string json = await response.Content.ReadAsStringAsync();
+            currentUser = UserInfo.FromJson(json);
+        }
+    }
+
+    public async Task FetchUserInventory()
+    {
+        HttpResponseMessage response = await api.GetAsync("/api/inventory?expandParts=true");
+
+        if (response.IsSuccessStatusCode)
+        {
+            inventory = InventoryItem.FromJsonArray(await response.Content.ReadAsStringAsync());
+        }
+    }
+
+    public void UpdateUserData()
+    {
+        // TODO: Implement
+    }
+
+    // TODO: Replace with GetUser().GetCurrency()?
     public int GetUserCurrency()
     {
-        return userCurrency;
+        return currentUser.GetCurrency();
     }
 
     public void SetUserCurrency(int amount)
@@ -45,8 +70,12 @@ public class DataManager
 
     public int GetUserLevel()
     {
-        // TODO: Implement
-        return 0;
+        return currentUser.GetLevel();
+    }
+
+    public string GetCurrentUserID()
+    {
+        return currentUser.GetID();
     }
 
     public void AddExperienceToUser(int xp)
@@ -56,8 +85,7 @@ public class DataManager
 
     public InventoryItem[] GetUserInventory()
     {
-        // TODO: Implement
-        return new InventoryItem[0];
+        return inventory;
     }
 
     public bool RemoveItemFromUserInventory(PartInfo item)
@@ -82,29 +110,6 @@ public class DataManager
     {
         // TODO: Implement
         return true;
-    }
-
-    public async Task FetchInitialUserData()
-    {
-        HttpResponseMessage response = await api.GetAsync("/api/user");
-
-        if (response.IsSuccessStatusCode)
-        {
-            DBUser userObj = JsonUtility.FromJson<DBUser>(await response.Content.ReadAsStringAsync());
-            this.userCurrency = userObj.currency;
-            this.userXP = userObj.xp;
-            this.currentUserID = userObj.uid;
-        }
-    }
-
-    public void UpdateUserData()
-    {
-        // TODO: Implement
-    }
-
-    public string GetCurrentUserID()
-    {
-        return currentUserID;
     }
 
 }

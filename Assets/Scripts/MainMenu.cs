@@ -24,6 +24,7 @@ public class MainMenu : MonoBehaviour
     {
         DataManager.shared.EstablishAuth("lucaspopp0@gmail.com");
         await DataManager.shared.FetchInitialUserData();
+        await DataManager.shared.FetchUserInventory();
         Debug.Log(DataManager.shared.GetCurrentUserID());
     }
 

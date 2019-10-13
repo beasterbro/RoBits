@@ -1,4 +1,4 @@
-enum PartType
+public enum PartType
 {
 
     BodyType = 0,
