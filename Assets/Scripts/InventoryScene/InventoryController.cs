@@ -1,15 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
-public class InventoryController : MonoBehaviour
+public class InventoryController : MonoBehaviour , IHasChanged
 {
     private BotInfo currentBot;
     private List<InventoryItem> userInventory;
 
+    [SerializeField] private Transform slots;
+    [SerializeField] public Text inventoryText;
+    
     public int teamArrayValue;
     public int botArrayValue;
-    
+    public BotInfo activeBot;
 
     private bool AddPartToInventory(PartInfo item)
     {
@@ -19,6 +25,11 @@ public class InventoryController : MonoBehaviour
     private bool RemovePartFromInventory(PartInfo item)
     {
         return DataManager.GetManager().RemoveItemFromUserInventory(item);
+    }
+
+    public void setActiveBot(BotInfo bot)
+    {
+        activeBot = bot;
     }
 
     /**
@@ -46,6 +57,7 @@ public class InventoryController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        HasChanged();
         currentBot = DataManager.GetManager().GetUserBotTeams()[teamArrayValue].GetBots()[botArrayValue];
     }
 
@@ -54,4 +66,30 @@ public class InventoryController : MonoBehaviour
     {
         
     }
+
+    public void HasChanged()
+    {
+        System.Text.StringBuilder builder = new System.Text.StringBuilder();
+        builder.Append("  -  ");
+        foreach (Transform slotTransform in slots)
+        {
+            GameObject item = slotTransform.GetComponent<SlotController>().item;
+            if (item)
+            {
+                builder.Append(item.name);
+                builder.Append("  -  ");
+            } 
+        }
+
+        inventoryText.text = builder.ToString();
+    }
+}
+
+namespace UnityEngine.EventSystems 
+{
+    public interface IHasChanged : IEventSystemHandler
+    {
+        void HasChanged();
+    }
+
 }
