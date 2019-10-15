@@ -4,12 +4,43 @@ using UnityEngine;
 
 public class InterfaceObject : MonoBehaviour
 {
+    // Note: container should not be changed except when a object is independent of its container
     [SerializeField] private InterfaceObject container;
     //[SerializeField] private Color color; // Handled by material
 
     public bool IsTopLevel()
     {
         return this.container == null;
+    }
+
+    // TODO: this should be fixed to only give Blocks to drag and drop
+    // Default implementation is to select the top level object
+    protected virtual void OnGrab(InterfaceObject child)
+    {
+        if (this.IsTopLevel())
+        {
+            DragAndDropController.Instance().Grab(this);
+        }
+        else
+        {
+            this.container.OnGrab(this);
+        }
+    }
+
+    // Default implementation is to reset position when dropped on top of another interface object
+    public virtual void OnDrop(Block obj)
+    {
+        DragAndDropController.Instance().ResetDrop();
+    }
+
+    private void OnMouseOver()
+    {
+        DragAndDropController.Instance().HoverOn(this);
+    }
+
+    private void OnMouseExit()
+    {
+        DragAndDropController.Instance().HoverOff(this);
     }
 
     // Updates the style of the object, without redrawing the whole thing

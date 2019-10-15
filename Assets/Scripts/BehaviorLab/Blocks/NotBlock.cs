@@ -1,16 +1,28 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class NotBlock : Block
 {
-    public override bool IsValid()
+    [SerializeField] private SlotInputComponent condition;
+
+    private void Start()
     {
-        throw new System.NotImplementedException();
+        if (condition.GetExpectedOutputType() != ReturnType.LOGICAL)
+        {
+            throw new ArgumentException("Condition MUST be a logical slot component!!!");
+        }
     }
 
     protected override BehaviorData InnerEvaluate()
     {
-        return BehaviorData.EMPTY;
+        return new BehaviorData(!condition.Evaluate().GetLogical());
+    }
+
+    public override bool IsValid()
+    {
+        return condition != null && condition.GetExpectedOutputType() == ReturnType.LOGICAL
+            && condition.IsValid();
     }
 }

@@ -6,7 +6,7 @@ using System;
 public abstract class Block : InterfaceObject
 {
     [SerializeField] private List<BlockLine> lines = new List<BlockLine>();
-    [SerializeField] private bool isMovable = true;
+    [SerializeField] private bool isMovable = false;
     [SerializeField] private bool isDeletable = false;
     [SerializeField] private ReturnType outputType = ReturnType.EMPTY;
     //[SerializeField] private Color textColor; // Handled by component?
@@ -37,6 +37,23 @@ public abstract class Block : InterfaceObject
 
     // Checks the code-validity of this block's structure.
     public abstract bool IsValid();
+
+    private void OnMouseDown()
+    {
+        Debug.Log("Click " + this);
+        if (DragAndDropController.IsPresent())
+        {
+            AttemptGrab();
+        }
+    }
+
+    private void AttemptGrab()
+    {
+        if (isMovable && !DragAndDropController.Instance().IsHolding())
+        {
+            this.OnGrab(this);
+        }
+    }
 
     // Move the block to a specific point in the view
     public void Move(Vector3 pos)
