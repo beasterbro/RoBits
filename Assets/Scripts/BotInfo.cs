@@ -76,7 +76,7 @@ public class BotInfo
         return equipment.ToArray();
     }
 
-    public bool AddPart(PartInfo part)
+    public void AddPart(PartInfo part)
     {
         equipment.Add(part);
     }
