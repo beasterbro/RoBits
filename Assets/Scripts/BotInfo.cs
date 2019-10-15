@@ -79,6 +79,7 @@ public class BotInfo
     public bool AddPart(PartInfo part)
     {
         equipment.Add(part);
+        return true;
     }
 
     public bool RemovePart(PartInfo part)
