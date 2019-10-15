@@ -14,6 +14,11 @@ public abstract class Block : InterfaceObject
     [SerializeField] private Block next; // Block that follows, if any
     [SerializeField] private Block containing; // Block to return an output to
 
+    public ReturnType GetOutputType()
+    {
+        return this.outputType;
+    }
+
     // Executes the code the block represents, either returning a value or performing
     // some action and calling evaluate on the block's successor
     public BehaviorData Evaluate()
@@ -29,6 +34,9 @@ public abstract class Block : InterfaceObject
 
     // Evaluation specific to this block.
     protected abstract BehaviorData InnerEvaluate();
+
+    // Checks the code-validity of this block's structure.
+    public abstract bool IsValid();
 
     // Move the block to a specific point in the view
     public void Move(Vector3 pos)

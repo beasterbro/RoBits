@@ -5,15 +5,26 @@ using UnityEngine;
 public class SlotInputComponent : BlockComponent
 {
     [SerializeField] private Block slot;
+    [SerializeField] private ReturnType expectedOutputType;
 
-    public bool IsSlotAvailable()
+    public ReturnType GetExpectedOutputType()
     {
-        return slot == null;
+        return this.expectedOutputType;
+    }
+
+    public bool IsFull()
+    {
+        return slot != null;
+    }
+
+    public bool MatchesOutputType(Block block)
+    {
+        return this.expectedOutputType == block.GetOutputType();
     }
 
     public void Push(Block block)
     {
-        if (IsSlotAvailable())
+        if (!IsFull() && MatchesOutputType(block))
         {
             slot = block;
             // TODO: probably some other stuff to setup the block
@@ -25,5 +36,15 @@ public class SlotInputComponent : BlockComponent
         Block result = slot;
         this.slot = null;
         return result;
+    }
+
+    public BehaviorData Evaluate()
+    {
+        return IsFull() ? slot.Evaluate() : BehaviorData.EMPTY;
+    }
+
+    public bool IsValid()
+    {
+        return IsFull() && MatchesOutputType(slot);
     }
 }

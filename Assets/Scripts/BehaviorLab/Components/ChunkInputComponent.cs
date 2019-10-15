@@ -22,4 +22,22 @@ public class ChunkInputComponent : BlockComponent
     {
         blocks.Remove(block);
     }
+
+    public BehaviorData Evaluate()
+    {
+        blocks.ForEach(block => block.Evaluate());
+        return BehaviorData.EMPTY;
+    }
+
+    public bool IsValid()
+    {
+        bool result = true;
+
+        blocks.ForEach(block =>
+        {
+            result &= block.IsValid();
+        });
+
+        return result;
+    }
 }
