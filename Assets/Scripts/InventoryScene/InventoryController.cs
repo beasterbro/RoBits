@@ -4,14 +4,16 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Image = UnityEngine.Experimental.UIElements.Image;
 
 public class InventoryController : MonoBehaviour , IHasChanged
 {
-    private BotInfo currentBot;
+    public static BotInfo currentBot;
     private List<InventoryItem> userInventory;
+    public List<Image> itemImages;
 
     [SerializeField] private Transform slots;
-    [SerializeField] public Text inventoryText;
+    [SerializeField] private Text inventoryText;
     
     public int teamArrayValue;
     public int botArrayValue;
@@ -58,13 +60,16 @@ public class InventoryController : MonoBehaviour , IHasChanged
     void Start()
     {
         HasChanged();
-        currentBot = DataManager.GetManager().GetUserBotTeams()[teamArrayValue].GetBots()[botArrayValue];
+        foreach (InventoryItem inventoryItem in userInventory)
+        {
+            
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        HasChanged();
     }
 
     public void HasChanged()
