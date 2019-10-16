@@ -51,7 +51,7 @@ public abstract class Block : InterfaceObject
     {
         if (isMovable && !DragAndDropController.Instance().IsHolding())
         {
-            this.OnGrab(this);
+            this.OnGrab();
         }
     }
 

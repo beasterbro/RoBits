@@ -27,6 +27,9 @@ public class SlotInputComponent : BlockComponent
         if (!IsFull() && MatchesOutputType(block))
         {
             slot = block;
+            block.SetContainer(this);
+            block.transform.position = this.transform.position;
+            block.transform.parent = this.transform;
             // TODO: probably some other stuff to setup the block
         }
     }
@@ -34,6 +37,8 @@ public class SlotInputComponent : BlockComponent
     public Block Pop()
     {
         Block result = slot;
+        result.SetContainer(null);
+        result.transform.parent = null;
         this.slot = null;
         return result;
     }
@@ -46,5 +51,28 @@ public class SlotInputComponent : BlockComponent
     public bool IsValid()
     {
         return IsFull() && MatchesOutputType(slot);
+    }
+
+    // TODO: this should be fixed to only give Blocks to drag and drop
+    // Default implementation is to select the top level object
+    protected override void OnGrab()
+    {
+        if (this.IsFull())
+        {
+            DragAndDropController.Instance().Grab(Pop(), this);
+        }
+    }
+
+    // Default implementation is to reset position when dropped on top of another interface object
+    public override void OnDrop()
+    {
+        if (this.IsFull())
+        {
+            DragAndDropController.Instance().ResetDrop();
+        }
+        else
+        {
+            Push(DragAndDropController.Instance().Drop());
+        }
     }
 }

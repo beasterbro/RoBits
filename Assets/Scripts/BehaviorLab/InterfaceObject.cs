@@ -8,6 +8,16 @@ public class InterfaceObject : MonoBehaviour
     [SerializeField] private InterfaceObject container;
     //[SerializeField] private Color color; // Handled by material
 
+    public InterfaceObject GetContainer()
+    {
+        return container;
+    }
+
+    public void SetContainer(InterfaceObject container)
+    {
+        this.container = container;
+    }
+
     public bool IsTopLevel()
     {
         return this.container == null;
@@ -15,7 +25,7 @@ public class InterfaceObject : MonoBehaviour
 
     // TODO: this should be fixed to only give Blocks to drag and drop
     // Default implementation is to select the top level object
-    protected virtual void OnGrab(InterfaceObject child)
+    protected virtual void OnGrab()
     {
         if (this.IsTopLevel())
         {
@@ -23,12 +33,12 @@ public class InterfaceObject : MonoBehaviour
         }
         else
         {
-            this.container.OnGrab(this);
+            this.container.OnGrab();
         }
     }
 
     // Default implementation is to reset position when dropped on top of another interface object
-    public virtual void OnDrop(Block obj)
+    public virtual void OnDrop()
     {
         DragAndDropController.Instance().ResetDrop();
     }

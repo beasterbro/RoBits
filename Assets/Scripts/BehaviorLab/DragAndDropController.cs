@@ -25,6 +25,8 @@ public class DragAndDropController : MonoBehaviour
     [SerializeField] private Vector3 originalOffset;
     [Tooltip("The original position of the held object in case the dropped position is invalid.")]
     [SerializeField] private Vector3 originalPosition;
+    [Tooltip("The original container of the held object in case the dropped position is invalid.")]
+    [SerializeField] private InterfaceObject originalContainer;
 
     void Awake()
     {
@@ -62,7 +64,7 @@ public class DragAndDropController : MonoBehaviour
                 // Notify potential of dropped item
                 if (potential != null)
                 {
-                    potential.OnDrop(GetHeld());
+                    potential.OnDrop();
                 }
                 else
                 {
@@ -101,26 +103,43 @@ public class DragAndDropController : MonoBehaviour
 
     public void Grab(InterfaceObject obj)
     {
-        if (isEnabled && obj is Block)
+        if (obj is Block)
+        {
+            Grab((Block)obj, obj.GetContainer());
+        }
+    }
+
+    public void Grab(Block block, InterfaceObject container)
+    {
+        if (isEnabled)
         {
             if (IsHolding())
             {
                 throw new NotSupportedException("Can not grab multiple items at once.");
             }
-            held = (Block)obj;
+            held = block;
             held.GetComponent<Collider2D>().enabled = false;
 
             Vector3 mousePos = MousePosition();
-            originalOffset = obj.transform.position - mousePos;
+            originalOffset = block.transform.position - mousePos;
             originalOffset.z = 0;
-            originalPosition = obj.transform.position;
-            originalZ = obj.transform.position.z;
+            originalZ = block.transform.position.z;
+            originalPosition = block.transform.position;
+            originalContainer = container;
         }
     }
 
     public Block ResetDrop()
     {
-        return DropAt(originalPosition);
+        if (originalContainer == null)
+        {
+            return DropAt(originalPosition);
+        }
+        else
+        {
+            originalContainer.OnDrop();
+            return null;
+        }
     }
 
     public Block Drop()
