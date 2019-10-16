@@ -24,18 +24,8 @@ public class TeamConverter : Converter<TeamInfo>
         int tier = helper.GetValue<int>("tier", 0);
         int[] botIds = helper.GetValue<int[]>("bots", new int[0]);
 
-        List<BotInfo> bots = new List<BotInfo>();
-
-        foreach (int botId in botIds)
-        {
-            foreach (BotInfo bot in DataManager.GetManager().GetAllBots())
-            {
-                if (bot.GetID() == botId)
-                {
-                    bots.Add(bot);
-                }
-            }
-        }
+        List<BotInfo> bots = new List<BotInfo>(botIds.Select(DataManager.GetManager().GetBot));
+        bots.RemoveAll(bot => bot == null);
 
         return new TeamInfo(id, name, DateTime.Parse(lastMaintenance), bots.ToArray(), rank, tier);
     }

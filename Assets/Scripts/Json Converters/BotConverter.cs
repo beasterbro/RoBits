@@ -23,24 +23,9 @@ public class BotConverter : Converter<BotInfo>
         int tier = helper.GetValue<int>("tier", 0);
         Dictionary<string, string> ai = helper.GetValue<Dictionary<string, string>>("ai", new Dictionary<string, string>());
 
-        List<PartInfo> equipment = new List<PartInfo>();
-        PartInfo bodyType = null;
-
-        foreach (int pid in partIds)
-        {
-            foreach (PartInfo part in DataManager.GetManager().GetAllParts())
-            {
-                if (part.GetID() == pid)
-                {
-                    equipment.Add(part);
-                }
-
-                if (part.GetID() == bodyTypeId)
-                {
-                    bodyType = part;
-                }
-            }
-        }
+        List<PartInfo> equipment = new List<PartInfo>(partIds.Select<int, PartInfo>(DataManager.GetManager().GetPart));
+        equipment.RemoveAll(p => p == null);
+        PartInfo bodyType = DataManager.GetManager().GetPart(bodyTypeId);
 
         return new BotInfo(id, name, tier, equipment, bodyType);
     }

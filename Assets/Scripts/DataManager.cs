@@ -8,17 +8,17 @@ using System.Threading.Tasks;
 public class DataManager
 {
 
-    private static DataManager shared ;
+    private static DataManager shared;
 
     private HttpClient api = new HttpClient();
 
     private UserInfo currentUser;
+    private PartInfo[] allParts;
+    private List<InventoryItem> inventory;
 
     private BotInfo[] allBots;
     private TeamInfo[] userTeams;
 
-    private List<InventoryItem> inventory;
-    private PartInfo[] allParts;
 
     public DataManager()
     {
@@ -26,11 +26,13 @@ public class DataManager
         api.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
     }
 
+    // Adds the auth header to the HTTP client
     public void EstablishAuth(string token)
     {
         api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
     }
 
+    // Returns a reference to the shared instance
     public static DataManager GetManager()
     {
         if (shared == null)
@@ -39,8 +41,8 @@ public class DataManager
         }
         return shared;
     }
-    
 
+    // Fetches all necessary initial data
     public async Task FetchInitialData()
     {
         await FetchCurrentUser();
@@ -66,10 +68,11 @@ public class DataManager
 
         if (response.IsSuccessStatusCode)
         {
-            allParts=  JsonUtils.DeserializeArray<PartInfo>(await response.Content.ReadAsStringAsync());
+            allParts = JsonUtils.DeserializeArray<PartInfo>(await response.Content.ReadAsStringAsync());
         }
     }
 
+    // Must be called after calling FetchAllParts
     public async Task FetchUserInventory()
     {
         HttpResponseMessage response = await api.GetAsync("/api/inventory");
@@ -80,6 +83,7 @@ public class DataManager
         }
     }
 
+    // Must be called after calling FetchAllParts
     public async Task FetchUserTeams()
     {
         HttpResponseMessage botsResponse = await api.GetAsync("/api/bots");
@@ -135,16 +139,6 @@ public class DataManager
         return true;
     }
 
-    public PartInfo GetPartById(int id)
-    {
-        foreach (PartInfo part in allParts)
-        {
-            if (part.GetID() == id) return part;
-        }
-
-        return null;
-    }
-
     public PartInfo[] GetAllParts()
     {
         return allParts;
@@ -154,10 +148,7 @@ public class DataManager
     {
         foreach (PartInfo part in allParts)
         {
-            if (part.GetID() == pid)
-            {
-                return part;
-            }
+            if (part.GetID() == pid) return part;
         }
 
         return null;
@@ -166,6 +157,16 @@ public class DataManager
     public BotInfo[] GetAllBots()
     {
         return allBots;
+    }
+
+    public BotInfo GetBot(int bid)
+    {
+        foreach (BotInfo bot in allBots)
+        {
+            if (bot.GetID() == bid) return bot;
+        }
+
+        return null;
     }
 
     public TeamInfo[] GetUserTeams()

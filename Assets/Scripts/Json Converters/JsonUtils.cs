@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 public class JsonUtils
 {
 
+    // A wrapper class for serializing/deserializing top-level arrays
     [System.Serializable]
     private class Wrapper<T>
     {

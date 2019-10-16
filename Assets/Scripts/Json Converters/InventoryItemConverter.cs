@@ -12,16 +12,7 @@ public class InventoryItemConverter : Converter<InventoryItem>
         int pid = helper.GetValue<int>("pid");
         int count = helper.GetValue<int>("count", 0);
 
-        PartInfo part = null;
-
-        foreach (PartInfo p in DataManager.GetManager().GetAllParts())
-        {
-            if (p.GetID() == pid)
-            {
-                part = p;
-                break;
-            }
-        }
+        PartInfo part = DataManager.GetManager().GetPart(pid);
 
         return new InventoryItem(part, count);
     }

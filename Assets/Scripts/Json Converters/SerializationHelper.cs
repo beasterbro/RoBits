@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 
+// Adds convenience methods for converting to JSON
 public class SerializationHelper
 {
 
@@ -27,12 +28,14 @@ public class SerializationHelper
         writer.WriteEndObject();
     }
 
+    // Writes a key/value pair
     public void WriteKeyValue<T>(string key, T value)
     {
         writer.WritePropertyName(key);
         writer.WriteValue(value);
     }
 
+    // Writes a key/value pair for a non-primitive value, which must be serialized
     public void SerializeKeyValue<T>(string key, T value)
     {
         writer.WritePropertyName(key);
