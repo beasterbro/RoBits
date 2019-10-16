@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-
-using UnityEngine;
-using UnityEngine.Networking;
 
 // Collects and manages necessary information that needs to be taken from the backend to the frontend and vice versa.
 public class DataManager

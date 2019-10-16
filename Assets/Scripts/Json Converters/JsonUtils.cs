@@ -1,11 +1,9 @@
-using System;
-using UnityEngine;
 using Newtonsoft.Json;
 
 public class JsonUtils
 {
 
-    [Serializable]
+    [System.Serializable]
     private class Wrapper<T>
     {
         public T[] Items = new T[0];

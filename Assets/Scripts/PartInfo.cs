@@ -1,10 +1,6 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 [JsonConverter(typeof(PartConverter))]
 public class PartInfo
