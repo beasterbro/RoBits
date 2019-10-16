@@ -53,8 +53,7 @@ public class SlotInputComponent : BlockComponent
         return IsFull() && MatchesOutputType(slot);
     }
 
-    // TODO: this should be fixed to only give Blocks to drag and drop
-    // Default implementation is to select the top level object
+    // Override meant to remove item from slot on grab
     protected override void OnGrab()
     {
         if (this.IsFull())
@@ -63,7 +62,7 @@ public class SlotInputComponent : BlockComponent
         }
     }
 
-    // Default implementation is to reset position when dropped on top of another interface object
+    // Override meant to add drop to this slot if there is space available
     public override void OnDrop()
     {
         if (this.IsFull())

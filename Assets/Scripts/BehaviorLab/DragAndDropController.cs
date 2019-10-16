@@ -75,7 +75,7 @@ public class DragAndDropController : MonoBehaviour
         }
     }
 
-    private Vector3 MousePosition()
+    public Vector3 MousePosition()
     {
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePos.z = grabZ;

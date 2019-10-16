@@ -43,12 +43,12 @@ public class InterfaceObject : MonoBehaviour
         DragAndDropController.Instance().ResetDrop();
     }
 
-    private void OnMouseOver()
+    protected virtual void OnMouseOver()
     {
         DragAndDropController.Instance().HoverOn(this);
     }
 
-    private void OnMouseExit()
+    protected virtual void OnMouseExit()
     {
         DragAndDropController.Instance().HoverOff(this);
     }
