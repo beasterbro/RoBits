@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Newtonsoft.Json;
 
 public class MainMenu : MonoBehaviour
 {
@@ -24,7 +25,15 @@ public class MainMenu : MonoBehaviour
     {
         DataManager.GetManager().EstablishAuth("lucaspopp0@gmail.com");
         await DataManager.GetManager().FetchInitialData();
-        Debug.Log(DataManager.GetManager().GetCurrentUserID());
+
+        Debug.Log("All Parts:");
+        Debug.Log(JsonConvert.SerializeObject(DataManager.GetManager().GetAllParts()));
+
+        Debug.Log("Inventory:");
+        Debug.Log(JsonConvert.SerializeObject(DataManager.GetManager().GetUserInventory()));
+
+        Debug.Log("Teams:");
+        Debug.Log(JsonConvert.SerializeObject(DataManager.GetManager().GetUserTeams()));
     }
 
     // Update is called once per frame

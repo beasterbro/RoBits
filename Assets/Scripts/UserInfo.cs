@@ -1,20 +1,10 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
+[JsonConverter(typeof(UserConverter))]
 public class UserInfo
 {
-
-    private class DbUser
-    {
-        public string uid;
-        public string email;
-        public string username;
-        public int currency;
-        public int xp;
-        public int level;
-        public bool canCompete;
-        public Dictionary<string, string> settings;
-    }
 
     private string id;
     private string email;
@@ -35,12 +25,6 @@ public class UserInfo
         this.level = level;
         this.canCompete = canCompete;
         this.settings = settings;
-    }
-
-    public static UserInfo FromJson(string json)
-    {
-        DbUser db = JsonUtility.FromJson<DbUser>(json);
-        return new UserInfo(db.uid, db.email, db.username, db.currency, db.xp, db.level, db.canCompete, db.settings);
     }
 
     public string GetID()

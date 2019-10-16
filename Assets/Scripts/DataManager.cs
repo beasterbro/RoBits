@@ -19,7 +19,9 @@ public class DataManager
 
     private UserInfo currentUser;
 
+    private BotInfo[] allBots;
     private TeamInfo[] userTeams;
+
     private List<InventoryItem> inventory;
     private PartInfo[] allParts;
 
@@ -49,6 +51,7 @@ public class DataManager
         await FetchCurrentUser();
         await FetchAllParts();
         await FetchUserInventory();
+        await FetchUserTeams();
     }
 
     public async Task FetchCurrentUser()
@@ -58,17 +61,7 @@ public class DataManager
         if (response.IsSuccessStatusCode)
         {
             string json = await response.Content.ReadAsStringAsync();
-            currentUser = UserInfo.FromJson(json);
-        }
-    }
-
-    public async Task FetchUserInventory()
-    {
-        HttpResponseMessage response = await api.GetAsync("/api/inventory?expandParts=true");
-
-        if (response.IsSuccessStatusCode)
-        {
-            inventory = new List<InventoryItem>(InventoryItem.FromJsonArray(await response.Content.ReadAsStringAsync()));
+            currentUser = JsonUtils.DeserializeObject<UserInfo>(json);
         }
     }
 
@@ -78,7 +71,29 @@ public class DataManager
 
         if (response.IsSuccessStatusCode)
         {
-            allParts = PartInfo.FromJsonArray(await response.Content.ReadAsStringAsync());
+            allParts=  JsonUtils.DeserializeArray<PartInfo>(await response.Content.ReadAsStringAsync());
+        }
+    }
+
+    public async Task FetchUserInventory()
+    {
+        HttpResponseMessage response = await api.GetAsync("/api/inventory");
+
+        if (response.IsSuccessStatusCode)
+        {
+            inventory = new List<InventoryItem>(JsonUtils.DeserializeArray<InventoryItem>(await response.Content.ReadAsStringAsync()));
+        }
+    }
+
+    public async Task FetchUserTeams()
+    {
+        HttpResponseMessage botsResponse = await api.GetAsync("/api/bots");
+        HttpResponseMessage teamsResponse = await api.GetAsync("/api/teams");
+
+        if (botsResponse.IsSuccessStatusCode && teamsResponse.IsSuccessStatusCode)
+        {
+            allBots = JsonUtils.DeserializeArray<BotInfo>(await botsResponse.Content.ReadAsStringAsync());
+            userTeams = JsonUtils.DeserializeArray<TeamInfo>(await teamsResponse.Content.ReadAsStringAsync());
         }
     }
 
@@ -87,25 +102,14 @@ public class DataManager
         // TODO: Implement
     }
 
-    // TODO: Replace with GetUser().GetCurrency()?
-    public int GetUserCurrency()
+    public UserInfo GetCurrentUser()
     {
-        return currentUser.GetCurrency();
+        return currentUser;
     }
 
     public void SetUserCurrency(int amount)
     {
         // TODO: Implement
-    }
-
-    public int GetUserLevel()
-    {
-        return currentUser.GetLevel();
-    }
-
-    public string GetCurrentUserID()
-    {
-        return currentUser.GetID();
     }
 
     public void AddExperienceToUser(int xp)
@@ -130,12 +134,6 @@ public class DataManager
         return true;
     }
 
-    public TeamInfo[] GetUserBotTeams()
-    {
-        // TODO: Implement
-        return new TeamInfo[0];
-    }
-
     public bool UpdateUserBot(BotInfo bot)
     {
         // TODO: Implement
@@ -155,6 +153,29 @@ public class DataManager
     public PartInfo[] GetAllParts()
     {
         return allParts;
+    }
+
+    public PartInfo GetPart(int pid)
+    {
+        foreach (PartInfo part in allParts)
+        {
+            if (part.GetID() == pid)
+            {
+                return part;
+            }
+        }
+
+        return null;
+    }
+
+    public BotInfo[] GetAllBots()
+    {
+        return allBots;
+    }
+
+    public TeamInfo[] GetUserTeams()
+    {
+        return userTeams;
     }
 
 }

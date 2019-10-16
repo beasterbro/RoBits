@@ -46,7 +46,7 @@ public class InventoryController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        currentBot = DataManager.GetManager().GetUserBotTeams()[teamArrayValue].GetBots()[botArrayValue];
+        currentBot = DataManager.GetManager().GetUserTeams()[teamArrayValue].GetBots()[botArrayValue];
     }
 
     // Update is called once per frame

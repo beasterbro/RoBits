@@ -1,17 +1,12 @@
 ﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json;
 
+[JsonConverter(typeof(TeamConverter))]
 public class TeamInfo
 {
-
-    private class DbTeam
-    {
-        public int tid;
-        public string name;
-        public string last_maintenance;
-        public double rank;
-        public int tier;
-    }
 
     private int id;
     private string name;
@@ -28,17 +23,6 @@ public class TeamInfo
         this.bots = bots;
         this.rank = rank;
         this.tier = tier;
-    }
-
-    public static TeamInfo FromJson(string json, BotInfo[] bots)
-    {
-        DbTeam db = JsonUtility.FromJson<DbTeam>(json);
-        return new TeamInfo(db.tid, db.name, DateTime.Parse(db.last_maintenance), new BotInfo[3], db.rank, db.tier);
-    }
-
-    public static TeamInfo FromJson(string json)
-    {
-        return TeamInfo.FromJson(json, new BotInfo[3]);
     }
 
     public int GetID()
