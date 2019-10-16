@@ -8,6 +8,7 @@ using Image = UnityEngine.Experimental.UIElements.Image;
 
 public class InventoryController : MonoBehaviour , IHasChanged
 {
+    private static List<BotInfo> userBots;
     public static BotInfo currentBot;
     private List<InventoryItem> userInventory;
     public List<Image> itemImages;
@@ -29,9 +30,9 @@ public class InventoryController : MonoBehaviour , IHasChanged
         return DataManager.GetManager().RemoveItemFromUserInventory(item);
     }
 
-    public void setActiveBot(BotInfo bot)
+    public void SetActiveBot(int bot)
     {
-        activeBot = bot;
+        //activeBot =;
     }
 
     /**
