@@ -23,4 +23,20 @@ public class InventoryItem
         return count;
     }
 
+    public void IncreaseCount()
+    {
+        count++;
+    }
+
+    public bool DecreaseCount()
+    {
+        if (count > 0)
+        {
+            count--;
+            return true;
+        }
+
+        return false;
+    }
+
 }

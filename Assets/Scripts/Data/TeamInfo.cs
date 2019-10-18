@@ -32,9 +32,19 @@ public class TeamInfo
         return name;
     }
 
+    public void SetName(string name)
+    {
+        this.name = name;
+    }
+
     public DateTime GetDateLastMaintained()
     {
         return lastMaintained;
+    }
+
+    public void SetMaintained()
+    {
+        lastMaintained = DateTime.Now();
     }
 
     public BotInfo[] GetBots()
@@ -45,6 +55,11 @@ public class TeamInfo
     public double GetRank()
     {
         return rank;
+    }
+
+    public void SetRank(double rank)
+    {
+        this.rank = rank;
     }
 
     public int GetTier()

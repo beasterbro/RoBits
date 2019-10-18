@@ -32,6 +32,11 @@ public class BotInfo
         return name;
     }
 
+    public void SetName(string name)
+    {
+        this.name = name;
+    }
+
     public int GetTier()
     {
         return tier;
@@ -55,6 +60,11 @@ public class BotInfo
     public PartInfo GetBodyType()
     {
         return bodyType;
+    }
+
+    public void SetBodyType(PartInfo bodyType)
+    {
+        this.bodyType = bodyType;
     }
 
     public Dictionary<string, string> GetBehaviors()
