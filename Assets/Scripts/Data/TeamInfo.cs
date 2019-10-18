@@ -44,7 +44,7 @@ public class TeamInfo
 
     public void SetMaintained()
     {
-        lastMaintained = DateTime.Now();
+        lastMaintained = DateTime.Now;
     }
 
     public BotInfo[] GetBots()
