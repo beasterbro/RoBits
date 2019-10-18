@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using JsonData;
 
 // Collects and manages necessary information that needs to be taken from the backend to the frontend and vice versa.
 public class DataManager
@@ -96,24 +97,15 @@ public class DataManager
         }
     }
 
-    public void UpdateUserData()
+    public async Task UpdateCurrentUser()
     {
-        // TODO: Implement
+        HttpContent updateBody = JsonUtils.SerializeObject(currentUser);
+        HttpResponseMessage updateResponse = await api.PostAsync("/api/user", updateBody);
     }
 
     public UserInfo GetCurrentUser()
     {
         return currentUser;
-    }
-
-    public void SetUserCurrency(int amount)
-    {
-        // TODO: Implement
-    }
-
-    public void AddExperienceToUser(int xp)
-    {
-        // TODO: Implement
     }
 
     public List<InventoryItem> GetUserInventory()
@@ -133,10 +125,10 @@ public class DataManager
         return true;
     }
 
-    public bool UpdateUserBot(BotInfo bot)
+    public async Task UpdateUserBot(BotInfo bot)
     {
-        // TODO: Implement
-        return true;
+        HttpContent updateBody = JsonUtils.SerializeObject(bot);
+        HttpResponseMessage updateResponse = await api.PostAsync("/api/bots/" + bot.GetID(), updateBody);
     }
 
     public PartInfo[] GetAllParts()

@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
-[JsonConverter(typeof(UserConverter))]
+[JsonConverter(typeof(JsonData.UserConverter))]
 public class UserInfo
 {
 
@@ -10,18 +11,16 @@ public class UserInfo
     private string username;
     private int currency;
     private int xp;
-    private int level;
     private bool canCompete;
     private Dictionary<string, string> settings;
 
-    public UserInfo(string id, string email, string username, int currency, int xp, int level, bool canCompete, Dictionary<string, string> settings)
+    public UserInfo(string id, string email, string username, int currency, int xp, bool canCompete, Dictionary<string, string> settings)
     {
         this.id = id;
         this.email = email;
         this.username = username;
         this.currency = currency;
         this.xp = xp;
-        this.level = level;
         this.canCompete = canCompete;
         this.settings = settings;
     }
@@ -46,14 +45,24 @@ public class UserInfo
         return currency;
     }
 
+    public void SetCurrency(int currency)
+    {
+        this.currency = currency;
+    }
+
     public int GetXP()
     {
         return xp;
     }
 
+    public void SetXP(int xp)
+    {
+        this.xp = xp;
+    }
+
     public int GetLevel()
     {
-        return level;
+        return (int)Math.Floor(((float)xp) / 1000f);
     }
 
     public bool CanCompete()

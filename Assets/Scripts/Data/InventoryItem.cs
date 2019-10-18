@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-[JsonConverter(typeof(InventoryItemConverter))]
+[JsonConverter(typeof(JsonData.InventoryItemConverter))]
 public class InventoryItem
 {
 

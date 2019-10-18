@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-[JsonConverter(typeof(BotConverter))]
+[JsonConverter(typeof(JsonData.BotConverter))]
 public class BotInfo
 {
 

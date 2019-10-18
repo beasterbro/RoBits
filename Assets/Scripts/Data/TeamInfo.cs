@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-[JsonConverter(typeof(TeamConverter))]
+[JsonConverter(typeof(JsonData.TeamConverter))]
 public class TeamInfo
 {
 

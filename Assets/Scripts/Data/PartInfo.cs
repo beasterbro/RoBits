@@ -2,7 +2,7 @@
 using UnityEngine;
 using Newtonsoft.Json;
 
-[JsonConverter(typeof(PartConverter))]
+[JsonConverter(typeof(JsonData.PartConverter))]
 public class PartInfo
 {
 
