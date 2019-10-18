@@ -97,15 +97,15 @@ public class DataManager
         }
     }
 
-    public async Task UpdateCurrentUser()
-    {
-        HttpContent updateBody = JsonUtils.SerializeObject(currentUser);
-        HttpResponseMessage updateResponse = await api.PostAsync("/api/user", updateBody);
-    }
-
     public UserInfo GetCurrentUser()
     {
         return currentUser;
+    }
+
+    public async Task UpdateCurrentUser()
+    {
+        HttpContent updateBody = JsonUtils.SerializeObject(currentUser);
+        HttpResponseMessage updateResponse = await api.PutAsync("/api/user", updateBody);
     }
 
     public List<InventoryItem> GetUserInventory()
@@ -125,12 +125,6 @@ public class DataManager
         return true;
     }
 
-    public async Task UpdateUserBot(BotInfo bot)
-    {
-        HttpContent updateBody = JsonUtils.SerializeObject(bot);
-        HttpResponseMessage updateResponse = await api.PostAsync("/api/bots/" + bot.GetID(), updateBody);
-    }
-
     public PartInfo[] GetAllParts()
     {
         return allParts;
@@ -139,9 +133,7 @@ public class DataManager
     public PartInfo GetPart(int pid)
     {
         foreach (PartInfo part in allParts)
-        {
             if (part.GetID() == pid) return part;
-        }
 
         return null;
     }
@@ -154,16 +146,34 @@ public class DataManager
     public BotInfo GetBot(int bid)
     {
         foreach (BotInfo bot in allBots)
-        {
             if (bot.GetID() == bid) return bot;
-        }
 
         return null;
+    }
+
+    public async Task UpdateBot(BotInfo bot)
+    {
+        HttpContent updateBody = JsonUtils.SerializeObject(bot);
+        HttpResponseMessage updateResponse = await api.PutAsync("/api/bots/" + bot.GetID(), updateBody);
     }
 
     public TeamInfo[] GetUserTeams()
     {
         return userTeams;
+    }
+
+    public TeamInfo GetTeam(int tid)
+    {
+        foreach (TeamInfo team in userTeams)
+            if (team.GetID() == tid) return team;
+
+        return null;
+    }
+
+    public async Task UpdateTeam(TeamInfo team)
+    {
+        HttpContent updateBody = JsonUtils.SerializeObject(team);
+        HttpResponseMessage updateResponse = await api.PutAsync("/api/teams/" + team.GetID(), updateBody);
     }
 
 }
