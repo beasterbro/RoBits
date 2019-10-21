@@ -10,7 +10,7 @@ public class ImageGenerator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        foreach (Image image in gatheredImages)
+//        foreach (Image image in gatheredImages)
         {
             
         }
