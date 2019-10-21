@@ -39,4 +39,11 @@ sysinfo.txt
 # Ignore GitHub plugin
 Assets/Plugins/GitHub/*
 /ProjectSettings/ProjectVersion.txt
-.idea
+.idea/.idea.RoBits/.idea/contentModel.xml
+.idea/.idea.RoBits/.idea/encodings.xml
+.idea/.idea.RoBits/.idea/indexLayout.xml
+.idea/.idea.RoBits/.idea/misc.xml
+.idea/.idea.RoBits/.idea/modules.xml
+.idea/.idea.RoBits/.idea/vcs.xml
+.idea/.idea.RoBits/.idea/workspace.xml
+.idea/.idea.RoBits/riderModule.iml
