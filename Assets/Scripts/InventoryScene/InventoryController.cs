@@ -1,6 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -15,9 +15,10 @@ public class InventoryController : MonoBehaviour , IHasChanged
 
     [SerializeField] private Transform slots;
     [SerializeField] private Text inventoryText;
+    [SerializeField] private Text testText;
     
-    public int teamArrayValue;
-    public int botArrayValue;
+   // public int teamArrayValue;
+   // public int botArrayValue;
     public BotInfo activeBot;
 
     private bool AddPartToInventory(PartInfo item)
@@ -30,9 +31,11 @@ public class InventoryController : MonoBehaviour , IHasChanged
         return DataManager.GetManager().RemoveItemFromUserInventory(item);
     }
 
-    public void SetActiveBot(int bot)
+    public void SetActiveBot(int botValue)
     {
-        //activeBot =;
+        testText.text = "" + botValue;
+        activeBot = DataManager.GetManager().GetUserBotTeams()[botValue/3].GetBots()[botValue%3];
+        testText.text = activeBot.ToString();
     }
 
     /**
@@ -58,19 +61,26 @@ public class InventoryController : MonoBehaviour , IHasChanged
     }
     
     // Start is called before the first frame update
+    //Start Here
+    /**
+     * 
+     */
     void Start()
     {
         HasChanged();
-        foreach (InventoryItem inventoryItem in userInventory)
+//        foreach (InventoryItem inventoryItem in userInventory)
         {
             
         }
+
+        
     }
 
     // Update is called once per frame
     void Update()
     {
         HasChanged();
+        
     }
 
     public void HasChanged()
