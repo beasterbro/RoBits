@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BotController : MonoBehaviour, Target
@@ -12,7 +10,7 @@ public class BotController : MonoBehaviour, Target
     public Transform bulletTransform;
     public float launchForce;
 
-    public GunLocation[] weaponLocations;
+    public Transform[] weaponLocations;
 
     public float movementSpeed;
     public float turningSpeed;
@@ -31,6 +29,7 @@ public class BotController : MonoBehaviour, Target
     private Rigidbody2D rigidbody;
     private float movementValue = 0f;
     private float turningValue = 0f;
+    private float weaponValue = 0f;
 
     // Start is called before the first frame update
     void Start()
@@ -41,11 +40,9 @@ public class BotController : MonoBehaviour, Target
         foreach (PartController controller in parts)
         {
             if (numWeapons == weaponLocations.Length) break;
-            if (controller is WeaponController)
+            if (controller is GunController)
             {
-                (controller as WeaponController).transform.SetPositionAndRotation(
-                    weaponLocations[numWeapons].weaponLocation.position,
-                    weaponLocations[numWeapons].weaponLocation.rotation);
+                (controller as GunController).Setup(weaponLocations[numWeapons]);
                 numWeapons++;
             }
         }
@@ -61,6 +58,7 @@ public class BotController : MonoBehaviour, Target
 
         movementValue = Input.GetAxis("Vertical");
         turningValue = Input.GetAxis("Horizontal");
+        weaponValue = Input.GetAxis("Horizontal2");
     }
 
     private void FixedUpdate()
@@ -74,18 +72,16 @@ public class BotController : MonoBehaviour, Target
 
         Vector2 movement = new Vector2(movementX, movementY);
         rigidbody.MovePosition(rigidbody.position + movement);
+        
+        parts[0].transform.Rotate(0, 0, -weaponValue * (turningSpeed * 2) * Time.deltaTime, Space.Self);
     }
 
     void Fire()
     {
-        Rigidbody2D bulletInstance =
-            Instantiate(bullet, bulletTransform.position, bulletTransform.rotation) as Rigidbody2D;
-
-        float vx = (float) Math.Cos(bulletInstance.rotation * Math.PI / 180) * launchForce;
-        float vy = (float) Math.Sin(bulletInstance.rotation * Math.PI / 180) * launchForce;
-
-        bulletInstance.velocity = new Vector2(vx, vy);
-        Destroy(bulletInstance.gameObject, 2f);
+        foreach (PartController part in parts)
+        {
+            if (part is ActorPartController) (part as ActorPartController).Act();
+        }
     }
 
     public void SetTarget(GameObject target)
