@@ -1,27 +1,25 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-
-using UnityEngine;
-using UnityEngine.Networking;
+using JsonData;
 
 // Collects and manages necessary information that needs to be taken from the backend to the frontend and vice versa.
 public class DataManager
 {
 
-    private static DataManager shared ;
+    private static DataManager shared;
 
     private HttpClient api = new HttpClient();
 
     private UserInfo currentUser;
-
-    private TeamInfo[] userTeams;
-    private List<InventoryItem> inventory;
     private PartInfo[] allParts;
+    private List<InventoryItem> inventory_;
+
+    private BotInfo[] allBots;
+    private TeamInfo[] userTeams;
+
 
     public DataManager()
     {
@@ -29,11 +27,13 @@ public class DataManager
         api.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
     }
 
+    // Adds the auth header to the HTTP client
     public void EstablishAuth(string token)
     {
         api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
     }
 
+    // Returns a reference to the shared instance
     public static DataManager GetManager()
     {
         if (shared == null)
@@ -42,13 +42,14 @@ public class DataManager
         }
         return shared;
     }
-    
 
+    // Fetches all necessary initial data
     public async Task FetchInitialData()
     {
         await FetchCurrentUser();
         await FetchAllParts();
         await FetchUserInventory();
+        await FetchUserTeams();
     }
 
     public async Task FetchCurrentUser()
@@ -58,17 +59,7 @@ public class DataManager
         if (response.IsSuccessStatusCode)
         {
             string json = await response.Content.ReadAsStringAsync();
-            currentUser = UserInfo.FromJson(json);
-        }
-    }
-
-    public async Task FetchUserInventory()
-    {
-        HttpResponseMessage response = await api.GetAsync("/api/inventory?expandParts=true");
-
-        if (response.IsSuccessStatusCode)
-        {
-            inventory = new List<InventoryItem>(InventoryItem.FromJsonArray(await response.Content.ReadAsStringAsync()));
+            currentUser = JsonUtils.DeserializeObject<UserInfo>(json);
         }
     }
 
@@ -78,44 +69,48 @@ public class DataManager
 
         if (response.IsSuccessStatusCode)
         {
-            allParts = PartInfo.FromJsonArray(await response.Content.ReadAsStringAsync());
+            allParts = JsonUtils.DeserializeArray<PartInfo>(await response.Content.ReadAsStringAsync());
         }
     }
 
-    public void UpdateUserData()
+    // Must be called after calling FetchAllParts
+    public async Task FetchUserInventory()
     {
-        // TODO: Implement
+        HttpResponseMessage response = await api.GetAsync("/api/inventory");
+
+        if (response.IsSuccessStatusCode)
+        {
+            inventory_ = new List<InventoryItem>(JsonUtils.DeserializeArray<InventoryItem>(await response.Content.ReadAsStringAsync()));
+        }
     }
 
-    // TODO: Replace with GetUser().GetCurrency()?
-    public int GetUserCurrency()
+    // Must be called after calling FetchAllParts
+    public async Task FetchUserTeams()
     {
-        return currentUser.GetCurrency();
+        HttpResponseMessage botsResponse = await api.GetAsync("/api/bots");
+        HttpResponseMessage teamsResponse = await api.GetAsync("/api/teams");
+
+        if (botsResponse.IsSuccessStatusCode && teamsResponse.IsSuccessStatusCode)
+        {
+            allBots = JsonUtils.DeserializeArray<BotInfo>(await botsResponse.Content.ReadAsStringAsync());
+            userTeams = JsonUtils.DeserializeArray<TeamInfo>(await teamsResponse.Content.ReadAsStringAsync());
+        }
     }
 
-    public void SetUserCurrency(int amount)
+    public UserInfo GetCurrentUser()
     {
-        // TODO: Implement
+        return currentUser;
     }
 
-    public int GetUserLevel()
+    public async Task UpdateCurrentUser()
     {
-        return currentUser.GetLevel();
-    }
-
-    public string GetCurrentUserID()
-    {
-        return currentUser.GetID();
-    }
-
-    public void AddExperienceToUser(int xp)
-    {
-        // TODO: Implement
+        HttpContent updateBody = JsonUtils.SerializeObject(currentUser);
+        HttpResponseMessage updateResponse = await api.PutAsync("/api/user", updateBody);
     }
 
     public List<InventoryItem> GetUserInventory()
     {
-        return inventory;
+        return inventory_;
     }
 
     public bool RemoveItemFromUserInventory(PartInfo item)
@@ -130,31 +125,55 @@ public class DataManager
         return true;
     }
 
-    public TeamInfo[] GetUserBotTeams()
+    public PartInfo[] GetAllParts()
     {
-        // TODO: Implement
-        return new TeamInfo[0];
+        return allParts;
     }
 
-    public bool UpdateUserBot(BotInfo bot)
-    {
-        // TODO: Implement
-        return true;
-    }
-
-    public PartInfo GetPartById(int id)
+    public PartInfo GetPart(int pid)
     {
         foreach (PartInfo part in allParts)
-        {
-            if (part.GetID() == id) return part;
-        }
+            if (part.GetID() == pid) return part;
 
         return null;
     }
 
-    public PartInfo[] GetAllParts()
+    public BotInfo[] GetAllBots()
     {
-        return allParts;
+        return allBots;
+    }
+
+    public BotInfo GetBot(int bid)
+    {
+        foreach (BotInfo bot in allBots)
+            if (bot.GetID() == bid) return bot;
+
+        return null;
+    }
+
+    public async Task UpdateBot(BotInfo bot)
+    {
+        HttpContent updateBody = JsonUtils.SerializeObject(bot);
+        HttpResponseMessage updateResponse = await api.PutAsync("/api/bots/" + bot.GetID(), updateBody);
+    }
+
+    public TeamInfo[] GetUserTeams()
+    {
+        return userTeams;
+    }
+
+    public TeamInfo GetTeam(int tid)
+    {
+        foreach (TeamInfo team in userTeams)
+            if (team.GetID() == tid) return team;
+
+        return null;
+    }
+
+    public async Task UpdateTeam(TeamInfo team)
+    {
+        HttpContent updateBody = JsonUtils.SerializeObject(team);
+        HttpResponseMessage updateResponse = await api.PutAsync("/api/teams/" + team.GetID(), updateBody);
     }
 
 }
