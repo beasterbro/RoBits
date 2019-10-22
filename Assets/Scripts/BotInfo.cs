@@ -71,9 +71,9 @@ public class BotInfo
         return tier;
     }
 
-    public PartInfo[] GetEquippedParts()
+    public List<PartInfo> GetEquippedParts()
     {
-        return equipment.ToArray();
+        return equipment;
     }
 
     public bool AddPart(PartInfo part)
