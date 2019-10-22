@@ -21,20 +21,20 @@ public class InventoryController : MonoBehaviour , IHasChanged
    // public int botArrayValue;
     public BotInfo activeBot;
 
-    private bool AddPartToInventory(PartInfo item)
+    public static bool PurchasePart(PartInfo item)
     {
-        return DataManager.GetManager().AddItemToUserInventory(item);
+        return DataManager.instance().PurchasePart(item);
     }
 
-    private bool RemovePartFromInventory(PartInfo item)
+    private bool SellPart(PartInfo item)
     {
-        return DataManager.GetManager().RemoveItemFromUserInventory(item);
+        return DataManager.instance().SellPart(item);
     }
 
     public void SetActiveBot(int botValue)
     {
         testText.text = "" + botValue;
-        currentBot = DataManager.GetManager().GetAllBots()[botValue];
+        currentBot = DataManager.instance().GetAllBots()[botValue];
         testText.text = currentBot.ToString();
     }
 

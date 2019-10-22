@@ -34,7 +34,7 @@ public class DataManager
     }
 
     // Returns a reference to the shared instance
-    public static DataManager GetManager()
+    public static DataManager instance()
     {
         if (shared == null)
         {
@@ -113,13 +113,13 @@ public class DataManager
         return inventory_;
     }
 
-    public bool RemoveItemFromUserInventory(PartInfo item)
+    public bool SellPart(PartInfo item)
     {
         // TODO: Implement
         return true;
     }
 
-    public bool AddItemToUserInventory(PartInfo item)
+    public bool PurchasePart(PartInfo item)
     {
         // TODO: Implement
         return true;

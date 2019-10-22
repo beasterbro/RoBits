@@ -14,7 +14,7 @@ namespace JsonData
             int pid = helper.GetValue<int>("pid");
             int count = helper.GetValue<int>("count", 0);
 
-            PartInfo part = DataManager.GetManager().GetPart(pid);
+            PartInfo part = DataManager.instance().GetPart(pid);
 
             return new InventoryItem(part, count);
         }
