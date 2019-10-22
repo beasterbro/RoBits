@@ -34,8 +34,8 @@ public class InventoryController : MonoBehaviour , IHasChanged
     public void SetActiveBot(int botValue)
     {
         testText.text = "" + botValue;
-        activeBot = DataManager.GetManager().GetUserBotTeams()[botValue/3].GetBots()[botValue%3];
-        testText.text = activeBot.ToString();
+        currentBot = DataManager.GetManager().GetUserBotTeams()[botValue/3].GetBots()[botValue%3];
+        testText.text = currentBot.ToString();
     }
 
     /**
