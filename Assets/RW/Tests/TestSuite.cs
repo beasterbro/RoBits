@@ -18,20 +18,27 @@ namespace Tests
         BotInfo _botInfo = new BotInfo(1,"test",0,equipment,bodyType);
         // A Test behaves as an ordinary method
         [Test]
-        public void TestSuiteSimplePasses()
+        public void TestingBotInfoAssigned()
         {
             // Use the Assert class to test conditions
             Assert.That(_botInfo != null);
         }
 
+        [Test]
+        public void TestingBotInfoCorrectInfo()
+        {
+            Assert.That(_botInfo.GetTier() == 0);
+            Assert.That(_botInfo.GetEquippedParts().Count== equipment.Count);
+        }
+
         // A UnityTest behaves like a coroutine in Play Mode. In Edit Mode you can use
         // `yield return null;` to skip a frame.
-        [UnityTest]
+      /*  [UnityTest]
         public IEnumerator TestSuiteWithEnumeratorPasses()
         {
             // Use the Assert class to test conditions.
             // Use yield to skip a frame.
             yield return null;
-        }
+        }*/
     }
 }
