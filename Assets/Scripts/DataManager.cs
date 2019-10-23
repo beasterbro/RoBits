@@ -15,7 +15,7 @@ public class DataManager
     private HttpClient api = new HttpClient();
 
     private UserInfo currentUser;
-    private PartInfo[] allParts;
+     PartInfo[] allParts;
     private List<InventoryItem> inventory_;
 
     private BotInfo[] allBots;
