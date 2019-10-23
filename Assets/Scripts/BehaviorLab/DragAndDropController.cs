@@ -82,7 +82,7 @@ public class DragAndDropController : MonoBehaviour
         return mousePos;
     }
 
-    private Vector3 OffsetMousePosition()
+    public Vector3 OffsetMousePosition()
     {
         return MousePosition() + originalOffset;
     }
