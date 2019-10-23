@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -16,11 +17,49 @@ public class InventoryController : MonoBehaviour , IHasChanged
     [SerializeField] private Transform slots;
     [SerializeField] private Text inventoryText;
     [SerializeField] private Text testText;
-    
-   // public int teamArrayValue;
-   // public int botArrayValue;
+ 
     public BotInfo activeBot;
 
+    private static Dictionary<String,double> attributes1 = new Dictionary<string, double>
+    {
+        {"DMG",23.0},
+        {"DIST",12}
+    };
+       
+    private static Dictionary<String,double> attributes2 = new Dictionary<string, double>
+    {
+        {"DMG",23.0},
+        {"DIST",12}
+    };
+       
+    private static Dictionary<String,string> settings = new Dictionary<string, string>
+    {
+        {"DARK","yes"},
+        {"LOUD","no"}
+    };
+       
+    private static Dictionary<String,double> bodySpec = new Dictionary<string, double>
+    {
+        {"THICC",11},
+        {"SANIC",101}
+    };
+       
+       
+    private static PartInfo part1 = new PartInfo(0, "0", "first part", PartType.Weapon, 1, 1, true, attributes1);
+    private static PartInfo part2 = new PartInfo(1, "1", "second part", PartType.Weapon, 2, 2, true, attributes2);
+
+    private static List<PartInfo> allParts = new List<PartInfo>(new PartInfo[]{part1,part2});
+        
+    private static PartInfo body = new PartInfo(2, "body", "thrid part", PartType.BodyType, 2, 2, false, bodySpec);
+
+    private UserInfo _userInfo = new UserInfo("testUser","ass@ass.com","tester101",100,200,true,settings);
+       
+    private static BotInfo bot0 = new BotInfo(0,"bot0",0,allParts,body);
+    private static BotInfo bot1 = new BotInfo(1,"bot1",1,allParts,body);
+    private static BotInfo bot2 = new BotInfo(2,"bot2",2,allParts,body);
+
+    private static BotInfo[] botTeam = new[] {bot0, bot1, bot2};
+    
     public static bool PurchasePart(PartInfo item)
     {
         return DataManager.instance().PurchasePart(item);
@@ -33,9 +72,13 @@ public class InventoryController : MonoBehaviour , IHasChanged
 
     public void SetActiveBot(int botValue)
     {
+        //for testing purposes of setting the actively edited bot
         testText.text = "" + botValue;
-        currentBot = DataManager.instance().GetAllBots()[botValue];
-        testText.text = currentBot.ToString();
+        // currentBot = DataManager.instance().GetAllBots()[botValue];
+        currentBot = botTeam[botValue];
+        testText.text = currentBot.GetName();
+        
+        
     }
 
     /**
@@ -43,9 +86,11 @@ public class InventoryController : MonoBehaviour , IHasChanged
      * Postcondition: the part is on the current bot;
      */
     private bool AddPartToBot(PartInfo part)
-    {//TODO: properly implement the conversion from Part to InventoryItem
-        InventoryItem itemToRemove = new InventoryItem(part,1);
+    {
+        //TODO: properly implement the conversion from Part to InventoryItem
+        InventoryItem itemToRemove = userInventory.First(item => item.GetPart().GetID() == part.GetID());
         userInventory.Remove(itemToRemove);
+        currentBot.AddPart(part);
         return true;
     }
 
@@ -56,7 +101,18 @@ public class InventoryController : MonoBehaviour , IHasChanged
     private bool RemovePartFromBot(PartInfo part)
     {
         currentBot.RemovePart(part);
-        userInventory.Add(new InventoryItem(part,1));
+        InventoryItem userItem = userInventory.First(item => item.GetPart().GetID() == part.GetID());
+        if (userItem != null)
+        {
+            userItem.IncreaseCount();
+        }
+        //It was the user's only copy of a part
+        else
+        {
+            userInventory.Add(new InventoryItem(part,1));
+        }
+
+        ;
         return true;
     }
     
