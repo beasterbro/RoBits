@@ -8,23 +8,19 @@ public abstract class Block : InterfaceObject
     [SerializeField] private List<BlockLine> lines = new List<BlockLine>();
     [SerializeField] private bool isMovable = false;
     [SerializeField] private bool isDeletable = false;
-    [SerializeField] private ReturnType outputType = ReturnType.EMPTY;
     //[SerializeField] private Color textColor; // Handled by component?
     [SerializeField] private Block prev; // Block that precedes, if any
     [SerializeField] private Block next; // Block that follows, if any
     [SerializeField] private Block containing; // Block to return an output to
 
-    public ReturnType GetOutputType()
-    {
-        return this.outputType;
-    }
+    public abstract ReturnType OutputType();
 
     // Executes the code the block represents, either returning a value or performing
     // some action and calling evaluate on the block's successor
     public BehaviorData Evaluate()
     {
         BehaviorData result = InnerEvaluate();
-        if (result.GetType() != outputType)
+        if (result.GetType() != OutputType())
         {
             throw new SystemException("Unexpected return type.");
         }

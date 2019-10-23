@@ -19,7 +19,7 @@ public class SlotInputComponent : BlockComponent
 
     public bool MatchesOutputType(Block block)
     {
-        return this.expectedOutputType == block.GetOutputType();
+        return this.expectedOutputType == block.OutputType();
     }
 
     public void Push(Block block)

@@ -15,6 +15,11 @@ public class NotBlock : Block
         }
     }
 
+    public override ReturnType OutputType()
+    {
+        return ReturnType.LOGICAL;
+    }
+
     protected override BehaviorData InnerEvaluate()
     {
         return new BehaviorData(!condition.Evaluate().GetLogical());

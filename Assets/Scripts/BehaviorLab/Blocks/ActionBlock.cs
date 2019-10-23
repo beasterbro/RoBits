@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TriggerBlock : Block
+public class ActionBlock : Block
 {
-    [SerializeField] private ReturnType outputType = ReturnType.LOGICAL;
-
     public override ReturnType OutputType()
     {
-        return outputType;
+        return ReturnType.EMPTY;
     }
 
     public override bool IsValid()

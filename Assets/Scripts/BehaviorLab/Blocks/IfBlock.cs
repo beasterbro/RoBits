@@ -16,6 +16,11 @@ public class IfBlock : Block
         }
     }
 
+    public override ReturnType OutputType()
+    {
+        return ReturnType.EMPTY;
+    }
+
     protected override BehaviorData InnerEvaluate()
     {
         if (condition.Evaluate().GetLogical())
