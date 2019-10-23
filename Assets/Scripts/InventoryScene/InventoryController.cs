@@ -78,7 +78,8 @@ public class InventoryController : MonoBehaviour , IHasChanged
         currentBot = botTeam[botValue];
         testText.text = currentBot.GetName();
         
-        
+        //TODO: Remove currently equipped parts from inventory
+        //TODO: Show currently equipped parts in Equipped section
     }
 
     /**
@@ -87,11 +88,16 @@ public class InventoryController : MonoBehaviour , IHasChanged
      */
     private bool AddPartToBot(PartInfo part)
     {
-        //TODO: properly implement the conversion from Part to InventoryItem
         InventoryItem itemToRemove = userInventory.First(item => item.GetPart().GetID() == part.GetID());
-        userInventory.Remove(itemToRemove);
-        currentBot.AddPart(part);
-        return true;
+        if ( itemToRemove.DecreaseCount())
+        {
+            currentBot.AddPart(part);
+            return true; 
+        }
+        else
+        {
+            return false;
+        }
     }
 
     /**
@@ -106,11 +112,7 @@ public class InventoryController : MonoBehaviour , IHasChanged
         {
             userItem.IncreaseCount();
         }
-        //It was the user's only copy of a part
-        else
-        {
-            userInventory.Add(new InventoryItem(part,1));
-        }
+        //It was the user's only copy of a part and we wi
 
         ;
         return true;
