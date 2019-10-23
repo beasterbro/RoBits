@@ -12,6 +12,7 @@ public class Item : MonoBehaviour
 {
     
     [SerializeField] public Image partImage;
+    [SerializeField] public int count;
     private InventoryItem inventoryItem;
     public PartInfo partInfo ;
     // Start is called before the first frame update
@@ -20,5 +21,11 @@ public class Item : MonoBehaviour
     {
         partInfo = inventoryItem.GetPart();
         partImage.name = partInfo.GetName();
+        count = inventoryItem.GetCount();
+    }
+
+    public void SetInventoryItem(InventoryItem item)
+    {
+        inventoryItem = item;
     }
 }
