@@ -14,9 +14,11 @@ public class InventoryController : MonoBehaviour , IHasChanged
     private List<InventoryItem> userInventory;
     public List<Image> itemImages;
 
-    [SerializeField] private Transform slots;
-    [SerializeField] private Text inventoryText;
+    [SerializeField] private Transform equipedSlots;
+    [SerializeField] private Transform inventorySlots;
+    [SerializeField] public Text inventoryText;
     [SerializeField] private Text testText;
+    [SerializeField] private Text botInfoText;
  
     public BotInfo activeBot;
 
@@ -49,6 +51,7 @@ public class InventoryController : MonoBehaviour , IHasChanged
     private static PartInfo part2 = new PartInfo(1, "1", "second part", PartType.Weapon, 2, 2, true, attributes2);
 
     private static List<PartInfo> allParts = new List<PartInfo>(new PartInfo[]{part1,part2});
+    private static List<PartInfo> allParts2 = new List<PartInfo>(new PartInfo[]{part2,part1});
         
     private static PartInfo body = new PartInfo(2, "body", "thrid part", PartType.BodyType, 2, 2, false, bodySpec);
 
@@ -56,9 +59,13 @@ public class InventoryController : MonoBehaviour , IHasChanged
        
     private static BotInfo bot0 = new BotInfo(0,"bot0",0,allParts,body);
     private static BotInfo bot1 = new BotInfo(1,"bot1",1,allParts,body);
-    private static BotInfo bot2 = new BotInfo(2,"bot2",2,allParts,body);
+    private static BotInfo bot2 = new BotInfo(2,"bot2",2,allParts2,body);
 
     private static BotInfo[] botTeam = new[] {bot0, bot1, bot2};
+    
+    private static InventoryItem item1 = new InventoryItem(part1,1);
+    private static InventoryItem item2 = new InventoryItem(part1,100);
+    
     
     public static bool PurchasePart(PartInfo item)
     {
@@ -77,9 +84,10 @@ public class InventoryController : MonoBehaviour , IHasChanged
         // currentBot = DataManager.instance().GetAllBots()[botValue];
         currentBot = botTeam[botValue];
         testText.text = currentBot.GetName();
-        
+        botInfoText.text = " Part 1: " + currentBot.GetEquippedParts()[0].GetDescription() + " Part 2: " + currentBot.GetEquippedParts()[1].GetDescription();
         //TODO: Remove currently equipped parts from inventory
         //TODO: Show currently equipped parts in Equipped section
+        UpdateUserInventory();
     }
 
     /**
@@ -109,13 +117,38 @@ public class InventoryController : MonoBehaviour , IHasChanged
         currentBot.RemovePart(part);
         InventoryItem userItem = userInventory.First(item => item.GetPart().GetID() == part.GetID());
         if (userItem != null)
-        {
+        {//adds on to the count of the specified inventory object
             userItem.IncreaseCount();
+            return true;
         }
-        //It was the user's only copy of a part and we wi
+        //The user's inventory did not contain the inventory item
+        else
+        {
+            return false;
+        }
+    }
 
-        ;
-        return true;
+    /*
+     * Updates the displayed user inventory to reflect any possible changes made by the user
+     */
+    void UpdateUserInventory()
+    {
+        var userInventoryEnumerator = userInventory.GetEnumerator();
+        foreach (Transform slot in equipedSlots)
+        {
+            if (userInventoryEnumerator.Current != null)
+            {
+                slot.GetComponent<Item>().SetInventoryItem(userInventoryEnumerator.Current);
+                userInventoryEnumerator.MoveNext();
+            }
+
+            else//all items in user inventory have been assigned
+            {
+                break;
+            }
+            
+        }
+        userInventoryEnumerator.Dispose();
     }
     
     // Start is called before the first frame update
@@ -126,9 +159,12 @@ public class InventoryController : MonoBehaviour , IHasChanged
     void Start()
     {
         HasChanged();
-
+        //userInventory = DataManager.instance().GetUserInventory();
+        userInventory = new List<InventoryItem>{item1,item2};
+        UpdateUserInventory();
         
     }
+    
 
     // Update is called once per frame
     void Update()
@@ -141,7 +177,7 @@ public class InventoryController : MonoBehaviour , IHasChanged
     {
         System.Text.StringBuilder builder = new System.Text.StringBuilder();
         builder.Append("  -  ");
-        foreach (Transform slotTransform in slots)
+        foreach (Transform slotTransform in equipedSlots)
         {
             GameObject item = slotTransform.GetComponent<SlotController>().item;
             if (item)
