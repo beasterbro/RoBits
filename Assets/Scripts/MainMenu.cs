@@ -18,8 +18,8 @@ public class MainMenu : MonoBehaviour
         Debug.Log("Quit");
         Application.Quit();
     }
-    
-    
+
+
     // Start is called before the first frame update
     async void Start()
     {
@@ -39,6 +39,6 @@ public class MainMenu : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

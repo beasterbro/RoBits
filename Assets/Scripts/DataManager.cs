@@ -159,7 +159,7 @@ public class DataManager
 
     public TeamInfo GetTeam(int tid)
     {
-        return userTeams.First(team => team.GetID() == tid);      
+        return userTeams.First(team => team.GetID() == tid);
     }
 
     public async Task UpdateTeam(TeamInfo team)
