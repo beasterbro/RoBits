@@ -11,7 +11,7 @@ public class InventoryController : MonoBehaviour , IHasChanged
 {
     private static List<BotInfo> userBots;
     public static BotInfo currentBot;
-    private List<InventoryItem> userInventory;
+    private static List<InventoryItem> userInventory;
     public List<Image> itemImages;
 
     [SerializeField] private Transform equipedSlots;
@@ -55,7 +55,7 @@ public class InventoryController : MonoBehaviour , IHasChanged
         
     private static PartInfo body = new PartInfo(2, "body", "thrid part", PartType.BodyType, 2, 2, false, bodySpec);
 
-    private UserInfo _userInfo = new UserInfo("testUser","ass@ass.com","tester101",100,200,true,settings);
+    private static UserInfo user = new UserInfo("testUser","ass@ass.com","tester101",100,200,true,settings);
        
     private static BotInfo bot0 = new BotInfo(0,"bot0",0,allParts,body);
     private static BotInfo bot1 = new BotInfo(1,"bot1",1,allParts,body);
@@ -67,14 +67,24 @@ public class InventoryController : MonoBehaviour , IHasChanged
     private static InventoryItem item2 = new InventoryItem(part1,100);
     
     
-    public static bool PurchasePart(PartInfo item)
+    
+    /*
+     * calls purchase part from DataManager
+     */
+    public static bool PurchasePart(PartInfo part)
     {
-        return DataManager.instance().PurchasePart(item);
+        user.SetCurrency(user.GetCurrency() - part.GetPrice());
+        userInventory.First(iitem => iitem.GetPart().GetID() == part.GetID()).IncreaseCount();
+        return true;
+        // return DataManager.instance().PurchasePart(item);
     }
 
-    private bool SellPart(PartInfo item)
+    public static bool SellPart(PartInfo part)
     {
-        return DataManager.instance().SellPart(item);
+        user.SetCurrency((int) (user.GetCurrency() + 0.2 * part.GetPrice()));
+        userInventory.First(iitem => iitem.GetPart().GetID() == part.GetID()).DecreaseCount();
+        return true;
+        //return DataManager.instance().SellPart(item);
     }
 
     public void SetActiveBot(int botValue)
@@ -87,12 +97,13 @@ public class InventoryController : MonoBehaviour , IHasChanged
         botInfoText.text = " Part 1: " + currentBot.GetEquippedParts()[0].GetDescription() + " Part 2: " + currentBot.GetEquippedParts()[1].GetDescription();
         //TODO: Remove currently equipped parts from inventory
         //TODO: Show currently equipped parts in Equipped section
-        UpdateUserInventory();
+        UpdateEquippedItems();
     }
 
     /**
      * Precondition: the part is currently in the user's inventory
-     * Postcondition: the part is on the current bot;
+     * Postcondition: the part is on the current bot
+     * Adds the inputted part to the bot
      */
     private bool AddPartToBot(PartInfo part)
     {
@@ -128,21 +139,34 @@ public class InventoryController : MonoBehaviour , IHasChanged
         }
     }
 
+    void InstantiateUserInventory()
+    {
+        foreach (var slot in inventorySlots)
+        {
+            
+        }
+    }
+
     /*
      * Updates the displayed user inventory to reflect any possible changes made by the user
      */
-    void UpdateUserInventory()
+    void UpdateEquippedItems()
     {
         var userInventoryEnumerator = userInventory.GetEnumerator();
         foreach (Transform slot in equipedSlots)
         {
             if (userInventoryEnumerator.Current != null)
             {
+                if (slot.childCount == 0)
+                {
+                    //TODO: generate a new object from prefab and put it in that slot with given item info
+                }
+                //set the item of the prexisting object to the item equipped to the current bot
                 slot.GetComponent<Item>().SetInventoryItem(userInventoryEnumerator.Current);
                 userInventoryEnumerator.MoveNext();
             }
 
-            else//all items in user inventory have been assigned
+            else//all items in the users inventory have been assigned
             {
                 break;
             }
@@ -161,7 +185,7 @@ public class InventoryController : MonoBehaviour , IHasChanged
         HasChanged();
         //userInventory = DataManager.instance().GetUserInventory();
         userInventory = new List<InventoryItem>{item1,item2};
-        UpdateUserInventory();
+        UpdateEquippedItems();
         
     }
     
@@ -170,6 +194,7 @@ public class InventoryController : MonoBehaviour , IHasChanged
     void Update()
     {
         HasChanged();
+        UpdateEquippedItems();
         
     }
 
