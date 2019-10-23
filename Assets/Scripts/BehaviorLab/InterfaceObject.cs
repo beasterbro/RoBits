@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InterfaceObject : MonoBehaviour
+public abstract class InterfaceObject : MonoBehaviour
 {
     // Note: container should not be changed except when a object is independent of its container
     [SerializeField] private InterfaceObject container;
     //[SerializeField] private Color color; // Handled by material
+    protected Boundary boundary = null;
 
     public InterfaceObject GetContainer()
     {
@@ -60,9 +61,11 @@ public class InterfaceObject : MonoBehaviour
     }
 
     // Updates the object's physical display
+    // Implementations of this SHOULD update the boundary object
     public void Redraw()
     {
-
+        // no default implementation
+        boundary = new Boundary(this.transform);
     }
 
     // Makes any necessary updates to the object's frame after a state change
