@@ -28,7 +28,7 @@ public class SlotController : MonoBehaviour,IDropHandler
         }
         else if (eventData.pointerDrag.gameObject.CompareTag("Equipped"))
         {
-            InventoryController.currentBot.AddPart(DragHandler.itemBeingDragged.GetComponent<Item>().partInfo);
+            InventoryController.currentBot.AddPart(DragHandler.itemBeingDragged.GetComponent<Item>().GetInventoryItem().GetPart());
         }
        
     }
