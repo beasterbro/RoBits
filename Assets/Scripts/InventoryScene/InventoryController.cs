@@ -68,10 +68,6 @@ public class InventoryController : MonoBehaviour , IHasChanged
     void Start()
     {
         HasChanged();
-//        foreach (InventoryItem inventoryItem in userInventory)
-        {
-            
-        }
 
         
     }
