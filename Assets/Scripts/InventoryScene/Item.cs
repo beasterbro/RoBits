@@ -6,26 +6,29 @@ using UnityEngine.UI;
 using Image = UnityEngine.UI.Image;
 
 /*
- * Represents a part while the user is in the inventory
+ * Represents an inventory item
  */
 public class Item : MonoBehaviour
 {
-    
-    [SerializeField] public Image partImage;
-    [SerializeField] public int count;
-    private InventoryItem inventoryItem;
-    public PartInfo partInfo ;
+    //The image of the item to display
+    [SerializeField] public Image itemImage;
+    //the amount of the item the user has
+    private InventoryItem _inventoryItem;
     // Start is called before the first frame update
 
     private void Start()
     {
-        partInfo = inventoryItem.GetPart();
-        partImage.name = partInfo.GetName();
-        count = inventoryItem.GetCount();
+        itemImage.name = _inventoryItem.GetPart().GetName();
+        
     }
 
     public void SetInventoryItem(InventoryItem item)
     {
-        inventoryItem = item;
+        _inventoryItem = item;
+    }
+
+    public InventoryItem GetInventoryItem()
+    {
+        return _inventoryItem;
     }
 }
