@@ -8,7 +8,6 @@ using JsonData;
 // Collects and manages necessary information that needs to be taken from the backend to the frontend and vice versa.
 public class DataManager
 {
-
     private static DataManager shared;
 
     private HttpClient api = new HttpClient();
@@ -40,6 +39,7 @@ public class DataManager
         {
             shared = new DataManager();
         }
+
         return shared;
     }
 
@@ -80,7 +80,8 @@ public class DataManager
 
         if (response.IsSuccessStatusCode)
         {
-            inventory = new List<InventoryItem>(JsonUtils.DeserializeArray<InventoryItem>(await response.Content.ReadAsStringAsync()));
+            inventory = new List<InventoryItem>(
+                JsonUtils.DeserializeArray<InventoryItem>(await response.Content.ReadAsStringAsync()));
         }
     }
 
@@ -133,7 +134,8 @@ public class DataManager
     public PartInfo GetPart(int pid)
     {
         foreach (PartInfo part in allParts)
-            if (part.GetID() == pid) return part;
+            if (part.GetID() == pid)
+                return part;
 
         return null;
     }
@@ -146,7 +148,8 @@ public class DataManager
     public BotInfo GetBot(int bid)
     {
         foreach (BotInfo bot in allBots)
-            if (bot.GetID() == bid) return bot;
+            if (bot.GetID() == bid)
+                return bot;
 
         return null;
     }
@@ -165,7 +168,8 @@ public class DataManager
     public TeamInfo GetTeam(int tid)
     {
         foreach (TeamInfo team in userTeams)
-            if (team.GetID() == tid) return team;
+            if (team.GetID() == tid)
+                return team;
 
         return null;
     }
@@ -175,5 +179,4 @@ public class DataManager
         HttpContent updateBody = JsonUtils.SerializeObject(team);
         HttpResponseMessage updateResponse = await api.PutAsync("/api/teams/" + team.GetID(), updateBody);
     }
-
 }
