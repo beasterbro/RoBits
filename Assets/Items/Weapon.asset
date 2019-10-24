@@ -10,7 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 929356e9f26ab3947bf53252c790a670, type: 3}
-  m_Name: 000
+  m_Name: Weapon
   m_EditorClassIdentifier: 
-  ItemName: 
-  Icon: {fileID: 0}
+  ItemName: Weapon
+  Icon: {fileID: 21300000, guid: 941b38e43b23e954ebcf395f32db597c, type: 3}
+  id: 0
+  description: test1
+  type: 3
+  price: 1
+  levelToUnlock: 1
+  isActor: 1

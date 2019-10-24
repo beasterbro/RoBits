@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 929356e9f26ab3947bf53252c790a670, type: 3}
   m_Name: CPU
   m_EditorClassIdentifier: 
-  ItemName: 
-  Icon: {fileID: 0}
-  id: 0
-  description: 
-  type: 0
-  price: 0
-  levelToUnlock: 0
+  ItemName: CPU
+  Icon: {fileID: 21300000, guid: 89035c6ce98694b45ba51e9fe5cfd706, type: 3}
+  id: 100
+  description: Its a CPU you dip
+  type: 5
+  price: 100
+  levelToUnlock: 1000
   isActor: 0
