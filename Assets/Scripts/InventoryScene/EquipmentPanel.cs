@@ -56,7 +56,7 @@ public class EquipmentPanel : MonoBehaviour
     {
         for (int i = 0; i < equipmentSlots.Length; i++)
         {
-            //TODO: Implementation for Specialized Slots
+            //Can change the implementation to add specialized slots
             if (equipmentSlots[i].Item == item)
             {
                 equipmentSlots[i].Item = null;
@@ -66,5 +66,18 @@ public class EquipmentPanel : MonoBehaviour
            
         }  
         return false;
+    }
+
+    //Clears the currently equipped and return them as a list
+    public List<Item> ClearEquipped()
+    {
+        List<Item> equippedItems = new List<Item>();
+        for (int i = 0; i < equipmentSlots.Length; i++)
+        {
+            equippedItems.Add(equipmentSlots[i].Item);
+            RemoveItem(equipmentSlots[i].Item);
+        }
+
+        return equippedItems;
     }
 }
