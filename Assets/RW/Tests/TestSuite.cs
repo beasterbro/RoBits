@@ -71,8 +71,7 @@ namespace Tests
         public IEnumerator TestSuiteWithEnumeratorPasses()
         {
             InventoryController controller = new InventoryController();
-            controller.HasChanged();
-            Assert.That(controller.inventoryText.text == "-");
+  
             // Use the Assert class to test conditions.
             // Use yield to skip a frame.
             yield return null;
