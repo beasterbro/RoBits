@@ -6,9 +6,8 @@ using UnityEngine;
 [RequireComponent(typeof(ScaleController))]
 public abstract class InterfaceObject : MonoBehaviour
 {
-    // Note: container should not be changed except when a object is independent of its container
+    // Note: container should not be changed except when an object is independent of its container
     [SerializeField] private InterfaceObject container;
-    //[SerializeField] private Color color; // Handled by material
     protected ScaleController scaleController;
 
     protected virtual void Start()
@@ -59,12 +58,6 @@ public abstract class InterfaceObject : MonoBehaviour
     protected virtual void OnMouseExit()
     {
         DragAndDropController.Instance().HoverOff(this);
-    }
-
-    // Updates the style of the object, without redrawing the whole thing
-    public virtual void UpdateStyle()
-    {
-        // Still don't know what this means
     }
 
     // Updates the object's physical display

@@ -6,10 +6,8 @@ using System;
 [AddComponentMenu("Interface Objects/Block")]
 public abstract class Block : InterfaceObject
 {
-    [SerializeField] private List<BlockLine> lines = new List<BlockLine>();
     [SerializeField] private bool isMovable = false;
     [SerializeField] private bool isDeletable = false;
-    //[SerializeField] private Color textColor; // Handled by component?
     [SerializeField] private Block prev; // Block that precedes, if any
     [SerializeField] private Block next; // Block that follows, if any
     [SerializeField] private Block containing; // Block to return an output to
@@ -91,26 +89,5 @@ public abstract class Block : InterfaceObject
         Block result = this.next;
         this.next = null;
         return result;
-    }
-
-    // Adds a new BlockLine to the block's structure, and sets itself as the line's container
-    public void AddLine(BlockLine line)
-    {
-        lines.Add(line);
-        // TODO: Not sure if the container part makes sense
-    }
-
-    // Removes a line from the block's structure, and removes itself as the line's container
-    public void RemoveLine(BlockLine line)
-    {
-        lines.Remove(line);
-        // TODO: Not sure if the container part makes sense
-    }
-
-    // Returns a duplicate of the current block, with all of the same internal properties but no connections
-    public Block MakeDuplicate()
-    {
-        // TODO: this should likely be handled via a controller and prefabs
-        return this;
     }
 }
