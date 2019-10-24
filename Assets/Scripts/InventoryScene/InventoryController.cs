@@ -11,7 +11,7 @@ public class InventoryController : MonoBehaviour
     
     //For integration with BE
     private static List<BotInfo> userBots;
-    public static BotInfo currentBot;
+    public BotInfo currentBot ;
     private static List<InventoryItem> userInventory;
     public List<Image> itemImages;
 
@@ -135,11 +135,14 @@ public class InventoryController : MonoBehaviour
     //Removes inputted item from inventory and adds it to equip panel
     public void Equip(Item item)
     {
+        //If you can remove the part
         if (inventory.RemoveItem(item))
         {
-            //Implementation for specific slots
+            //If you can add it to the equipped
             if (equipmentPanel.AddItem(item,out var previousItem))
             {
+                currentBot.AddPart(item.part);
+                //if equipped is full and it swaps items
                 if (previousItem != null)
                 {
                     inventory.AddItem(previousItem);
@@ -157,6 +160,7 @@ public class InventoryController : MonoBehaviour
     {
         if (!inventory.IsFull() && equipmentPanel.RemoveItem(item))
         {
+            currentBot.RemovePart(item.part);
             inventory.AddItem(item);
         }
     }
@@ -186,21 +190,21 @@ public class InventoryController : MonoBehaviour
     };
        
        
-    private static PartInfo part1 = new PartInfo(000, "0", "first part", PartType.Weapon, 1, 1, true, attributes1);
-    private static PartInfo part2 = new PartInfo(001, "1", "second part", PartType.Weapon, 2, 2, true, attributes2);
+    private static PartInfo part1 = new PartInfo(123, "0", "first part", PartType.Weapon, 1, 1, true, attributes1);
+    private static PartInfo part2 = new PartInfo(122, "1", "second part", PartType.Weapon, 2, 2, true, attributes2);
 
     private static List<PartInfo> allParts = new List<PartInfo>(new PartInfo[]{part1,part2});
     private static List<PartInfo> allParts2 = new List<PartInfo>(new PartInfo[]{part2,part1});
         
-    private static PartInfo body = new PartInfo(002, "body", "thrid part", PartType.BodyType, 2, 2, false, bodySpec);
+    private static PartInfo body = new PartInfo(223, "body", "thrid part", PartType.BodyType, 2, 2, false, bodySpec);
 
     private static UserInfo user = new UserInfo("testUser","ass@ass.com","tester101",100,200,true,settings);
        
-    private static BotInfo bot0 = new BotInfo(0,"bot0",0,allParts,body);
-    private static BotInfo bot1 = new BotInfo(1,"bot1",1,allParts,body);
-    private static BotInfo bot2 = new BotInfo(2,"bot2",2,allParts2,body);
+    private  BotInfo bot0 = new BotInfo(0,"bot0",0,allParts,body);
+    private BotInfo bot1 = new BotInfo(1,"bot1",1,allParts,body);
+    private BotInfo bot2 = new BotInfo(2,"bot2",2,allParts2,body);
 
-    private static BotInfo[] botTeam = new[] {bot0, bot1, bot2};
+    private  List<BotInfo> botTeam = new List<BotInfo>();
     
     private static InventoryItem item1 = new InventoryItem(part1,1);
     private static InventoryItem item2 = new InventoryItem(part1,100);
@@ -214,19 +218,56 @@ public class InventoryController : MonoBehaviour
         //for testing purposes of setting the actively edited bot
         testText.text = "" + botValue;
         // currentBot = DataManager.instance().GetAllBots()[botValue];
-        currentBot = botTeam[botValue];
+        currentBot = userBots[botValue];
         testText.text = currentBot.GetName();
         botInfoText.text = " Part 1: " + currentBot.GetEquippedParts()[0].GetDescription() + " Part 2: " + currentBot.GetEquippedParts()[1].GetDescription();
         //TODO: Remove currently equipped parts from inventory
         //TODO: Show currently equipped parts in Equipped section
+        UpdateEquipment();
+    }
+
+    public void UpdateEquipment()
+    {
+        
+        //retrieves all of the items currently equipped and store them
+        //TODO: fix duping that happens here (Contains or remove part from bot)
+        List<Item> addToInventory = equipmentPanel.ClearEquipped();
+      /*  for (int i = 0; i < addToInventory.Count; i++)
+        {
+            if (!inventory.Contains(addToInventory[i]))
+            {
+                inventory.AddItem(addToInventory[i]);
+            }
+            
+        }*/
+        
+        Item previousItem;
+        foreach (PartInfo part in currentBot.GetEquippedParts())
+        {
+            //Creating new item to add to equipment panel
+            Item item = new Item();
+            item.part = part;
+            item.id = part.GetID();
+            item.type = part.GetPartType();
+            item.price = part.GetPrice();
+            
+            equipmentPanel.AddItem(item,out previousItem);
+            
+            inventory.AddItem(previousItem);
+        }
     }
 
 
     void Start()
     {
- 
+        botTeam.Add(bot0);
+        botTeam.Add(bot1);
+        botTeam.Add(bot2);
+        userBots = botTeam;//Temp for testing
         //userInventory = DataManager.instance().GetUserInventory();
         userInventory = new List<InventoryItem>{item1,item2};
+        currentBot = userBots[0];
+        UpdateEquipment();
         
     }
     
