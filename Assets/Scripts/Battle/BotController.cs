@@ -1,14 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class BotController : MonoBehaviour, Target
+public class BotController : MonoBehaviour
 {
-    private float maxHealth = 100.0f;
-    private float minHealth = 0.0f;
 
-    public Rigidbody2D bullet;
-    public Transform bulletTransform;
-    public float launchForce;
+    [HideInInspector] private TeamInfo team;
+    
+    // TODO: Reorganize all these nonsense fields & methods
+    public float MAX_HEALTH = 100.0f;
+    [HideInInspector] public float currentHealth;
+    [HideInInspector] public bool isDead = false;
+
+    public bool isEnemy;
+
+    public bool controlsEnabled;
 
     public Transform[] weaponLocations;
 
@@ -17,52 +23,118 @@ public class BotController : MonoBehaviour, Target
 
     [HideInInspector] public BotInfo info;
 
-    [HideInInspector] public float currentHealth;
-
     /*[HideInInspector]*/
-    public PartController[] parts;
+    public List<PartController> parts = new List<PartController>();
+    private List<SensorPartController> sensors = new List<SensorPartController>();
+    private List<ActorPartController> actors = new List<ActorPartController>();
 
-    [HideInInspector] public Target target;
+    [HideInInspector] public Transform target;
+
+    private List<Behavior> behaviors = new List<Behavior>();
     // actions
     // triggers
 
     private Rigidbody2D rigidbody;
     private float movementValue = 0f;
     private float turningValue = 0f;
-    private float weaponValue = 0f;
 
-    // Start is called before the first frame update
-    void Start()
+    private Behavior activeBehavior;
+
+    public void LoadInfo(BotInfo info)
     {
-        rigidbody = GetComponent<Rigidbody2D>();
+        this.info = info;
+
+        foreach (PartInfo partInfo in info.GetEquippedParts())
+        {
+            PartController partController = PartController.ControllerForPart(partInfo);
+            if (partController != null)
+            {
+                parts.Add(partController);
+                partController.gameObject.transform.parent = transform;
+            }
+        }
+
+        foreach (PartController part in parts)
+        {
+            if (part is SensorPartController sensor) sensors.Add(sensor);
+            else if (part is ActorPartController actor) actors.Add(actor);
+        }
 
         int numWeapons = 0;
         foreach (PartController controller in parts)
         {
+            controller.bot = this;
+
             if (numWeapons == weaponLocations.Length) break;
             if (controller is GunController)
             {
-                (controller as GunController).Setup(weaponLocations[numWeapons]);
+                (controller as GunController).Position(weaponLocations[numWeapons]);
                 numWeapons++;
+            }
+        }
+
+        if (parts.Count > 1)
+        {
+            ProximitySensor proxSensor = parts[1] as ProximitySensor;
+            GunController gun = parts[0] as GunController;
+
+            behaviors.Add(new Behavior(this, proxSensor.OpponentIsInRange, () =>
+            {
+                gun.FocusOn(proxSensor.GetNearestOpponent().transform);
+                gun.Act();
+
+                if (!proxSensor.ShouldMoveTowardsNearestOpponent())
+                {
+                    movementValue = 0f;
+                }
+            }));
+
+            behaviors.Add(Behavior.BasicOffense(this));
+        }
+    }
+
+    void Start()
+    {
+        rigidbody = GetComponent<Rigidbody2D>();
+        currentHealth = MAX_HEALTH;
+    }
+
+    void MakeObservations()
+    {
+        foreach (SensorPartController sensor in sensors)
+            sensor.Observe();
+    }
+
+    void PickActiveBehavior()
+    {
+        foreach (Behavior behavior in behaviors)
+        {
+            if (behavior.IsApplicable())
+            {
+                activeBehavior = behavior;
+                break;
             }
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
+        activeBehavior = null;
+        MakeObservations();
+        PickActiveBehavior();
+
+        if (!controlsEnabled) return;
+
         if (Input.GetButtonDown("Fire1"))
         {
             Fire();
         }
-
-        movementValue = Input.GetAxis("Vertical");
-        turningValue = Input.GetAxis("Horizontal");
-        weaponValue = Input.GetAxis("Horizontal2");
     }
 
     private void FixedUpdate()
     {
+        activeBehavior?.Execute();
+
         float turn = turningValue * turningSpeed * Time.deltaTime;
         rigidbody.MoveRotation(rigidbody.rotation - turn);
 
@@ -72,26 +144,34 @@ public class BotController : MonoBehaviour, Target
 
         Vector2 movement = new Vector2(movementX, movementY);
         rigidbody.MovePosition(rigidbody.position + movement);
-        
-        parts[0].transform.Rotate(0, 0, -weaponValue * (turningSpeed * 2) * Time.deltaTime, Space.Self);
     }
 
     void Fire()
     {
-        foreach (PartController part in parts)
+        foreach (ActorPartController actor in actors)
         {
-            if (part is ActorPartController) (part as ActorPartController).Act();
+            actor.Act();
         }
     }
 
-    public void SetTarget(GameObject target)
+    public void SetTarget(Transform target)
     {
-        // TODO: Implement
+        this.target = target;
     }
 
     public void TakeDamage(float amount)
     {
-        // TODO: Implement  
+        currentHealth -= amount;
+        if (currentHealth <= 0)
+        {
+            currentHealth = 0;
+            isDead = true;
+        }
+    }
+
+    public void SetMovementValue(float amount)
+    {
+        movementValue = amount;
     }
 
     // PerformAction

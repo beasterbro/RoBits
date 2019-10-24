@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3352554030842525174}
   - component: {fileID: 3352554030842525169}
   - component: {fileID: 3352554030842525168}
+  - component: {fileID: 1993405577}
   m_Layer: 0
   m_Name: Basic-Bullet
   m_TagString: Untagged
@@ -118,3 +119,20 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 0.16, y: 0.1}
   m_Direction: 1
+--- !u!114 &1993405577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3352554030842525171}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a396099ff6b34915aa73fb471accfa42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  botsMask:
+    serializedVersion: 2
+    m_Bits: 256
+  damage: 10
+  maxLifetime: 2
