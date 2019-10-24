@@ -10,7 +10,7 @@ public abstract class ScaleController : MonoBehaviour
 
     protected virtual void Start()
     {
-        boundary = new Boundary(transform.position, offset);
+        boundary = new Boundary(transform, offset);
     }
 
     private Vector2 OffsetScale(Vector2 scale)
