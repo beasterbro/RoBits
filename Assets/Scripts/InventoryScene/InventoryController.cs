@@ -89,10 +89,11 @@ public class InventoryController : MonoBehaviour
         draggableItem.transform.position = Input.mousePosition;
     }
 
-    private void Drop(ItemSlot itemSlot)
+    private void Drop(ItemSlot dropItemSlot)
     {
         Item draggedItem = draggedSlot.Item;
-        itemSlot.Item = draggedItem;
+        draggedSlot.Item = dropItemSlot.Item;
+        dropItemSlot.Item = draggedItem;
     }
 
     private void Equip(ItemSlot itemSlot)
