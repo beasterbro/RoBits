@@ -8,6 +8,8 @@ using UnityEngine.UI;
 //Character
 public class InventoryController : MonoBehaviour 
 {
+    
+    //For integration with BE
     private static List<BotInfo> userBots;
     public static BotInfo currentBot;
     private static List<InventoryItem> userInventory;
@@ -105,6 +107,7 @@ public class InventoryController : MonoBehaviour
         }
     }
     
+    //
     private void Unequip(ItemSlot itemSlot)
     {
         Item item = itemSlot.Item;
@@ -129,6 +132,7 @@ public class InventoryController : MonoBehaviour
         
     }
 
+    //Removes inputted item from inventory and adds it to equip panel
     public void Equip(Item item)
     {
         if (inventory.RemoveItem(item))
@@ -148,6 +152,7 @@ public class InventoryController : MonoBehaviour
         }
     }
 
+    //removes inputted item from equip panel and adds it to the inventory
     public void Unequip(Item item)
     {
         if (!inventory.IsFull() && equipmentPanel.RemoveItem(item))
