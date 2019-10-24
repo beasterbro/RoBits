@@ -40,15 +40,14 @@ public class EquipmentPanel : MonoBehaviour
     {
         for (int i = 0; i < equipmentSlots.Length; i++)
         {
-            //TODO: Implementation for Specialized Slots
-            if (equipmentSlots[i].PartType == item.type)
+            if (equipmentSlots[i].Item == null)
             {
                 previousItem = equipmentSlots[i].Item;
                 equipmentSlots[i].Item = item;
                 return true;
             }
-
         }
+
         previousItem = null;
         return false;
     }

@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class EquipmentSlot : ItemSlot
 {
-   public PartType PartType;
+ //  public PartType PartType;
 
    protected override void OnValidate()
    {
       base.OnValidate();
-      gameObject.name = PartType.ToString() + " Slot";
+      gameObject.name =  " Slot";
    }
 }
