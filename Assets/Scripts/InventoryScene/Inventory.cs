@@ -2,21 +2,35 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class Inventory : MonoBehaviour
 {
-    
-    [SerializeField] private List<Item> items;
+   
+    [SerializeField] List<Item> startingitems;
     [SerializeField] Transform itemsParent;
     [SerializeField] ItemSlot[] itemSlots;
     
-    public event Action<Item> OnItemRightClickedEvent;
+    public static event Action<ItemSlot> OnRightClickEvent;
+    public static event Action<ItemSlot> OnPointerEnterEvent;
+    public static event Action<ItemSlot> OnPointerExitEvent;
+    public event Action<ItemSlot> OnPointerClickEvent;
+    public static event Action<ItemSlot> OnBeingDragEvent;
+    public static event Action<ItemSlot> OnDragEvent;
+    public static event Action<ItemSlot> OnEndDragEvent;
+    public static event Action<ItemSlot> OnDropEvent;
 
     private void Start()
     {
         for (int i = 0; i < itemSlots.Length; i++)
         {
-            itemSlots[i].OnRightClickEvent += OnItemRightClickedEvent;
+            itemSlots[i].OnPointerEnterEvent += OnPointerEnterEvent;
+            itemSlots[i].OnPointerExitEvent += OnPointerExitEvent;
+            itemSlots[i].OnRightClickEvent += OnRightClickEvent;
+            itemSlots[i].OnBeingDragEvent += OnBeingDragEvent;
+            itemSlots[i].OnDragEvent += OnDragEvent;
+            itemSlots[i].OnEndDragEvent += OnEndDragEvent;
+            itemSlots[i].OnDropEvent += OnDropEvent;
         }
     }
 
@@ -26,15 +40,15 @@ public class Inventory : MonoBehaviour
         {
             itemSlots = itemsParent.GetComponentsInChildren<ItemSlot>();
         }
-        RefreshUI();
+        SetStartingItems();
     }
 
-    private void RefreshUI()
+    private void SetStartingItems()
     {
         int i = 0;
-        for (; i < items.Count && i < itemSlots.Length; i++)
+        for (; i < startingitems.Count && i < itemSlots.Length; i++)
         {
-            itemSlots[i].Item = items[i];
+            itemSlots[i].Item = startingitems[i];
         }
 
         for (; i < itemSlots.Length; i++)
@@ -45,33 +59,43 @@ public class Inventory : MonoBehaviour
 
     public bool AddItem(Item item)
     {
-        if (IsFull())
+        for (int i = 0; i < itemSlots.Length; i++)
         {
-            return false;
+            if (itemSlots[i].Item == null)
+            {
+                itemSlots[i].Item = item;
+                return true;
+            }
         }
-        else
-        {
-            items.Add(item);
-            RefreshUI();
-            return true;
-        }
+
+        return false;
     }
 
     public bool RemoveItem(Item item)
     {
-        if (items.Remove(item))
+        for (int i = 0; i < itemSlots.Length; i++)
         {
-            RefreshUI();
-            return true;
+            if (itemSlots[i].Item == item)
+            {
+                itemSlots[i].Item = null;
+                return true;
+            }
         }
-        else
-        {
-            return false;
-        }
+
+        return false;
     }
 
     public bool IsFull()
     {
-        return items.Count >= itemSlots.Length;
+        for (int i = 0; i < itemSlots.Length; i++)
+        {
+            if (itemSlots[i].Item == null)
+            {
+               
+                return false;
+            }
+        }
+
+        return true;
     }
 }

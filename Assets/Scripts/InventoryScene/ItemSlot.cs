@@ -3,11 +3,23 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
+public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler, IDragHandler,IBeginDragHandler,IEndDragHandler,IDropHandler
     {
         [SerializeField] Image image;
-        [SerializeField] ItemToolTip toolTip;
-        public event Action<Item> OnRightClickEvent;
+       
+        public event Action<ItemSlot> OnRightClickEvent;
+        public event Action<ItemSlot> OnPointerEnterEvent;
+        public event Action<ItemSlot> OnPointerExitEvent;
+        public event Action<ItemSlot> OnPointerClickEvent;
+        public event Action<ItemSlot> OnBeingDragEvent;
+        public event Action<ItemSlot> OnDragEvent;
+        public event Action<ItemSlot> OnEndDragEvent;
+        public event Action<ItemSlot> OnDropEvent;
+        
+        private  Color normalColor = Color.white;
+        private  Color disableColor = new Color(1,1,1,0);
+        
+        [SerializeField] private Vector2 originalPosition;
         
         private Item _item;
         public Item Item
@@ -18,12 +30,12 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandl
                 _item = value;
                 if (_item == null)
                 {
-                    image.enabled = false;
+                    image.color= disableColor;
                 }
                 else
                 {
                     image.sprite = _item.Icon;
-                    image.enabled = true;
+                    image.color = normalColor;
                 }
                 
                     
@@ -38,30 +50,64 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandl
                 image =  GetComponent<Image>();
             }
 
-            if (toolTip ==null)
-            {
-                toolTip = FindObjectOfType<ItemToolTip>();
-            }
         }
 
         public void OnPointerClick(PointerEventData eventData)
         {
             if (eventData != null && eventData.button == PointerEventData.InputButton.Right)
             {
-                if (Item != null && OnRightClickEvent != null)
+                if ( OnRightClickEvent != null)
                 {
-                    OnRightClickEvent(Item);
+                    OnRightClickEvent(this);
                 }
             }
         }
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            toolTip.ShowTooltip(Item);
+            if ( OnPointerEnterEvent != null)
+            {
+                OnPointerEnterEvent(this);
+            }
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
-           toolTip.HideToolTip();
+            if ( OnPointerExitEvent != null)
+            {
+                OnPointerExitEvent(this);
+            }
+        }
+
+        public void OnDrag(PointerEventData eventData)
+        {
+            if ( OnDragEvent != null)
+            {
+                OnDragEvent(this);
+            }
+        }
+
+        public void OnBeginDrag(PointerEventData eventData)
+        {
+            if ( OnBeingDragEvent != null)
+            {
+                OnBeingDragEvent(this);
+            }
+        }
+
+        public void OnEndDrag(PointerEventData eventData)
+        {
+            if ( OnEndDragEvent != null)
+            {
+                OnEndDragEvent(this);
+            } 
+        }
+
+        public void OnDrop(PointerEventData eventData)
+        {
+            if ( OnDropEvent != null)
+            {
+                OnDropEvent(this);
+            }
         }
     }

@@ -5,8 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using Image = UnityEngine.Experimental.UIElements.Image;
-
+//Character
 public class InventoryController : MonoBehaviour 
 {
     private static List<BotInfo> userBots;
@@ -14,24 +13,119 @@ public class InventoryController : MonoBehaviour
     private static List<InventoryItem> userInventory;
     public List<Image> itemImages;
 
-   // [SerializeField] Transform equipedSlots;
+    // [SerializeField] Transform equipedSlots;
    
- //  [SerializeField] Transform inventorySlots;
+    //  [SerializeField] Transform inventorySlots;
+    [SerializeField] ItemToolTip itemToolTip;
     [SerializeField] Text inventoryText;
     [SerializeField] Text testText;
     [SerializeField] Text botInfoText;
- 
+    
     public BotInfo activeBot;
+    private ItemSlot draggedSlot;
 
-
-    [SerializeField] static Inventory inventory;
+    [SerializeField] Image draggableItem;
+    [SerializeField]  Inventory inventory;
     [SerializeField] EquipmentPanel equipmentPanel;
 
 
+    private void OnValidate()
+    {
+        if (itemToolTip == null)
+        {
+            itemToolTip = FindObjectOfType<ItemToolTip>();
+        }
+    }
+
     private void Awake()
     {
-        inventory.OnItemRightClickedEvent += Equip;
-        equipmentPanel.OnItemRightClickedEvent += Unequip;
+
+        // Setup Events:
+        // Right Click
+        Inventory.OnRightClickEvent += Equip;
+        EquipmentPanel.OnRightClickEvent += Unequip;
+        // Pointer Enter
+        Inventory.OnPointerEnterEvent += ShowTooltip;
+        EquipmentPanel.OnPointerEnterEvent += ShowTooltip;
+        
+        // Pointer Exit
+        Inventory.OnPointerExitEvent += HideTooltip;
+        EquipmentPanel.OnPointerExitEvent += HideTooltip;
+       
+        // Begin Drag
+        Inventory.OnBeingDragEvent += BeginDrag;
+        EquipmentPanel.OnBeingDragEvent += BeginDrag;
+        // End Drag
+        Inventory.OnEndDragEvent += EndDrag;
+        EquipmentPanel.OnEndDragEvent += EndDrag;
+        // Drag
+        Inventory.OnDragEvent += Drag;
+        EquipmentPanel.OnDragEvent += Drag;
+        // Drop
+        Inventory.OnDropEvent += Drop;
+        EquipmentPanel.OnDropEvent += Drop;
+       
+    }
+
+    private void BeginDrag(ItemSlot itemSlot)
+    {
+        if (itemSlot.Item != null)
+        {
+            draggedSlot = itemSlot;
+            draggableItem.sprite = itemSlot.Item.Icon;
+            draggableItem.transform.position = Input.mousePosition;
+            draggableItem.enabled = true;
+        }
+    }
+
+    private void EndDrag(ItemSlot itemSlot)
+    {
+        draggedSlot = null;
+        draggableItem.enabled = false;
+    }
+
+    private void Drag(ItemSlot itemSlot)
+    {
+        draggableItem.transform.position = Input.mousePosition;
+    }
+
+    private void Drop(ItemSlot itemSlot)
+    {
+        Item draggedItem = draggedSlot.Item;
+        itemSlot.Item = draggedItem;
+    }
+
+    private void Equip(ItemSlot itemSlot)
+    {
+        Item item = itemSlot.Item;
+        if (item != null)
+        {
+            Equip(item);
+        }
+    }
+    
+    private void Unequip(ItemSlot itemSlot)
+    {
+        Item item = itemSlot.Item;
+        if (item != null)
+        {
+            Unequip(item);
+        }
+    }
+    
+    private void ShowTooltip(ItemSlot itemSlot)
+    {
+        if (itemSlot.Item != null)
+        {
+            itemToolTip.ShowTooltip(itemSlot.Item);
+        }
+    }
+
+    private void HideTooltip(ItemSlot itemSlot)
+    {
+        
+        itemToolTip.HideToolTip();
+        
     }
 
     public void Equip(Item item)
@@ -107,44 +201,7 @@ public class InventoryController : MonoBehaviour
     
     
     
-    /*
-     * calls purchase part from DataManager
-     */
-    public static bool PurchaseItem(Item item)
-    {
-        if ( user.GetCurrency() >= item.price && inventory.AddItem(item))
-        {
-            user.SetCurrency(user.GetCurrency() - item.price);
-           InventoryItem possibleItem = userInventory.FirstOrDefault(userItem => userItem.GetPart().GetID() == item.id);
-           if (possibleItem == null)
-           {
-               userInventory.Add(new InventoryItem(item.part,1));
-           }
-           else
-           {
-               possibleItem.IncreaseCount();
-           }
-           return true;
-        }
-        
-       
-        return false;
-        // return DataManager.instance().PurchasePart(item);
-    }
-
-    public static bool SellPart(Item item)
-    {
-        if (inventory.RemoveItem(item))
-        {
-            user.SetCurrency((int) (user.GetCurrency() + 0.2 * item.price));
-            userInventory.First(invitem => invitem.GetPart().GetID() == item.id).DecreaseCount();
-            return true;
-        }
-
-        return false;
-
-        //return DataManager.instance().SellPart(item);
-    }
+   
 
     public void SetActiveBot(int botValue)
     {
@@ -158,11 +215,7 @@ public class InventoryController : MonoBehaviour
         //TODO: Show currently equipped parts in Equipped section
     }
 
- // Start is called before the first frame update
-    //Start Here
-    /**
-     * 
-     */
+
     void Start()
     {
  
@@ -179,4 +232,4 @@ public class InventoryController : MonoBehaviour
         
     }
 
- }
+}
