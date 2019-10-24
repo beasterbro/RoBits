@@ -74,6 +74,16 @@ public abstract class InterfaceObject : MonoBehaviour
         // no default implementation
     }
 
+    public Vector2 Scale()
+    {
+        return scaleController != null ? scaleController.Scale() : Vector2.zero;
+    }
+
+    public Boundary Bounds()
+    {
+        return scaleController != null ? scaleController.Bounds() : Boundary.NONE;
+    }
+
     // Makes any necessary updates to the object's frame after a state change
     // Note any changes should recurse down the chain of objects
     public virtual void LayoutObject()

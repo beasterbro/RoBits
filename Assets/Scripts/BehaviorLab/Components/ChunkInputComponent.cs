@@ -163,13 +163,13 @@ public class ChunkInputComponent : BlockComponent
     private Vector3 FindBlockPosition(Vector3 hover)
     {
         int index = FindHoverIndex(hover);
-        return index < 0 ? this.transform.position : At(index).transform.position;
+        return index < 0 ? this.transform.position : At(index).Bounds().BottomLeft;
     }
 
     // The hover index is defined as the index of the last item whose y-position is at or above
     // the hover position.
     private int FindHoverIndex(Vector3 hover)
     {
-        return blocks.FindLastIndex(block => hover.y <= block.transform.position.y);
+        return blocks.FindLastIndex(block => hover.y <= block.Bounds().TopLeft.y);
     }
 }
