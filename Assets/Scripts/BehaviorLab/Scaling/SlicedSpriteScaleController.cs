@@ -16,6 +16,6 @@ public class SlicedSpriteScaleController : ScaleController
 
     protected override void ApplyScale(Vector2 scale)
     {
-        sprite.size = scale;
+        if (sprite != null) { sprite.size = scale; }
     }
 }

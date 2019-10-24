@@ -6,16 +6,27 @@ using UnityEngine;
 public abstract class ScaleController : MonoBehaviour
 {
     [SerializeField] private Vector2 offset;
+    [SerializeField] private Vector2 minimum;
     [SerializeField] private Boundary boundary;
 
     protected virtual void Start()
     {
-        boundary = new Boundary(transform, offset);
+        boundary = ScaledBoundary(Vector2.zero);
+    }
+
+    private Boundary ScaledBoundary(Vector2 scale)
+    {
+        return new Boundary(transform, OffsetScale(scale));
     }
 
     private Vector2 OffsetScale(Vector2 scale)
     {
-        return scale + offset;
+        return Vector2.Max(scale, minimum) + offset;
+    }
+
+    public Boundary Bounds()
+    {
+        return boundary;
     }
 
     public Vector2 Scale()
@@ -27,6 +38,7 @@ public abstract class ScaleController : MonoBehaviour
     {
         scale.x = NonNegative(scale.x);
         scale.y = NonNegative(scale.y);
+        boundary = ScaledBoundary(scale);
         this.ApplyScale(OffsetScale(scale));
     }
 
