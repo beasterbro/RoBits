@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+[AddComponentMenu("Interface Objects/Blocks/If")]
 public class IfBlock : Block
 {
     [SerializeField] private SlotInputComponent condition;

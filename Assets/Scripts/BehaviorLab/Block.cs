@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+[AddComponentMenu("Interface Objects/Block")]
 public abstract class Block : InterfaceObject
 {
     [SerializeField] private List<BlockLine> lines = new List<BlockLine>();

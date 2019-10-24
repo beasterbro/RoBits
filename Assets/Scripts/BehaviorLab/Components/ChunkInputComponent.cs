@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[AddComponentMenu("Interface Objects/Components/Chunk Component")]
 public class ChunkInputComponent : BlockComponent
 {
     [SerializeField] private List<Block> blocks;

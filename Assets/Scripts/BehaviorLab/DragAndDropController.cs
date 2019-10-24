@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+[AddComponentMenu("Interface Objects/Drag and Drop (Singleton)")]
 public class DragAndDropController : MonoBehaviour
 {
     private static DragAndDropController _dndCtrl;

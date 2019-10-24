@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[AddComponentMenu("Interface Objects/Blocks/Trigger")]
 public class TriggerBlock : Block
 {
     [SerializeField] private ReturnType outputType = ReturnType.LOGICAL;

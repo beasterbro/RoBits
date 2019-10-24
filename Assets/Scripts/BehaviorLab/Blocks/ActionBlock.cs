@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[AddComponentMenu("Interface Objects/Blocks/Action")]
 public class ActionBlock : Block
 {
     public override ReturnType OutputType()

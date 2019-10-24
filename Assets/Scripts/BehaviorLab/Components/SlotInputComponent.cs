@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[AddComponentMenu("Interface Objects/Components/Slot Component")]
 public class SlotInputComponent : BlockComponent
 {
     [SerializeField] private Block slot;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[AddComponentMenu("Interface Objects/Interface Object")]
 public abstract class InterfaceObject : MonoBehaviour
 {
     // Note: container should not be changed except when a object is independent of its container

@@ -2,14 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class Boundary
 {
-    private Vector3 topLeft;
-    private float width;
-    private float height;
+    [SerializeField] private Vector3 topLeft;
+    [SerializeField] private float width;
+    [SerializeField] private float height;
 
     public Boundary(Transform transform) : 
         this (transform.position, transform.lossyScale.x, transform.lossyScale.y) { }
+
+    public Boundary(Vector3 topLeft, Vector2 scale) : 
+        this (topLeft, Mathf.Abs(scale.x), Mathf.Abs(scale.y)) { }
 
     public Boundary(Vector3 topLeft, float width, float height)
     {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[AddComponentMenu("Interface Objects/Blocks/Compare")]
 public class ComparissonBlock : Block
 {
     public override ReturnType OutputType()
