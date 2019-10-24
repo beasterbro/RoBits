@@ -98,4 +98,18 @@ public class Inventory : MonoBehaviour
 
         return true;
     }
+
+    public bool Contains(Item item)
+    {
+        for (int i = 0; i < itemSlots.Length; i++)
+        {
+            //TODO: Find good comparison evaluation so that dupes don't happen
+            if (itemSlots[i].Item== item)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
