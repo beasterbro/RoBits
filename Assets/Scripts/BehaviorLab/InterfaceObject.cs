@@ -3,12 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [AddComponentMenu("Interface Objects/Interface Object")]
+[RequireComponent(typeof(ScaleController))]
 public abstract class InterfaceObject : MonoBehaviour
 {
     // Note: container should not be changed except when a object is independent of its container
     [SerializeField] private InterfaceObject container;
     //[SerializeField] private Color color; // Handled by material
-    protected Boundary boundary = null;
+    protected ScaleController scaleController;
+
+    protected virtual void Start()
+    {
+        scaleController = GetComponent<ScaleController>();
+    }
 
     public InterfaceObject GetContainer()
     {
@@ -66,7 +72,6 @@ public abstract class InterfaceObject : MonoBehaviour
     public void Redraw()
     {
         // no default implementation
-        boundary = new Boundary(this.transform);
     }
 
     // Makes any necessary updates to the object's frame after a state change

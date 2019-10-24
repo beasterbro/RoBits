@@ -8,8 +8,9 @@ public class NotBlock : Block
 {
     [SerializeField] private SlotInputComponent condition;
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
         if (condition.GetExpectedOutputType() != ReturnType.LOGICAL)
         {
             throw new ArgumentException("Condition MUST be a logical slot component!!!");
