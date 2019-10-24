@@ -16,6 +16,8 @@ public class IfBlock : Block
         {
             throw new ArgumentException("Condition MUST be a logical slot component!!!");
         }
+
+        thenChunk.LinkScaleController(this.scaleController);
     }
 
     public override ReturnType OutputType()

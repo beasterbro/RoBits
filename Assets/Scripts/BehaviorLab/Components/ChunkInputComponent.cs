@@ -5,8 +5,22 @@ using UnityEngine;
 [AddComponentMenu("Interface Objects/Components/Chunk Component")]
 public class ChunkInputComponent : BlockComponent
 {
-    [SerializeField] private List<Block> blocks;
+    [SerializeField] private ScalingList<Block> blocks;
+    [SerializeField] private List<Block> _elements;
     [SerializeField] private GameObject indicator;
+    [SerializeField] private GameObject elementContainer;
+
+    protected override void Start()
+    {
+        base.Start();
+        blocks = new ScalingList<Block>(this.transform);
+        _elements = blocks.elements;
+    }
+
+    public void LinkScaleController(ScaleController scaleController)
+    {
+        blocks.LinkScaleController(scaleController);
+    }
 
     public bool MatchesOutputType(Block block)
     {
@@ -53,7 +67,7 @@ public class ChunkInputComponent : BlockComponent
     private void Entering(Block block)
     {
         block.SetContainer(this);
-        block.transform.parent = this.transform;
+        block.transform.parent = this.elementContainer.transform;
         // TODO: probably some other stuff to setup the block
     }
 
@@ -83,20 +97,20 @@ public class ChunkInputComponent : BlockComponent
 
     public BehaviorData Evaluate()
     {
-        blocks.ForEach(block => block.Evaluate());
+        foreach (Block block in blocks)
+        {
+            block.Evaluate();
+        }
         return BehaviorData.EMPTY;
     }
 
     public bool IsValid()
     {
         bool result = true;
-
-        blocks.ForEach(block =>
+        foreach (Block block in blocks)
         {
-            // TODO: Check that block is allowed in a block-list (Nothing return type OR Function Block?)
             result &= block.IsValid();
-        });
-
+        }
         return result;
     }
     
