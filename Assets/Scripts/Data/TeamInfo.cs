@@ -4,7 +4,6 @@ using Newtonsoft.Json;
 [JsonConverter(typeof(JsonData.TeamConverter))]
 public class TeamInfo
 {
-
     private int id;
     private string name;
     private DateTime lastMaintained;
@@ -66,5 +65,4 @@ public class TeamInfo
     {
         return tier;
     }
-
 }

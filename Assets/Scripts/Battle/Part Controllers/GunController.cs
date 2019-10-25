@@ -4,30 +4,24 @@ using UnityEngine;
 
 public class GunController : ActorPartController
 {
+    public Transform fireTransform;
+
     public Rigidbody2D bullet;
     private Transform weaponLocation;
-    private Transform fireTransform;
     public float launchSpeed = 5f;
     public float downtime = 0.5f;
 
     private bool canFire = true;
 
-    public void Position(Transform weaponLocation)
-    {
-        this.weaponLocation = weaponLocation;
-
-        transform.SetPositionAndRotation(weaponLocation.position, weaponLocation.rotation);
-        GameObject fireObject = new GameObject();
-        fireObject.transform.parent = gameObject.transform;
-        fireObject.transform.localPosition = new Vector3(0.52f, 0f, 1f);
-        fireObject.transform.localRotation = Quaternion.identity;
-
-        fireTransform = fireObject.transform;
-    }
-
     public override bool IsActor()
     {
         return true;
+    }
+
+    public void Position(Transform location)
+    {
+        weaponLocation = location;
+        transform.SetPositionAndRotation(location.position, location.rotation);
     }
 
     public void Reset()

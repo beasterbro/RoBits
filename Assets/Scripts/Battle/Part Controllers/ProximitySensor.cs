@@ -10,7 +10,7 @@ public class ProximitySensor : SensorPartController
     public override void Observe()
     {
         List<BotController> otherGuys = new List<BotController>(GameObject.FindObjectsOfType<BotController>());
-        otherGuys.RemoveAll(bot => bot.isDead || (bot.Equals(this.bot) || bot.isEnemy == this.bot.isEnemy));
+        otherGuys.RemoveAll(other => other.isDead || !bot.OtherIsEnemey(other));
 
         BotController nearest = null;
         float minDist = maxRange;

@@ -58,8 +58,7 @@ public class DataManager
 
         if (response.IsSuccessStatusCode)
         {
-            string json = await response.Content.ReadAsStringAsync();
-            currentUser = JsonUtils.DeserializeObject<UserInfo>(json);
+            currentUser = JsonUtils.DeserializeObject<UserInfo>(await response.Content.ReadAsStringAsync());
         }
     }
 
@@ -94,7 +93,8 @@ public class DataManager
         if (botsResponse.IsSuccessStatusCode && teamsResponse.IsSuccessStatusCode)
         {
             allBots = JsonUtils.DeserializeArray<BotInfo>(await botsResponse.Content.ReadAsStringAsync());
-            userTeams = JsonUtils.DeserializeArray<TeamInfo>(await teamsResponse.Content.ReadAsStringAsync());
+            userTeams = JsonUtils.DeserializeArray<TeamInfo>(await teamsResponse.Content.ReadAsStringAsync(),
+                new TeamConverter());
         }
     }
 
@@ -178,5 +178,27 @@ public class DataManager
     {
         HttpContent updateBody = JsonUtils.SerializeObject(team);
         HttpResponseMessage updateResponse = await api.PutAsync("/api/teams/" + team.GetID(), updateBody);
+    }
+
+    public async Task<TeamInfo[]> GetOtherUserTeams(string uid)
+    {
+        HttpResponseMessage response = await api.GetAsync("/api/users/" + uid + "/teams?expandBots=true");
+
+        if (response.IsSuccessStatusCode)
+        {
+            return JsonUtils.DeserializeArray<TeamInfo>(await response.Content.ReadAsStringAsync());
+        }
+
+        return null;
+    }
+
+    public async Task<TeamInfo> GetOtherUserTeam(string uid, int tid)
+    {
+        TeamInfo[] teams = await GetOtherUserTeams(uid);
+        foreach (TeamInfo team in teams)
+            if (team.GetID() == tid)
+                return team;
+
+        return null;
     }
 }

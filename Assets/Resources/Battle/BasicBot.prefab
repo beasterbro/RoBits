@@ -99,10 +99,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MAX_HEALTH: 100
-  MIN_HEALTH: 0
   currentHealth: 0
   isDead: 0
-  isEnemy: 0
   controlsEnabled: 1
   weaponLocations:
   - {fileID: 7167869128964092864}
@@ -121,7 +119,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7167869127240544848}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0

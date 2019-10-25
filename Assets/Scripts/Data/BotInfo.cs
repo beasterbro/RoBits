@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
 [JsonConverter(typeof(JsonData.BotConverter))]
