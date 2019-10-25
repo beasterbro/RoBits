@@ -10,9 +10,9 @@ public class InventoryController : MonoBehaviour
 {
     
     //For integration with BE
-    private static List<BotInfo> userBots;
+    private List<BotInfo> userBots;
     public BotInfo currentBot ;
-    private static List<InventoryItem> userInventory;
+    private  List<InventoryItem> userInventory;
     public List<Image> itemImages;
 
 
@@ -106,7 +106,7 @@ public class InventoryController : MonoBehaviour
         }
     }
     
-    //
+    
     private void Unequip(ItemSlot itemSlot)
     {
         Item item = itemSlot.Item;
@@ -131,8 +131,8 @@ public class InventoryController : MonoBehaviour
         
     }
 
-    //Removes inputted item from inventory and adds it to equip panel
 
+    //Removes inputted item from inventory and adds it to equip panel
 
     private static Dictionary<String,double> attributes1 = new Dictionary<string, double>
     {
@@ -235,6 +235,7 @@ public class InventoryController : MonoBehaviour
           }*/
         
         Item previousItem;
+        equipmentPanel.ClearEquipped();
         foreach (PartInfo part in currentBot.GetEquippedParts())
         {
             //Creating new item to add to equipment panel
