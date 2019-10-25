@@ -438,7 +438,7 @@ GameObject:
   - component: {fileID: 95035711}
   - component: {fileID: 95035710}
   m_Layer: 5
-  m_Name: Weapon Slot
+  m_Name: ' Slot'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -476,8 +476,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 95035711}
-  toolTip: {fileID: 587453946}
-  PartType: 3
 --- !u!114 &95035711
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -547,7 +545,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 96442790}
-  toolTip: {fileID: 587453946}
 --- !u!114 &96442790
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -561,7 +558,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -710,7 +707,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 105963181}
-  toolTip: {fileID: 587453946}
 --- !u!114 &105963181
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -724,7 +720,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -942,7 +938,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 118903722}
-  toolTip: {fileID: 587453946}
 --- !u!114 &118903722
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -956,7 +951,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -2254,7 +2249,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 179809891}
-  toolTip: {fileID: 587453946}
 --- !u!114 &179809891
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2268,7 +2262,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -3396,7 +3390,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 275372461}
-  toolTip: {fileID: 587453946}
 --- !u!114 &275372461
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3410,7 +3403,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -4285,9 +4278,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a011bc73ba0216344be1fe0afcd86367, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  itemImages: []
+  itemToolTip: {fileID: 587453946}
   inventoryText: {fileID: 0}
   testText: {fileID: 1362157559}
   botInfoText: {fileID: 84142067}
+  draggableItem: {fileID: 0}
+  inventory: {fileID: 473167494}
   equipmentPanel: {fileID: 1211222225}
 --- !u!1 &361932042
 GameObject:
@@ -5209,9 +5206,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a011bc73ba0216344be1fe0afcd86367, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  itemImages: []
+  itemToolTip: {fileID: 0}
   inventoryText: {fileID: 0}
   testText: {fileID: 0}
   botInfoText: {fileID: 0}
+  draggableItem: {fileID: 0}
+  inventory: {fileID: 0}
   equipmentPanel: {fileID: 0}
 --- !u!114 &415464313
 MonoBehaviour:
@@ -5428,10 +5429,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ff04788d1b368b408398a75e35a3739, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  items:
-  - {fileID: 11400000, guid: 2ef5c4919dc021845973016f90efbdea, type: 2}
+  startingitems:
   - {fileID: 11400000, guid: 590ac3838e6ee87469e94f11392eb308, type: 2}
-  - {fileID: 11400000, guid: 9c8fea05f9324c545928319a8e120299, type: 2}
   - {fileID: 11400000, guid: 2ef5c4919dc021845973016f90efbdea, type: 2}
   - {fileID: 11400000, guid: 9c8fea05f9324c545928319a8e120299, type: 2}
   itemsParent: {fileID: 1955563576}
@@ -6312,7 +6311,7 @@ GameObject:
   - component: {fileID: 558137953}
   - component: {fileID: 558137952}
   m_Layer: 5
-  m_Name: Weapon Slot
+  m_Name: ' Slot'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6350,8 +6349,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 558137953}
-  toolTip: {fileID: 587453946}
-  PartType: 3
 --- !u!114 &558137953
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6748,7 +6745,7 @@ GameObject:
   - component: {fileID: 574987395}
   - component: {fileID: 574987394}
   m_Layer: 5
-  m_Name: Weapon Slot
+  m_Name: ' Slot'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6786,8 +6783,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 574987395}
-  toolTip: {fileID: 587453946}
-  PartType: 3
 --- !u!114 &574987395
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7182,7 +7177,7 @@ GameObject:
   - component: {fileID: 588182956}
   - component: {fileID: 588182955}
   m_Layer: 5
-  m_Name: Sensor Slot
+  m_Name: ' Slot'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7201,8 +7196,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 588182956}
-  toolTip: {fileID: 587453946}
-  PartType: 2
 --- !u!114 &588182956
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8061,7 +8054,7 @@ GameObject:
   - component: {fileID: 701213616}
   - component: {fileID: 701213615}
   m_Layer: 5
-  m_Name: BodyType Slot
+  m_Name: ' Slot'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8080,8 +8073,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 701213616}
-  toolTip: {fileID: 587453946}
-  PartType: 0
 --- !u!114 &701213616
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8373,7 +8364,7 @@ GameObject:
   - component: {fileID: 783505713}
   - component: {fileID: 783505712}
   m_Layer: 5
-  m_Name: Armor Slot
+  m_Name: ' Slot'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8392,8 +8383,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 783505713}
-  toolTip: {fileID: 587453946}
-  PartType: 1
 --- !u!114 &783505713
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9806,7 +9795,7 @@ GameObject:
   - component: {fileID: 872407442}
   - component: {fileID: 872407441}
   m_Layer: 5
-  m_Name: Cpu Slot
+  m_Name: ' Slot'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9825,8 +9814,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 872407442}
-  toolTip: {fileID: 587453946}
-  PartType: 5
 --- !u!114 &872407442
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10498,7 +10485,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 963262507}
-  toolTip: {fileID: 587453946}
 --- !u!114 &963262507
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10519,7 +10505,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 5bca9f93c1ed9b74ebef7c36cb9869dd, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 941b38e43b23e954ebcf395f32db597c, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -11124,7 +11110,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 1086410129}
-  toolTip: {fileID: 587453946}
 --- !u!114 &1086410129
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11850,7 +11835,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 1153047681}
-  toolTip: {fileID: 587453946}
 --- !u!114 &1153047681
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11864,7 +11848,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -11920,7 +11904,7 @@ GameObject:
   - component: {fileID: 1158149414}
   - component: {fileID: 1158149413}
   m_Layer: 5
-  m_Name: Transport Slot
+  m_Name: ' Slot'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11939,8 +11923,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 1158149414}
-  toolTip: {fileID: 587453946}
-  PartType: 4
 --- !u!114 &1158149414
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12540,7 +12522,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 1192539927}
-  toolTip: {fileID: 587453946}
 --- !u!114 &1192539927
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12554,7 +12535,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -13390,7 +13371,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 1262298180}
-  toolTip: {fileID: 587453946}
 --- !u!114 &1262298180
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13404,7 +13384,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -15517,7 +15497,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 1557094283}
-  toolTip: {fileID: 587453946}
 --- !u!114 &1557094283
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15531,7 +15510,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -15946,7 +15925,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 1595381186}
-  toolTip: {fileID: 587453946}
 --- !u!114 &1595381186
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15960,7 +15938,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -16326,7 +16304,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 1611987989}
-  toolTip: {fileID: 587453946}
 --- !u!114 &1611987989
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16340,7 +16317,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -16396,7 +16373,7 @@ GameObject:
   - component: {fileID: 1613822601}
   - component: {fileID: 1613822600}
   m_Layer: 5
-  m_Name: Weapon Slot
+  m_Name: ' Slot'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16434,8 +16411,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 1613822601}
-  toolTip: {fileID: 587453946}
-  PartType: 3
 --- !u!114 &1613822601
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17282,7 +17257,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 1736911360}
-  toolTip: {fileID: 587453946}
 --- !u!114 &1736911360
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17296,7 +17270,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -18630,7 +18604,7 @@ GameObject:
   - component: {fileID: 1877649020}
   - component: {fileID: 1877649019}
   m_Layer: 5
-  m_Name: Weapon Slot
+  m_Name: ' Slot'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18649,8 +18623,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 1877649020}
-  toolTip: {fileID: 587453946}
-  PartType: 3
 --- !u!114 &1877649020
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18947,7 +18919,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 1915077468}
-  toolTip: {fileID: 587453946}
 --- !u!114 &1915077468
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18968,7 +18939,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 941b38e43b23e954ebcf395f32db597c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 5bca9f93c1ed9b74ebef7c36cb9869dd, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -19300,7 +19271,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 1973276356}
-  toolTip: {fileID: 587453946}
 --- !u!114 &1973276356
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19314,7 +19284,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:

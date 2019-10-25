@@ -75,7 +75,7 @@ public class EquipmentPanel : MonoBehaviour
         for (int i = 0; i < equipmentSlots.Length; i++)
         {
             equippedItems.Add(equipmentSlots[i].Item);
-            RemoveItem(equipmentSlots[i].Item);
+            equipmentSlots[i].Item = null;
         }
 
         return equippedItems;

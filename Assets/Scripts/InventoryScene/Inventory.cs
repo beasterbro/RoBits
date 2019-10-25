@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 
 public class Inventory : MonoBehaviour
-{
+{//TODO: Implement Specified Item Categories
    
     [SerializeField] List<Item> startingitems;
     [SerializeField] Transform itemsParent;
