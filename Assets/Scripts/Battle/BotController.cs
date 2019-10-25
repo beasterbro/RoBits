@@ -4,15 +4,12 @@ using UnityEngine;
 
 public class BotController : MonoBehaviour
 {
-
     [HideInInspector] private TeamInfo team;
-    
+
     // TODO: Reorganize all these nonsense fields & methods
     public float MAX_HEALTH = 100.0f;
     [HideInInspector] public float currentHealth;
     [HideInInspector] public bool isDead = false;
-
-    public bool isEnemy;
 
     public bool controlsEnabled;
 
@@ -23,8 +20,7 @@ public class BotController : MonoBehaviour
 
     [HideInInspector] public BotInfo info;
 
-    /*[HideInInspector]*/
-    public List<PartController> parts = new List<PartController>();
+    [HideInInspector] public List<PartController> parts = new List<PartController>();
     private List<SensorPartController> sensors = new List<SensorPartController>();
     private List<ActorPartController> actors = new List<ActorPartController>();
 
@@ -40,43 +36,17 @@ public class BotController : MonoBehaviour
 
     private Behavior activeBehavior;
 
-    public void LoadInfo(BotInfo info)
+    public void LoadInfo(BotInfo botInfo, TeamInfo teamInfo)
     {
-        this.info = info;
+        team = teamInfo;
+        info = botInfo;
 
-        foreach (PartInfo partInfo in info.GetEquippedParts())
-        {
-            PartController partController = PartController.ControllerForPart(partInfo);
-            if (partController != null)
-            {
-                parts.Add(partController);
-                partController.gameObject.transform.parent = transform;
-            }
-        }
-
-        foreach (PartController part in parts)
-        {
-            if (part is SensorPartController sensor) sensors.Add(sensor);
-            else if (part is ActorPartController actor) actors.Add(actor);
-        }
-
-        int numWeapons = 0;
-        foreach (PartController controller in parts)
-        {
-            controller.bot = this;
-
-            if (numWeapons == weaponLocations.Length) break;
-            if (controller is GunController)
-            {
-                (controller as GunController).Position(weaponLocations[numWeapons]);
-                numWeapons++;
-            }
-        }
+        LoadParts();
 
         if (parts.Count > 1)
         {
-            ProximitySensor proxSensor = parts[1] as ProximitySensor;
-            GunController gun = parts[0] as GunController;
+            ProximitySensor proxSensor = sensors[0] as ProximitySensor;
+            GunController gun = actors[0] as GunController;
 
             behaviors.Add(new Behavior(this, proxSensor.OpponentIsInRange, () =>
             {
@@ -90,6 +60,38 @@ public class BotController : MonoBehaviour
             }));
 
             behaviors.Add(Behavior.BasicOffense(this));
+        }
+    }
+
+    private void LoadParts()
+    {
+        foreach (PartInfo partInfo in info.GetEquippedParts())
+        {
+            PartController partController = PartController.ControllerForPart(partInfo);
+            if (partController != null)
+            {
+                partController.bot = this;
+                partController.gameObject.transform.parent = transform;
+                partController.Setup();
+                partController.Position();
+                parts.Add(partController);
+            }
+        }
+
+        foreach (PartController part in parts)
+        {
+            if (part is SensorPartController sensor) sensors.Add(sensor);
+            else if (part is ActorPartController actor) actors.Add(actor);
+        }
+
+        int numWeapons = 0;
+        foreach (PartController controller in parts)
+        {
+            if (numWeapons == weaponLocations.Length) break;
+            if (controller is GunController gun)
+            {
+                gun.Position(weaponLocations[numWeapons++]);
+            }
         }
     }
 
@@ -162,16 +164,32 @@ public class BotController : MonoBehaviour
     public void TakeDamage(float amount)
     {
         currentHealth -= amount;
-        if (currentHealth <= 0)
+        if (currentHealth <= 0 && !isDead)
         {
-            currentHealth = 0;
-            isDead = true;
+            Die();
         }
+    }
+
+    private void Die()
+    {
+        currentHealth = 0;
+        isDead = true;
+
+        // Dim sprite
+        SpriteRenderer renderer = GetComponent<SpriteRenderer>();
+        Color spriteColor = renderer.color;
+        spriteColor.a = 0.2f;
+        renderer.color = spriteColor;
     }
 
     public void SetMovementValue(float amount)
     {
         movementValue = amount;
+    }
+
+    public bool OtherIsEnemey(BotController other)
+    {
+        return !other.team.Equals(team);
     }
 
     // PerformAction

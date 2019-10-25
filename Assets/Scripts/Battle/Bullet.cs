@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class Bullet : MonoBehaviour
@@ -7,6 +6,8 @@ public class Bullet : MonoBehaviour
     public LayerMask botsMask;
     public float damage = 10f;
     public float maxLifetime = 2f;
+
+    private bool isRebound = false;
 
     [HideInInspector] public BotController firedBy;
 
@@ -17,12 +18,30 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("Entered");
-
         BotController bot = other.GetComponent<BotController>();
-        if (bot == null || bot.Equals(firedBy)) return;
-        
-        bot.TakeDamage(damage);
-        Destroy(gameObject);
+        if (bot != null)
+        {
+            if (!isRebound && bot.Equals(firedBy)) return;
+
+            bot.TakeDamage(damage);
+            Destroy(gameObject);
+            return;
+        }
+
+        ReflectiveArmorController armor = other.GetComponent<ReflectiveArmorController>();
+        if (armor != null)
+        {
+            if (!isRebound && armor.bot.Equals(firedBy)) return;
+
+            if (armor.CanReflect())
+            {
+                Rigidbody2D body = GetComponent<Rigidbody2D>();
+                body.velocity = -body.velocity;
+                isRebound = true;
+
+                armor.TakeDamange(damage);
+            }
+        }
     }
+
 }

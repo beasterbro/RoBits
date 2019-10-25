@@ -2,6 +2,7 @@ using System;
 
 public class Behavior
 {
+
     private BotController bot;
     private Func<bool> triggerFunction;
     private Action executionFunction;
@@ -27,4 +28,5 @@ public class Behavior
     {
         return new Behavior(bot, () => true, () => { bot.SetMovementValue(0.3f); });
     }
+
 }

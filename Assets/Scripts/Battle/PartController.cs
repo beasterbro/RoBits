@@ -1,20 +1,37 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Text.RegularExpressions;
+using UnityEngine;
 
 public abstract class PartController : MonoBehaviour
 {
-    [HideInInspector] public PartInfo info;
 
     [HideInInspector] public BotController bot;
-    public abstract bool IsActor();
+    [HideInInspector] public PartInfo info;
 
     public static PartController ControllerForPart(PartInfo info)
     {
-        if (info.GetName() == "Basic Gun")
+        string stripped = Regex.Replace(info.GetName(), "[\\W]", "");
+
+        try
         {
-            GameObject obj = Instantiate(Resources.Load("Battle/BasicGun")) as GameObject;
-            return obj.GetComponent<GunController>();
+            GameObject obj = Instantiate(Resources.Load("Battle/" + stripped)) as GameObject;
+            return obj.GetComponent<PartController>();
+        }
+        catch (ArgumentException exc)
+        {
+            Debug.LogWarning("Attempted to load missing asset: Battle/" + stripped);
         }
 
         return null;
     }
+
+    public virtual void Setup() { }
+
+    public virtual void Position()
+    {
+        gameObject.transform.localPosition = Vector3.zero;
+    }
+
+    public abstract bool IsActor();
+
 }

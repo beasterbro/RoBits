@@ -59,7 +59,7 @@ Transform:
   m_GameObject: {fileID: 2871855525433271127}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.5835813, y: -2.3225358, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.99999994, y: 0.99999994, z: 1}
   m_Children:
   - {fileID: 2871855525049099655}
   m_Father: {fileID: 0}
@@ -151,7 +151,7 @@ PolygonCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.42, y: 1.42}
+    oldSize: {x: 1.46, y: 1.46}
     newSize: {x: 1.42, y: 1.42}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -183,11 +183,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6ec58ef9398c4b719a26bec15a77936, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bullet: {fileID: 3352554030842525169, guid: 3b01398b4507942efbd0a6d5d3cdef09, type: 3}
-  bulletTransform: {fileID: 2871855525049099655}
-  launchForce: 30
+  MAX_HEALTH: 100
+  currentHealth: 0
+  isDead: 0
+  controlsEnabled: 0
+  weaponLocations: []
   movementSpeed: 5
   turningSpeed: 5
-  currentHealth: 0
   parts: []
   target: {fileID: 0}
