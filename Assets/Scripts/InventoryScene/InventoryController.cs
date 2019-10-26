@@ -160,10 +160,10 @@ public class InventoryController : MonoBehaviour
        
        
     
-    private PartInfo part1 = new PartInfo(123, "0", "first part", PartType.Weapon, 1, 1, true, attributes1);
-    private PartInfo part2 = new PartInfo(122, "1", "second part", PartType.Weapon, 2, 2, true, attributes2);
+    private PartInfo part1 = new PartInfo(112, "112", "WeaponPart1", PartType.Weapon, 1, 1, true, attributes1);
+    private PartInfo part2 = new PartInfo(113, "113", "WeaponPart2", PartType.Weapon, 2, 2, true, attributes2);
     
-    private PartInfo body = new PartInfo(223, "body", "thrid part", PartType.BodyType, 2, 2, false, bodySpec);
+    private PartInfo body = new PartInfo(444, "body", "thrid part", PartType.BodyType, 2, 2, false, bodySpec);
 
     private UserInfo user = new UserInfo("testUser","ass@ass.com","tester101",100,200,true,settings);
      
@@ -208,6 +208,7 @@ public class InventoryController : MonoBehaviour
 
     public void SetActiveBot(int botValue)
     {
+        //TODO: Current Implementation bug, hard wired bot parts reset upon switch
         //for testing purposes of setting the actively edited bot
         testText.text = "" + botValue;
         // currentBot = DataManager.instance().GetAllBots()[botValue];
@@ -215,7 +216,6 @@ public class InventoryController : MonoBehaviour
         testText.text = currentBot.GetName();
         botInfoText.text = " Part 1: " + currentBot.GetEquippedParts()[0].GetDescription() + " Part 2: " + currentBot.GetEquippedParts()[1].GetDescription();
         //TODO: Remove currently equipped parts from inventory
-        //TODO: Show currently equipped parts in Equipped section
         UpdateEquipment();
     }
 
@@ -244,6 +244,12 @@ public class InventoryController : MonoBehaviour
             item.id = part.GetID();
             item.type = part.GetPartType();
             item.price = part.GetPrice();
+            item.description = part.GetDescription();
+            item.Icon = part.GetSprite();
+            item.attributes = part.GetAttributes();
+            item.ItemName = part.GetName();
+            item.levelToUnlock = part.GetLevelToUnlock();
+            item.isActor = part.IsActor();
             
             equipmentPanel.AddItem(item,out previousItem);
             
