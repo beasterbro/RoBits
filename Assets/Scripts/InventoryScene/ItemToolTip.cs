@@ -1,9 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 public class ItemToolTip : MonoBehaviour
 {
@@ -19,8 +21,10 @@ public class ItemToolTip : MonoBehaviour
 
   //Add more Stats here
   sb.Length = 0;
-  AddStat(item.price, "Price");
-  AddStat(item.levelToUnlock, "Unlock At");
+  AddStat(item.price.ToString(), "Price");
+  AddStat(item.levelToUnlock.ToString(), "Unlock At");
+  AddStat(item.id.ToString(), "ID");
+  AddStat(item.description,"desc");
 
   ItemStatText.text = sb.ToString();
   
@@ -32,16 +36,19 @@ public class ItemToolTip : MonoBehaviour
   gameObject.SetActive(false);
  }
 
- private void AddStat(double value, string statName)
+ private void AddStat(String info, string statName)
  {
-  if (value != 0)
-  {
+  String value = info.ToString();
+ // if (value != 0)
+  //{
    if (sb.Length > 0)
    {
     sb.AppendLine();
    }
 
-   if (value > 0)
+   double doubleVal;
+
+   if (double.TryParse(value, out doubleVal))
    {
     sb.Append("+");
    }
@@ -49,6 +56,6 @@ public class ItemToolTip : MonoBehaviour
    sb.Append(value);
    sb.Append(" ");
    sb.Append(statName);
-  }
+ // }
  }
 }
