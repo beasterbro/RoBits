@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ItemName: CPU
   Icon: {fileID: 21300000, guid: 89035c6ce98694b45ba51e9fe5cfd706, type: 3}
-  id: 100
-  description: Its a CPU you dip
+  id: 333
+  description: CPU Item
   type: 5
   price: 100
   levelToUnlock: 1000
