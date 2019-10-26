@@ -4,11 +4,17 @@ using UnityEngine;
 
 public class EquipmentSlot : ItemSlot
 {
- //  public PartType PartType;
+    
 
-   protected override void OnValidate()
-   {
-      base.OnValidate();
-      gameObject.name =  " Slot";
-   }
+
+    /*public override bool CanReveiveItem(Item item)
+    {
+        return true;
+    }*/
+    
+    protected override void OnValidate()
+    {
+        base.OnValidate();
+        gameObject.name =  " Slot";
+    }
 }

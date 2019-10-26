@@ -18,12 +18,11 @@ public class InventoryController : MonoBehaviour
 
     
     [SerializeField] ItemToolTip itemToolTip;
-    [SerializeField] Text inventoryText;
     [SerializeField] Text testText;
     [SerializeField] Text botInfoText;
     
     public BotInfo activeBot;
-    private ItemSlot draggedSlot;
+    private ItemSlot draggedItemSlot;
 
     [SerializeField] Image draggableItem;
     [SerializeField]  Inventory inventory;
@@ -72,30 +71,37 @@ public class InventoryController : MonoBehaviour
     {
         if (itemSlot.Item != null)
         {
-            draggedSlot = itemSlot;
+            draggedItemSlot = itemSlot;
             draggableItem.sprite = itemSlot.Item.Icon;
             draggableItem.transform.position = Input.mousePosition;
-            draggableItem.enabled = true;
+            draggableItem.gameObject.SetActive(true);
         }
     }
 
     private void EndDrag(ItemSlot itemSlot)
     {
-        draggedSlot = null;
-        draggableItem.enabled = false;
+        draggedItemSlot = null;
+        draggableItem.gameObject.SetActive(false);
     }
 
     private void Drag(ItemSlot itemSlot)
     {
+     
         draggableItem.transform.position = Input.mousePosition;
+            
+        
     }
 
     private void Drop(ItemSlot dropItemSlot)
     {
-        Item draggedItem = draggedSlot.Item;
-        draggedSlot.Item = dropItemSlot.Item;
-        dropItemSlot.Item = draggedItem;
+      //  if (dropItemSlot.CanReveiveItem(draggedItemSlot.Item) && draggedItemSlot.CanReveiveItem(dropItemSlot.Item))
+        {
+            SwapItems(dropItemSlot);
+        }
+       
     }
+
+
 
     private void Equip(ItemSlot itemSlot)
     {
@@ -132,7 +138,7 @@ public class InventoryController : MonoBehaviour
     }
 
 
-    //Removes inputted item from inventory and adds it to equip panel
+//Removes inputted item from inventory and adds it to equip panel
 
     private static Dictionary<String,double> attributes1 = new Dictionary<string, double>
     {
@@ -172,23 +178,45 @@ public class InventoryController : MonoBehaviour
     
 
     
+    private void SwapItems(ItemSlot dropItemSlot)
+    {
+        Item dragEquipItem = dropItemSlot.Item;
+        Item dropEquipItem = dropItemSlot.Item;
+        
+        if (dropItemSlot is EquipmentSlot)
+        {
+            if (dragEquipItem != null) Equip(dragEquipItem);
+            if (dropEquipItem != null) Unequip(dropEquipItem);
+        }
+        if (draggedItemSlot is EquipmentSlot)
+        {
+            if (dragEquipItem != null) Unequip(dragEquipItem);
+            if (dropEquipItem != null) Equip(dropEquipItem);
+        }
+        Item draggedItem = draggedItemSlot.Item;
+        draggedItemSlot.Item = dropItemSlot.Item;
+        dropItemSlot.Item = draggedItem;
+        
+    }
     
     
     public void Equip(Item item)
     {
-        //If you can remove the part
+//If you can remove the part
         if (inventory.RemoveItem(item))
         {
-            //If you can add it to the equipped
+//If you can add it to the equipped
             if (equipmentPanel.AddItem(item,out var previousItem))
             {
-                currentBot.AddPart(item.part);
-                //if equipped is full and it swaps items
+               
+//if equipped is full and it swaps items
                 if (previousItem != null)
                 {
                     inventory.AddItem(previousItem);
+                    Unequip(previousItem);
                 }
-            }
+                currentBot.AddPart(item.part);
+              }
             else
             {
                 inventory.AddItem(item);
@@ -196,7 +224,7 @@ public class InventoryController : MonoBehaviour
         }
     }
    
-    //removes inputted item from equip panel and adds it to the inventory
+//removes inputted item from equip panel and adds it to the inventory
     public void Unequip(Item item)
     {
         if (!inventory.IsFull() && equipmentPanel.RemoveItem(item))
@@ -208,37 +236,37 @@ public class InventoryController : MonoBehaviour
 
     public void SetActiveBot(int botValue)
     {
-        //TODO: Current Implementation bug, hard wired bot parts reset upon switch
-        //for testing purposes of setting the actively edited bot
+//TODO: Current Implementation bug, hard wired bot parts reset upon switch
+//for testing purposes of setting the actively edited bot
         testText.text = "" + botValue;
-        // currentBot = DataManager.instance().GetAllBots()[botValue];
+// currentBot = DataManager.instance().GetAllBots()[botValue];
         currentBot = userBots[botValue];
         testText.text = currentBot.GetName();
         botInfoText.text = " Part 1: " + currentBot.GetEquippedParts()[0].GetDescription() + " Part 2: " + currentBot.GetEquippedParts()[1].GetDescription();
-        //TODO: Remove currently equipped parts from inventory
+//TODO: Remove currently equipped parts from inventory
         UpdateEquipment();
     }
 
     public void UpdateEquipment()
     {
         
-        //retrieves all of the items currently equipped and store them
-        //TODO: fix duping that happens here (Contains or remove part from bot)
+//retrieves all of the items currently equipped and store them
+//TODO: fix duping that happens here (Contains or remove part from bot)
         List<Item> addToInventory = equipmentPanel.ClearEquipped();
-        /*  for (int i = 0; i < addToInventory.Count; i++)
-          {
-              if (!inventory.Contains(addToInventory[i]))
-              {
-                  inventory.AddItem(addToInventory[i]);
-              }
-              
-          }*/
+/*  for (int i = 0; i < addToInventory.Count; i++)
+  {
+      if (!inventory.Contains(addToInventory[i]))
+      {
+          inventory.AddItem(addToInventory[i]);
+      }
+      
+  }*/
         
         Item previousItem;
         equipmentPanel.ClearEquipped();
         foreach (PartInfo part in currentBot.GetEquippedParts())
         {
-            //Creating new item to add to equipment panel
+//Creating new item to add to equipment panel
             Item item = new Item();
             item.part = part;
             item.id = part.GetID();
@@ -260,7 +288,7 @@ public class InventoryController : MonoBehaviour
 
     void Start()
     {
-        //Temp for testing
+//Temp for testing
         var item1 = new InventoryItem(part1,1);
         var item2 = new InventoryItem(part2,100);
         
@@ -278,7 +306,7 @@ public class InventoryController : MonoBehaviour
         botTeam.Add(bot1);
         botTeam.Add(bot2);
         userBots = botTeam;
-        //userInventory = DataManager.instance().GetUserInventory();
+//userInventory = DataManager.instance().GetUserInventory();
         userInventory = new List<InventoryItem>{item1,item2};
         currentBot = userBots[0];
         UpdateEquipment();
@@ -286,7 +314,7 @@ public class InventoryController : MonoBehaviour
     }
     
 
-    // Update is called once per frame
+// Update is called once per frame
     void Update()
     {
        

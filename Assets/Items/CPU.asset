@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 929356e9f26ab3947bf53252c790a670, type: 3}
   m_Name: CPU
   m_EditorClassIdentifier: 
-  ItemName: CPU
+  ItemName: 333
   Icon: {fileID: 21300000, guid: 89035c6ce98694b45ba51e9fe5cfd706, type: 3}
   id: 333
   description: CPU Item

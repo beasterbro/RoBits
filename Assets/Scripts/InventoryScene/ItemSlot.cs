@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler, IDragHandler,IBeginDragHandler,IEndDragHandler,IDropHandler
     {
         [SerializeField] Image image;
+      //  [SerializeField] private PartType PartType;
        
         public event Action<ItemSlot> OnRightClickEvent;
         public event Action<ItemSlot> OnPointerEnterEvent;
@@ -42,6 +43,19 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandl
                 
             }
         }
+
+       /* public virtual bool CanReveiveItem(Item item)
+        {
+            //TODO: Implment
+            if (item == null)
+            {
+            return true;
+                
+            }
+            return item != null && item.type == PartType;
+        }*/
+       
+       
         //Only runs in editor
         protected virtual void OnValidate()
         {
