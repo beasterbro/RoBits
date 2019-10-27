@@ -11,23 +11,28 @@ public class InventoryController : MonoBehaviour
     
     //For integration with BE
     private List<BotInfo> userBots;
-    public BotInfo currentBot ;
     private  List<InventoryItem> userInventory;
+    
+    
+    public BotInfo currentBot ;
     public List<Image> itemImages;
 
 
-    
+    //Displaying info to user
     [SerializeField] ItemToolTip itemToolTip;
     [SerializeField] Text testText;
     [SerializeField] Text botInfoText;
     
-    public BotInfo activeBot;
-    private ItemSlot draggedItemSlot;
-
-    [SerializeField] Image draggableItem;
+    //Managing user input
     [SerializeField]  Inventory inventory;
     [SerializeField] EquipmentPanel equipmentPanel;
-
+   
+    //Managing Dragged and Dropped items
+    private ItemSlot draggedItemSlot;
+    //Drag and Drop does not work if DraggableItem has RayCast Target Enabled
+    [SerializeField] Image draggableItem;
+ 
+ 
 
     private void OnValidate()
     {
@@ -94,7 +99,11 @@ public class InventoryController : MonoBehaviour
 
     private void Drop(ItemSlot dropItemSlot)
     {
-      //  if (dropItemSlot.CanReveiveItem(draggedItemSlot.Item) && draggedItemSlot.CanReveiveItem(dropItemSlot.Item))
+        if (draggedItemSlot == null)
+        {
+            return;
+        }
+        if (dropItemSlot.CanReceiveItem(draggedItemSlot.Item) && draggedItemSlot.CanReceiveItem(dropItemSlot.Item))
         {
             SwapItems(dropItemSlot);
         }

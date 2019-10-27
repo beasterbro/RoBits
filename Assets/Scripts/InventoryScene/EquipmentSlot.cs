@@ -7,10 +7,10 @@ public class EquipmentSlot : ItemSlot
     
 
 
-    /*public override bool CanReveiveItem(Item item)
+    public override bool CanReceiveItem(Item item)
     {
         return true;
-    }*/
+    }
     
     protected override void OnValidate()
     {
