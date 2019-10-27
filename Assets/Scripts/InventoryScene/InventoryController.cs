@@ -178,6 +178,7 @@ public class InventoryController : MonoBehaviour
     private PartInfo part1 = new PartInfo(112, "112", "WeaponPart1", PartType.Weapon, 1, 1, true, attributes1);
     private PartInfo part2 = new PartInfo(113, "113", "WeaponPart2", PartType.Weapon, 2, 2, true, attributes2);
     
+    
     private PartInfo body = new PartInfo(444, "body", "thrid part", PartType.BodyType, 2, 2, false, bodySpec);
 
     private UserInfo user = new UserInfo("testUser","ass@ass.com","tester101",100,200,true,settings);
@@ -236,10 +237,9 @@ public class InventoryController : MonoBehaviour
 //removes inputted item from equip panel and adds it to the inventory
     public void Unequip(Item item)
     {
-        if (!inventory.IsFull() && equipmentPanel.RemoveItem(item))
+        if (equipmentPanel.RemoveItem(item) && inventory.AddItem(item))
         {
             currentBot.RemovePart(item.part);
-            inventory.AddItem(item);
         }
     }
 
@@ -252,7 +252,6 @@ public class InventoryController : MonoBehaviour
         currentBot = userBots[botValue];
         testText.text = currentBot.GetName();
         botInfoText.text = " Part 1: " + currentBot.GetEquippedParts()[0].GetDescription() + " Part 2: " + currentBot.GetEquippedParts()[1].GetDescription();
-//TODO: Remove currently equipped parts from inventory
         UpdateEquipment();
     }
 
@@ -304,11 +303,12 @@ public class InventoryController : MonoBehaviour
         
         var allParts = new List<PartInfo>(new PartInfo[]{part1,part2});
         var allParts2 = new List<PartInfo>(new PartInfo[]{part2,part1});
+        var allParts3 = new List<PartInfo>(new PartInfo[]{part2,part1});
         
         
         var bot0 = new BotInfo(0,"bot0",0,allParts,body);
         var bot1 = new BotInfo(1,"bot1",1,allParts,body);
-        var bot2 = new BotInfo(2,"bot2",2,allParts2,body);
+        var bot2 = new BotInfo(2,"bot2",2,allParts3,body);
         
         
         botTeam.Add(bot0);

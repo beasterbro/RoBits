@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler, IDragHandler,IBeginDragHandler,IEndDragHandler,IDropHandler
     {
         [SerializeField] Image image;
-        [SerializeField] private PartType PartType;
+        [SerializeField] public PartType PartType;
        
         public event Action<ItemSlot> OnRightClickEvent;
         public event Action<ItemSlot> OnPointerEnterEvent;
@@ -46,7 +46,7 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandl
 
         public virtual bool CanReceiveItem(Item item)
         {
-            //TODO: Implment
+            //TODO: Implement
             if (item == null)
             {
             return true;
