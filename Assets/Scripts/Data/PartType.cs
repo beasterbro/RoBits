@@ -1,3 +1,6 @@
+using Newtonsoft.Json;
+
+[JsonConverter(typeof(JsonData.PartTypeConverter))]
 public enum PartType
 {
 

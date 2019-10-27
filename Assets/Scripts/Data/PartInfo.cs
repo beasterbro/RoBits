@@ -1,19 +1,10 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 
+[JsonConverter(typeof(JsonData.PartConverter))]
 public class PartInfo
 {
-
-    private class DbPart
-    {
-        public int pid;
-        public string name;
-        public PartType type;
-        public int price;
-        public int unlockLvl;
-        public Dictionary<string, double> stats;
-    }
 
     private int id;
     private string name;
@@ -25,7 +16,8 @@ public class PartInfo
     private Dictionary<string, double> attributes;
     private Sprite sprite;
 
-    public PartInfo(int id, string name, string description, PartType type, int price, int levelToUnlock, bool isActor, Dictionary<string, double> attributes, Sprite sprite) {
+    public PartInfo(int id, string name, string description, PartType type, int price, int levelToUnlock, bool isActor, Dictionary<string, double> attributes)
+    {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -34,23 +26,6 @@ public class PartInfo
         this.levelToUnlock = levelToUnlock;
         this.isActor = isActor;
         this.attributes = attributes;
-        this.sprite = sprite;
-    }
-
-    public static PartInfo FromJson(string json) {
-        DbPart db = JsonUtility.FromJson<DbPart>(json);
-        return new PartInfo(db.pid, db.name, "", db.type, db.price, db.unlockLvl, false, db.stats, null);
-    }
-
-    public static PartInfo[] FromJsonArray(string json) {
-        string[] elements = Regex.Split(json.Substring(1, json.Length - 2).Trim(), "(?<=}),(?={\"pid\":)");
-        PartInfo[] parts = new PartInfo[elements.Length];
-
-        for (int i = 0;i < elements.Length;i++) {
-            parts[i] = PartInfo.FromJson(elements[i].Trim());
-        }
-
-        return parts;
     }
 
     public int GetID()

@@ -1,17 +1,9 @@
 ﻿using System;
-using UnityEngine;
+using Newtonsoft.Json;
 
+[JsonConverter(typeof(JsonData.TeamConverter))]
 public class TeamInfo
 {
-
-    private class DbTeam
-    {
-        public int tid;
-        public string name;
-        public string last_maintenance;
-        public double rank;
-        public int tier;
-    }
 
     private int id;
     private string name;
@@ -30,17 +22,6 @@ public class TeamInfo
         this.tier = tier;
     }
 
-    public static TeamInfo FromJson(string json, BotInfo[] bots)
-    {
-        DbTeam db = JsonUtility.FromJson<DbTeam>(json);
-        return new TeamInfo(db.tid, db.name, DateTime.Parse(db.last_maintenance), new BotInfo[3], db.rank, db.tier);
-    }
-
-    public static TeamInfo FromJson(string json)
-    {
-        return TeamInfo.FromJson(json, new BotInfo[3]);
-    }
-
     public int GetID()
     {
         return id;
@@ -51,9 +32,19 @@ public class TeamInfo
         return name;
     }
 
+    public void SetName(string name)
+    {
+        this.name = name;
+    }
+
     public DateTime GetDateLastMaintained()
     {
         return lastMaintained;
+    }
+
+    public void SetMaintained()
+    {
+        lastMaintained = DateTime.Now;
     }
 
     public BotInfo[] GetBots()
@@ -64,6 +55,11 @@ public class TeamInfo
     public double GetRank()
     {
         return rank;
+    }
+
+    public void SetRank(double rank)
+    {
+        this.rank = rank;
     }
 
     public int GetTier()

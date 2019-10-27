@@ -1,24 +1,15 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Linq;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
-// TODO: Add custom serializer
+[JsonConverter(typeof(JsonData.BotConverter))]
 public class BotInfo
 {
-
-    private class DbBot
-    {
-        public int bid;
-        public string name;
-        public int[] parts;
-        public int bodyType;
-        public int tier;
-        public Dictionary<string, string> ai; // TODO: Change to a better data type later
-    }
 
     private int id;
     private string name;
     private int tier;
-    // botBehavior
+    private Dictionary<string, string> behavior;
     private List<PartInfo> equipment;
     private PartInfo bodyType;
 
@@ -31,31 +22,6 @@ public class BotInfo
         this.bodyType = bodyType;
     }
 
-    public static BotInfo FromJson(string json)
-    {
-        DbBot db = JsonUtility.FromJson<DbBot>(json);
-        List<PartInfo> parts = new List<PartInfo>();
-        PartInfo bodyType = null;
-
-        foreach (int id in db.parts)
-        {
-            foreach (PartInfo part in DataManager.GetManager().GetAllParts())
-            {
-                if (part.GetID() == id)
-                {
-                    parts.Add(part);
-                }
-
-                if (part.GetID() == db.bodyType)
-                {
-                    bodyType = part;
-                }
-            }
-        }
-
-        return new BotInfo(db.bid, db.name, db.tier, parts, bodyType);
-    }
-
     public int GetID()
     {
         return id;
@@ -64,6 +30,11 @@ public class BotInfo
     public string GetName()
     {
         return name;
+    }
+
+    public void SetName(string name)
+    {
+        this.name = name;
     }
 
     public int GetTier()
@@ -89,6 +60,16 @@ public class BotInfo
     public PartInfo GetBodyType()
     {
         return bodyType;
+    }
+
+    public void SetBodyType(PartInfo bodyType)
+    {
+        this.bodyType = bodyType;
+    }
+
+    public Dictionary<string, string> GetBehaviors()
+    {
+        return behavior;
     }
 
     // TODO: Implement
