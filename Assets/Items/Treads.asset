@@ -10,13 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 929356e9f26ab3947bf53252c790a670, type: 3}
-  m_Name: Armor
+  m_Name: Treads
   m_EditorClassIdentifier: 
-  ItemName: 222
-  Icon: {fileID: 21300000, guid: 5bca9f93c1ed9b74ebef7c36cb9869dd, type: 3}
-  id: 222
-  description: Armor Item
-  type: 1
-  price: 2
+  ItemName: Tanky Bois
+  Icon: {fileID: 21300000, guid: 10e775f40f0d44185ac072bd84f2f6f6, type: 3}
+  id: 2ef5c4919dc021845973016f90efbdea
+  partID: 555
+  description: Tank Treads
+  type: 4
+  price: 1
   levelToUnlock: 1
   isActor: 1

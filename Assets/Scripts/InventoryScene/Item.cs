@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 [CreateAssetMenu]
@@ -8,7 +9,12 @@ public class Item : ScriptableObject
     public string ItemName;
     public Sprite Icon;
     public PartInfo part;
-    public int id;
+    [SerializeField] string id;
+    public int partID;
+    public string ID
+    {
+        get { return id; }
+    }
     public String description;
     public PartType type;
     public int price;
@@ -18,6 +24,8 @@ public class Item : ScriptableObject
 
     private void OnValidate()
     {
-        part = new PartInfo(id,ItemName,description,type,price,levelToUnlock,isActor,attributes);
+        part = new PartInfo(partID,ItemName,description,type,price,levelToUnlock,isActor,attributes);
+        string path = AssetDatabase.GetAssetPath(this);
+        id = AssetDatabase.AssetPathToGUID(path);
     }
 }

@@ -99,10 +99,7 @@ public class InventoryController : MonoBehaviour
 
     private void Drop(ItemSlot dropItemSlot)
     {
-        if (draggedItemSlot == null)
-        {
-            return;
-        }
+       
         if (dropItemSlot.CanReceiveItem(draggedItemSlot.Item) && draggedItemSlot.CanReceiveItem(dropItemSlot.Item))
         {
             SwapItems(dropItemSlot);
@@ -147,7 +144,7 @@ public class InventoryController : MonoBehaviour
     }
 
 
-//Removes inputted item from inventory and adds it to equip panel
+
 
     private static Dictionary<String,double> attributes1 = new Dictionary<string, double>
     {
@@ -175,8 +172,12 @@ public class InventoryController : MonoBehaviour
        
        
     
-    private PartInfo part1 = new PartInfo(112, "112", "WeaponPart1", PartType.Weapon, 1, 1, true, attributes1);
-    private PartInfo part2 = new PartInfo(113, "113", "WeaponPart2", PartType.Weapon, 2, 2, true, attributes2);
+    private PartInfo tankGun= new PartInfo(112, "Tank Gun", "Shoot Shells", PartType.Weapon, 100, 2, true, attributes1);
+    private PartInfo gun = new PartInfo(113, "Base Gun", "Shoot Bullets", PartType.Weapon, 1, 0, true, attributes2);
+    private PartInfo baseBody = new PartInfo(222, "Base Body", "Body of Bot", PartType.BodyType, 1, 1, true, attributes1);
+    private PartInfo armor = new PartInfo(333, "Reflective Armor", "Reflects Bullets", PartType.Armor, 1, 1, true, attributes1);
+    private PartInfo wheels = new PartInfo(444, "Wheels", "High Speed, Low Load", PartType.Transport, 1, 1, true, attributes1);
+    private PartInfo treads = new PartInfo(555, "Tank Treads", "Low Speed High Load", PartType.Transport, 1, 1, true, attributes1);
     
     
     private PartInfo body = new PartInfo(444, "body", "thrid part", PartType.BodyType, 2, 2, false, bodySpec);
@@ -209,7 +210,7 @@ public class InventoryController : MonoBehaviour
         
     }
     
-    
+    //Removes inputted item from inventory and adds it to equip panel 
     public void Equip(Item item)
     {
 //If you can remove the part
@@ -226,7 +227,7 @@ public class InventoryController : MonoBehaviour
                     Unequip(previousItem);
                 }
                 currentBot.AddPart(item.part);
-              }
+            }
             else
             {
                 inventory.AddItem(item);
@@ -237,8 +238,9 @@ public class InventoryController : MonoBehaviour
 //removes inputted item from equip panel and adds it to the inventory
     public void Unequip(Item item)
     {
-        if (equipmentPanel.RemoveItem(item) && inventory.AddItem(item))
+        if (equipmentPanel.RemoveItem(item))
         {
+            inventory.AddItem(item);
             currentBot.RemovePart(item.part);
         }
     }
@@ -251,7 +253,6 @@ public class InventoryController : MonoBehaviour
 // currentBot = DataManager.instance().GetAllBots()[botValue];
         currentBot = userBots[botValue];
         testText.text = currentBot.GetName();
-        botInfoText.text = " Part 1: " + currentBot.GetEquippedParts()[0].GetDescription() + " Part 2: " + currentBot.GetEquippedParts()[1].GetDescription();
         UpdateEquipment();
     }
 
@@ -259,56 +260,55 @@ public class InventoryController : MonoBehaviour
     {
         
 //retrieves all of the items currently equipped and store them
-//TODO: fix duping that happens here (Contains or remove part from bot)
         List<Item> addToInventory = equipmentPanel.ClearEquipped();
-/*  for (int i = 0; i < addToInventory.Count; i++)
-  {
-      if (!inventory.Contains(addToInventory[i]))
-      {
-          inventory.AddItem(addToInventory[i]);
-      }
-      
-  }*/
-        
+       
         Item previousItem;
-        equipmentPanel.ClearEquipped();
         foreach (PartInfo part in currentBot.GetEquippedParts())
         {
 //Creating new item to add to equipment panel
-            Item item = new Item();
-            item.part = part;
-            item.id = part.GetID();
-            item.type = part.GetPartType();
-            item.price = part.GetPrice();
-            item.description = part.GetDescription();
-            item.Icon = part.GetSprite();
-            item.attributes = part.GetAttributes();
-            item.ItemName = part.GetName();
-            item.levelToUnlock = part.GetLevelToUnlock();
-            item.isActor = part.IsActor();
-            
+
+            Item item = partToItem(part);
             equipmentPanel.AddItem(item,out previousItem);
             
             inventory.AddItem(previousItem);
         }
     }
 
+    //converts inputted part into an item to be put in the inventory
+    Item partToItem(PartInfo part)
+    {
+        Item item = new Item();
+        item.part = part;
+        item.partID = part.GetID();
+        item.type = part.GetPartType();
+        item.price = part.GetPrice();
+        item.description = part.GetDescription();
+        item.Icon = part.GetSprite();
+        item.attributes = part.GetAttributes();
+        item.ItemName = part.GetName();
+        item.levelToUnlock = part.GetLevelToUnlock();
+        item.isActor = part.IsActor();
+        item.Icon = this.GetComponentInParent<ItemImageGenrator>().generateImage(part.GetID());
+
+        return item;
+    }
+
 
     void Start()
     {
 //Temp for testing
-        var item1 = new InventoryItem(part1,1);
-        var item2 = new InventoryItem(part2,100);
+        var item1 = new InventoryItem(treads,1);
+        var item2 = new InventoryItem(baseBody,2);
         
         
-        var allParts = new List<PartInfo>(new PartInfo[]{part1,part2});
-        var allParts2 = new List<PartInfo>(new PartInfo[]{part2,part1});
-        var allParts3 = new List<PartInfo>(new PartInfo[]{part2,part1});
+        var allParts = new List<PartInfo>(new PartInfo[]{tankGun,treads,armor});
+        var allParts2 = new List<PartInfo>(new PartInfo[]{gun,wheels,baseBody});
+        var allParts3 = new List<PartInfo>(new PartInfo[]{tankGun,gun});
         
         
-        var bot0 = new BotInfo(0,"bot0",0,allParts,body);
-        var bot1 = new BotInfo(1,"bot1",1,allParts,body);
-        var bot2 = new BotInfo(2,"bot2",2,allParts3,body);
+        var bot0 = new BotInfo(0,"bot0",0,allParts,baseBody);
+        var bot1 = new BotInfo(1,"bot1",1,allParts,baseBody);
+        var bot2 = new BotInfo(2,"bot2",2,allParts3,baseBody);
         
         
         botTeam.Add(bot0);
@@ -318,10 +318,19 @@ public class InventoryController : MonoBehaviour
 //userInventory = DataManager.instance().GetUserInventory();
         userInventory = new List<InventoryItem>{item1,item2};
         currentBot = userBots[0];
+        UpdateInventory();
         UpdateEquipment();
         
     }
-    
+
+    private void UpdateInventory()
+    {
+        foreach (var inventoryItem in userInventory)
+        {
+            inventory.AddItem(partToItem(inventoryItem.GetPart()));
+        }
+    }
+
 
 // Update is called once per frame
     void Update()

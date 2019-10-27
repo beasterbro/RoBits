@@ -476,6 +476,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 95035711}
+  PartType: 0
   originalPosition: {x: 0, y: 0}
 --- !u!114 &95035711
 MonoBehaviour:
@@ -546,6 +547,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 96442790}
+  PartType: 3
   originalPosition: {x: 0, y: 0}
 --- !u!114 &96442790
 MonoBehaviour:
@@ -709,6 +711,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 105963181}
+  PartType: 3
   originalPosition: {x: 0, y: 0}
 --- !u!114 &105963181
 MonoBehaviour:
@@ -941,6 +944,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 118903722}
+  PartType: 3
   originalPosition: {x: 0, y: 0}
 --- !u!114 &118903722
 MonoBehaviour:
@@ -2253,6 +2257,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 179809891}
+  PartType: 3
   originalPosition: {x: 0, y: 0}
 --- !u!114 &179809891
 MonoBehaviour:
@@ -3395,6 +3400,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 275372461}
+  PartType: 3
   originalPosition: {x: 0, y: 0}
 --- !u!114 &275372461
 MonoBehaviour:
@@ -4223,6 +4229,7 @@ GameObject:
   - component: {fileID: 354803274}
   - component: {fileID: 354803275}
   - component: {fileID: 354803276}
+  - component: {fileID: 354803277}
   m_Layer: 5
   m_Name: InventoryMenu
   m_TagString: Untagged
@@ -4287,12 +4294,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemImages: []
   itemToolTip: {fileID: 587453946}
-  inventoryText: {fileID: 0}
   testText: {fileID: 1362157559}
   botInfoText: {fileID: 84142067}
-  draggableItem: {fileID: 1228940142}
   inventory: {fileID: 473167494}
   equipmentPanel: {fileID: 1211222225}
+  draggableItem: {fileID: 1228940142}
+--- !u!114 &354803277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 354803273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b385394c144c28438ce17b54b478c6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  partImages:
+  - {fileID: 21300000, guid: 10e775f40f0d44185ac072bd84f2f6f6, type: 3}
+  - {fileID: 21300000, guid: 024d14237a93244ccbe00dae7e35d41c, type: 3}
+  - {fileID: 21300000, guid: 81b863cc6f9a44509b2d12045bef19b2, type: 3}
+  - {fileID: 21300000, guid: f990187859f2c4e0a940c845b7fdcbfc, type: 3}
+  - {fileID: 21300000, guid: fa5c78b1ceded4e69b7911e493b3f157, type: 3}
+  - {fileID: 21300000, guid: d58ea39d243484ae7bb23dc3a89fde07, type: 3}
 --- !u!1 &361932042
 GameObject:
   m_ObjectHideFlags: 0
@@ -5215,12 +5240,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemImages: []
   itemToolTip: {fileID: 0}
-  inventoryText: {fileID: 0}
   testText: {fileID: 0}
   botInfoText: {fileID: 0}
-  draggableItem: {fileID: 0}
   inventory: {fileID: 0}
   equipmentPanel: {fileID: 0}
+  draggableItem: {fileID: 0}
 --- !u!114 &415464313
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5436,10 +5460,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ff04788d1b368b408398a75e35a3739, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingitems:
-  - {fileID: 11400000, guid: 590ac3838e6ee87469e94f11392eb308, type: 2}
-  - {fileID: 11400000, guid: 2ef5c4919dc021845973016f90efbdea, type: 2}
-  - {fileID: 11400000, guid: 9c8fea05f9324c545928319a8e120299, type: 2}
+  startingitems: []
   itemsParent: {fileID: 1955563576}
   itemSlots:
   - {fileID: 1915077467}
@@ -6356,6 +6377,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 558137953}
+  PartType: 0
   originalPosition: {x: 0, y: 0}
 --- !u!114 &558137953
 MonoBehaviour:
@@ -6791,6 +6813,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 574987395}
+  PartType: 0
   originalPosition: {x: 0, y: 0}
 --- !u!114 &574987395
 MonoBehaviour:
@@ -7205,6 +7228,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 588182956}
+  PartType: 0
   originalPosition: {x: 0, y: 0}
 --- !u!114 &588182956
 MonoBehaviour:
@@ -8083,6 +8107,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 701213616}
+  PartType: 0
   originalPosition: {x: 0, y: 0}
 --- !u!114 &701213616
 MonoBehaviour:
@@ -8394,6 +8419,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 783505713}
+  PartType: 0
   originalPosition: {x: 0, y: 0}
 --- !u!114 &783505713
 MonoBehaviour:
@@ -9826,6 +9852,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 872407442}
+  PartType: 0
   originalPosition: {x: 0, y: 0}
 --- !u!114 &872407442
 MonoBehaviour:
@@ -10498,6 +10525,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 963262507}
+  PartType: 3
   originalPosition: {x: 0, y: 0}
 --- !u!114 &963262507
 MonoBehaviour:
@@ -10512,14 +10540,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 941b38e43b23e954ebcf395f32db597c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 10e775f40f0d44185ac072bd84f2f6f6, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -11124,6 +11152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 1086410129}
+  PartType: 3
   originalPosition: {x: 0, y: 0}
 --- !u!114 &1086410129
 MonoBehaviour:
@@ -11138,14 +11167,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 89035c6ce98694b45ba51e9fe5cfd706, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f990187859f2c4e0a940c845b7fdcbfc, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -11850,6 +11879,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 1153047681}
+  PartType: 3
   originalPosition: {x: 0, y: 0}
 --- !u!114 &1153047681
 MonoBehaviour:
@@ -11939,6 +11969,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 1158149414}
+  PartType: 0
   originalPosition: {x: 0, y: 0}
 --- !u!114 &1158149414
 MonoBehaviour:
@@ -12539,6 +12570,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 1192539927}
+  PartType: 3
   originalPosition: {x: 0, y: 0}
 --- !u!114 &1192539927
 MonoBehaviour:
@@ -13118,7 +13150,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -13463,6 +13495,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 1262298180}
+  PartType: 3
   originalPosition: {x: 0, y: 0}
 --- !u!114 &1262298180
 MonoBehaviour:
@@ -15590,6 +15623,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 1557094283}
+  PartType: 3
   originalPosition: {x: 0, y: 0}
 --- !u!114 &1557094283
 MonoBehaviour:
@@ -16019,6 +16053,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 1595381186}
+  PartType: 3
   originalPosition: {x: 0, y: 0}
 --- !u!114 &1595381186
 MonoBehaviour:
@@ -16399,6 +16434,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 1611987989}
+  PartType: 3
   originalPosition: {x: 0, y: 0}
 --- !u!114 &1611987989
 MonoBehaviour:
@@ -16507,6 +16543,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 1613822601}
+  PartType: 0
   originalPosition: {x: 0, y: 0}
 --- !u!114 &1613822601
 MonoBehaviour:
@@ -17354,6 +17391,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 1736911360}
+  PartType: 3
   originalPosition: {x: 0, y: 0}
 --- !u!114 &1736911360
 MonoBehaviour:
@@ -18721,6 +18759,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 1877649020}
+  PartType: 0
   originalPosition: {x: 0, y: 0}
 --- !u!114 &1877649020
 MonoBehaviour:
@@ -19018,6 +19057,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 1915077468}
+  PartType: 3
   originalPosition: {x: 0, y: 0}
 --- !u!114 &1915077468
 MonoBehaviour:
@@ -19032,14 +19072,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 5bca9f93c1ed9b74ebef7c36cb9869dd, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 81b863cc6f9a44509b2d12045bef19b2, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -19371,6 +19411,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 1973276356}
+  PartType: 3
   originalPosition: {x: 0, y: 0}
 --- !u!114 &1973276356
 MonoBehaviour:

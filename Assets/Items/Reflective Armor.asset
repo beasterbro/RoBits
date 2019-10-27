@@ -10,13 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 929356e9f26ab3947bf53252c790a670, type: 3}
-  m_Name: CPU
+  m_Name: Reflective Armor
   m_EditorClassIdentifier: 
-  ItemName: 333
-  Icon: {fileID: 21300000, guid: 89035c6ce98694b45ba51e9fe5cfd706, type: 3}
-  id: 333
-  description: CPU Item
-  type: 5
-  price: 100
-  levelToUnlock: 1000
-  isActor: 0
+  ItemName: Reflective Armor
+  Icon: {fileID: 21300000, guid: 81b863cc6f9a44509b2d12045bef19b2, type: 3}
+  id: 590ac3838e6ee87469e94f11392eb308
+  partID: 333
+  description: Deflects Projectiles
+  type: 1
+  price: 2
+  levelToUnlock: 1
+  isActor: 1

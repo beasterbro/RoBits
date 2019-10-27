@@ -21,10 +21,10 @@ public class ItemToolTip : MonoBehaviour
 
   //Add more Stats here
   sb.Length = 0;
-  AddStat(item.price.ToString(), "Price");
-  AddStat(item.levelToUnlock.ToString(), "Unlock At");
-  AddStat(item.id.ToString(), "ID");
-  AddStat(item.description,"desc");
+  AddStat(item.price.ToString(), "Price:");
+  AddStat(item.levelToUnlock.ToString(), "Unlock At:");
+  AddStat(item.partID.ToString(), "ID:");
+  AddStat(item.description,"Desc:");
 
   ItemStatText.text = sb.ToString();
   
@@ -39,23 +39,20 @@ public class ItemToolTip : MonoBehaviour
  private void AddStat(String info, string statName)
  {
   String value = info.ToString();
- // if (value != 0)
-  //{
+
    if (sb.Length > 0)
    {
     sb.AppendLine();
    }
 
-   double doubleVal;
+    sb.Append(statName);
+    sb.Append(" ");
+    sb.Append(value);
+    
+   
+   
 
-   if (double.TryParse(value, out doubleVal))
-   {
-    sb.Append("+");
-   }
-
-   sb.Append(value);
-   sb.Append(" ");
-   sb.Append(statName);
+   
  // }
  }
 }

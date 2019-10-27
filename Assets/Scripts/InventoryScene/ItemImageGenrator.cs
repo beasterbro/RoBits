@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//Generates the Image for an Item from a specified partID
 public class ItemImageGenrator : MonoBehaviour
 {
     [SerializeField] List<Sprite> partImages;
