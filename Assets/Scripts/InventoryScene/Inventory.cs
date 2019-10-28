@@ -60,13 +60,15 @@ public class Inventory : MonoBehaviour
 
     public bool AddItem(Item item)
     {
-        for (int i = 0; i < itemSlots.Length; i++)
+        //for (int i = 0; i < itemSlots.Length; i++)
+        foreach (var slot in itemSlots)
         {
-          //  if (itemSlots[i].CanReceiveItem(item))
+           
             // if (itemSlots[i].PartType == item.type)
-            if (itemSlots[i].Item == null)
+            //if (itemSlots[i].Item == null)
+            if (slot.CanReceiveItem(item))
             {
-                itemSlots[i].Item = item;
+                slot.Item = item;
                 return true;
             }
         }
