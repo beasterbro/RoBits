@@ -4,8 +4,10 @@ using System.Collections.Generic;
 
 namespace JsonData
 {
+
     public class TeamConverter : Converter<TeamInfo>
     {
+
         public override void SerializeJson(SerializationHelper serializer, TeamInfo obj)
         {
             serializer.WriteKeyValue<int>("tid", obj.GetID());
@@ -15,6 +17,7 @@ namespace JsonData
             serializer.WriteKeyValue<int>("tier", obj.GetTier());
             serializer.SerializeKeyValue<int[]>("bots",
                 obj.GetBots().Select<BotInfo, int>(bot => bot.GetID()).ToArray());
+            serializer.WriteKeyValue<string>("uid", obj.GetUserID());
         }
 
         public override TeamInfo DeserializeJson(DeserializationHelper helper)
@@ -40,7 +43,9 @@ namespace JsonData
                 bots = helper.GetArrayValue("bots", new BotInfo[0]);
             }
 
-            return new TeamInfo(id, name, DateTime.Parse(lastMaintenance), bots, rank, tier);
+            return new TeamInfo(id, name, DateTime.Parse(lastMaintenance), bots, rank, tier, uid);
         }
+
     }
+
 }

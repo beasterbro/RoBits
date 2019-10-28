@@ -8,6 +8,7 @@ using JsonData;
 // Collects and manages necessary information that needs to be taken from the backend to the frontend and vice versa.
 public class DataManager
 {
+
     private static DataManager shared;
 
     private HttpClient api = new HttpClient();
@@ -18,7 +19,6 @@ public class DataManager
 
     private BotInfo[] allBots;
     private TeamInfo[] userTeams;
-
 
     public DataManager()
     {
@@ -93,9 +93,27 @@ public class DataManager
         if (botsResponse.IsSuccessStatusCode && teamsResponse.IsSuccessStatusCode)
         {
             allBots = JsonUtils.DeserializeArray<BotInfo>(await botsResponse.Content.ReadAsStringAsync());
-            userTeams = JsonUtils.DeserializeArray<TeamInfo>(await teamsResponse.Content.ReadAsStringAsync(),
-                new TeamConverter());
+            userTeams = JsonUtils.DeserializeArray<TeamInfo>(await teamsResponse.Content.ReadAsStringAsync());
+
+            foreach (TeamInfo team in userTeams)
+            {
+                await team.FetchUserInfo();
+            }
         }
+    }
+
+    public async Task<UserInfo> FetchUser(string uid)
+    {
+        if (uid == currentUser.GetID()) return currentUser;
+
+        HttpResponseMessage response = await api.GetAsync("/api/user/" + uid);
+
+        if (response.IsSuccessStatusCode)
+        {
+            return JsonUtils.DeserializeObject<UserInfo>(await response.Content.ReadAsStringAsync());
+        }
+
+        return null;
     }
 
     public UserInfo GetCurrentUser()
@@ -186,7 +204,14 @@ public class DataManager
 
         if (response.IsSuccessStatusCode)
         {
-            return JsonUtils.DeserializeArray<TeamInfo>(await response.Content.ReadAsStringAsync());
+            TeamInfo[] teams = JsonUtils.DeserializeArray<TeamInfo>(await response.Content.ReadAsStringAsync());
+
+            foreach (TeamInfo team in teams)
+            {
+                await team.FetchUserInfo();
+            }
+
+            return teams;
         }
 
         return null;
@@ -201,4 +226,5 @@ public class DataManager
 
         return null;
     }
+
 }

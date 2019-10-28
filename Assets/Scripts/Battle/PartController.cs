@@ -14,8 +14,10 @@ public abstract class PartController : MonoBehaviour
 
         try
         {
-            GameObject obj = Instantiate(Resources.Load("Battle/" + stripped)) as GameObject;
-            return obj.GetComponent<PartController>();
+            GameObject obj = Instantiate(Resources.Load<GameObject>("Battle/" + stripped));
+            PartController controller = obj.GetComponent<PartController>();
+            controller.info = info;
+            return controller;
         }
         catch (ArgumentException exc)
         {
@@ -29,9 +31,18 @@ public abstract class PartController : MonoBehaviour
 
     public virtual void Position()
     {
+        gameObject.transform.parent = bot.transform;
         gameObject.transform.localPosition = Vector3.zero;
     }
 
-    public abstract bool IsActor();
+    public void Dim()
+    {
+        var renderer = GetComponent<SpriteRenderer>();
+        if (renderer == null) return;
+
+        var spriteColor = renderer.color;
+        spriteColor.a = 0.2f;
+        renderer.color = spriteColor;
+    }
 
 }

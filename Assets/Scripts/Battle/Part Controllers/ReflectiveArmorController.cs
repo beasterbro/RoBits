@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class ReflectiveArmorController : ActorPartController
+public class ReflectiveArmorController : ArmorController
 {
 
     public float maxEnergy = 30f;
@@ -17,14 +17,7 @@ public class ReflectiveArmorController : ActorPartController
         canReflect = true;
     }
 
-    public override void Position()
-    {
-        gameObject.transform.localPosition = Vector3.forward;
-    }
-
-    public override void Act() { }
-
-    public void TakeDamange(float amount)
+    public override void TakeDamage(float amount)
     {
         currentEnergy -= amount;
 

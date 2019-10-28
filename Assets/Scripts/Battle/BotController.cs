@@ -1,70 +1,124 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class BotController : MonoBehaviour
 {
-    [HideInInspector] private TeamInfo team;
 
-    // TODO: Reorganize all these nonsense fields & methods
-    public float MAX_HEALTH = 100.0f;
+    private TeamInfo team;
+
+    public float maxHealth = 100.0f;
     [HideInInspector] public float currentHealth;
-    [HideInInspector] public bool isDead = false;
+    [HideInInspector] public bool isDead;
 
-    public bool controlsEnabled;
-
-    public Transform[] weaponLocations;
-
-    public float movementSpeed;
-    public float turningSpeed;
+    private bool actionsEnabled;
 
     [HideInInspector] public BotInfo info;
 
     [HideInInspector] public List<PartController> parts = new List<PartController>();
-    private List<SensorPartController> sensors = new List<SensorPartController>();
-    private List<ActorPartController> actors = new List<ActorPartController>();
+    private readonly List<SensorPartController> sensors = new List<SensorPartController>();
 
     [HideInInspector] public Transform target;
 
-    private List<Behavior> behaviors = new List<Behavior>();
-    // actions
-    // triggers
-
-    private Rigidbody2D rigidbody;
-    private float movementValue = 0f;
-    private float turningValue = 0f;
+    private readonly List<Behavior> behaviors = new List<Behavior>();
 
     private Behavior activeBehavior;
+
+    public void LoadInfo(BotInfo botInfo)
+    {
+        info = botInfo;
+        LoadParts();
+    }
 
     public void LoadInfo(BotInfo botInfo, TeamInfo teamInfo)
     {
         team = teamInfo;
-        info = botInfo;
+        LoadInfo(botInfo);
 
-        LoadParts();
-
-        if (parts.Count > 1)
+        List<GunController> guns = new List<GunController>();
+        parts.ForEach(part =>
         {
-            ProximitySensor proxSensor = sensors[0] as ProximitySensor;
-            GunController gun = actors[0] as GunController;
+            if (part is GunController gun) guns.Add(gun);
+        });
 
-            behaviors.Add(new Behavior(this, proxSensor.OpponentIsInRange, () =>
+        ProximitySensor proxSensor = sensors.Find(part => part is ProximitySensor) as ProximitySensor;
+        WheelsController wheels = parts.Find(part => part is WheelsController) as WheelsController;
+
+        if (teamInfo.GetUserID() == "lmp122")
+        {
+            if (botInfo.GetID() < 2)
             {
-                gun.FocusOn(proxSensor.GetNearestOpponent().transform);
-                gun.Act();
-
-                if (!proxSensor.ShouldMoveTowardsNearestOpponent())
+                behaviors.Add(new Behavior(this, proxSensor.OpponentIsInRange, () =>
                 {
-                    movementValue = 0f;
-                }
-            }));
+                    for (var i = 0; i < guns.Count; i++)    
+                    {
+                        BotController opponent = proxSensor.GetNthOpponent(i);
+                        if (opponent != null)
+                        {
+                            guns[i].FocusOn(opponent.gameObject.transform);
+                            guns[i].Fire();
+                        }
+                    }
 
-            behaviors.Add(Behavior.BasicOffense(this));
+                    if (!proxSensor.ShouldMoveTowardsNearestOpponent())
+                    {
+                        wheels.SetForward(0f);
+                    }
+                }));
+            }
+        }
+        else if (teamInfo.GetUserID() == "axs1477")
+        {
+            if (botInfo.GetID() == 0)
+            {
+                proxSensor.maxRange = 10;
+
+                behaviors.Add(new Behavior(this, proxSensor.OpponentIsInRange, () =>
+                {
+                    for (var i = 0; i < guns.Count; i++)
+                    {
+                        BotController opponent = proxSensor.GetNthOpponent(i);
+                        if (opponent != null)
+                        {
+                            guns[i].FocusOn(opponent.gameObject.transform);
+                            guns[i].Fire();
+                        }
+                    }
+                }));
+            }
+            else if (botInfo.GetID() == 1)
+            {
+                behaviors.Add(new Behavior(this, proxSensor.OpponentIsInRange, () =>
+                {
+                    for (var i = 0; i < guns.Count; i++)
+                    {
+                        BotController opponent = proxSensor.GetNthOpponent(i);
+                        if (opponent != null)
+                        {
+                            guns[i].FocusOn(opponent.gameObject.transform);
+                            guns[i].Fire();
+                        }
+                    }
+
+                    if (!proxSensor.ShouldMoveTowardsNearestOpponent())
+                    {
+                        wheels.SetForward(0f);
+                    }
+                }));
+            }
+        }
+
+        if (wheels != null)
+        {
+            behaviors.Add(Behavior.BasicOffense(this, wheels));
         }
     }
 
     private void LoadParts()
     {
+        List<GunController> guns = new List<GunController>();
+
         foreach (PartInfo partInfo in info.GetEquippedParts())
         {
             PartController partController = PartController.ControllerForPart(partInfo);
@@ -75,39 +129,46 @@ public class BotController : MonoBehaviour
                 partController.Setup();
                 partController.Position();
                 parts.Add(partController);
+
+                if (partController is SensorPartController sensor) sensors.Add(sensor);
+                else if (partController is GunController gun) guns.Add(gun);
             }
         }
 
-        foreach (PartController part in parts)
+        if (guns.Count > 1)
         {
-            if (part is SensorPartController sensor) sensors.Add(sensor);
-            else if (part is ActorPartController actor) actors.Add(actor);
-        }
+            float distance = 0.42f;
+            float rotationInterval = 360f / guns.Count;
+            float startingRotation = rotationInterval / 2f;
 
-        int numWeapons = 0;
-        foreach (PartController controller in parts)
-        {
-            if (numWeapons == weaponLocations.Length) break;
-            if (controller is GunController gun)
+            for (var i = 0; i < guns.Count; i++)
             {
-                gun.Position(weaponLocations[numWeapons++]);
+                float rotation = startingRotation + (i * rotationInterval);
+                GameObject empty = new GameObject();
+                empty.transform.parent = gameObject.transform;
+                empty.transform.localPosition =
+                    new Vector3(Mathf.Cos(rotation * Mathf.PI / 180f) * distance,
+                        Mathf.Sin(rotation * Mathf.PI / 180f) * distance, -1f);
+                empty.transform.localRotation = Quaternion.Euler(0f, 0f, rotation);
+
+                guns[i].Position(empty.transform);
+                Destroy(empty);
             }
         }
     }
 
-    void Start()
+    private void Start()
     {
-        rigidbody = GetComponent<Rigidbody2D>();
-        currentHealth = MAX_HEALTH;
+        currentHealth = maxHealth;
     }
 
-    void MakeObservations()
+    private void MakeObservations()
     {
-        foreach (SensorPartController sensor in sensors)
-            sensor.Observe();
+        foreach (var sensor in sensors)
+            sensor.MakeObservations();
     }
 
-    void PickActiveBehavior()
+    private void PickActiveBehavior()
     {
         foreach (Behavior behavior in behaviors)
         {
@@ -119,41 +180,20 @@ public class BotController : MonoBehaviour
         }
     }
 
-    void Update()
+    private void Update()
     {
+        if (!actionsEnabled) return;
+
         activeBehavior = null;
         MakeObservations();
         PickActiveBehavior();
-
-        if (!controlsEnabled) return;
-
-        if (Input.GetButtonDown("Fire1"))
-        {
-            Fire();
-        }
     }
 
     private void FixedUpdate()
     {
+        if (!actionsEnabled) return;
+
         activeBehavior?.Execute();
-
-        float turn = turningValue * turningSpeed * Time.deltaTime;
-        rigidbody.MoveRotation(rigidbody.rotation - turn);
-
-        float movementDistance = movementValue * movementSpeed * Time.deltaTime;
-        float movementX = (float) Math.Cos(rigidbody.rotation * Math.PI / 180) * movementDistance;
-        float movementY = (float) Math.Sin(rigidbody.rotation * Math.PI / 180) * movementDistance;
-
-        Vector2 movement = new Vector2(movementX, movementY);
-        rigidbody.MovePosition(rigidbody.position + movement);
-    }
-
-    void Fire()
-    {
-        foreach (ActorPartController actor in actors)
-        {
-            actor.Act();
-        }
     }
 
     public void SetTarget(Transform target)
@@ -172,19 +212,22 @@ public class BotController : MonoBehaviour
 
     private void Die()
     {
+        actionsEnabled = false;
+
         currentHealth = 0;
         isDead = true;
 
+        Vector3 newPosition = gameObject.transform.position;
+        newPosition.z = 10;
+        gameObject.transform.position = newPosition;
+
         // Dim sprite
-        SpriteRenderer renderer = GetComponent<SpriteRenderer>();
-        Color spriteColor = renderer.color;
+        var renderer = GetComponent<SpriteRenderer>();
+        var spriteColor = renderer.color;
         spriteColor.a = 0.2f;
         renderer.color = spriteColor;
-    }
 
-    public void SetMovementValue(float amount)
-    {
-        movementValue = amount;
+        parts.ForEach(part => part.Dim());
     }
 
     public bool OtherIsEnemey(BotController other)
@@ -192,7 +235,36 @@ public class BotController : MonoBehaviour
         return !other.team.Equals(team);
     }
 
-    // PerformAction
+    public void SetEnabled(bool enabled)
+    {
+        actionsEnabled = enabled;
+    }
 
-    // OnTrigger
+    public bool IsEnabled()
+    {
+        return actionsEnabled;
+    }
+
+    public GameObject BuildPreview()
+    {
+        GameObject bot = Instantiate(Resources.Load<GameObject>("Battle/Images/BasicBot"));
+
+        foreach (PartController part in parts)
+        {
+            try
+            {
+                GameObject partObj =
+                    Instantiate(Resources.Load<GameObject>("Battle/Images/" + part.info.GetResourceName()),
+                        bot.transform);
+
+                partObj.transform.localPosition = part.transform.localPosition;
+                partObj.transform.localRotation = part.transform.localRotation;
+                partObj.transform.localScale = part.transform.localScale;
+            }
+            catch (ArgumentException exc) { }
+        }
+
+        return bot;
+    }
+
 }

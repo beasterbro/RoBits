@@ -2,8 +2,9 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class GunController : ActorPartController
+public class GunController : PartController
 {
+
     public Transform fireTransform;
 
     public Rigidbody2D bullet;
@@ -13,9 +14,12 @@ public class GunController : ActorPartController
 
     private bool canFire = true;
 
-    public override bool IsActor()
+    public override void Position()
     {
-        return true;
+        base.Position();
+        Vector3 position = transform.position;
+        position.z = -1f;
+        transform.SetPositionAndRotation(position, transform.rotation);
     }
 
     public void Position(Transform location)
@@ -32,7 +36,7 @@ public class GunController : ActorPartController
         }
     }
 
-    public override void Act()
+    public void Fire()
     {
         if (!canFire) return;
 
@@ -53,7 +57,18 @@ public class GunController : ActorPartController
 
     public void FocusOn(Transform target)
     {
-        transform.right = target.position - transform.position;
+        Vector2 diff = target.position - transform.position;
+        float angle = 180f * Mathf.Atan(Mathf.Abs(diff.y / diff.x)) / Mathf.PI;
+
+        if (diff.x == 0) angle = 90f * Mathf.Sign(diff.y);
+        else if (diff.y == 0 && diff.x < 0) angle = 180;
+        else
+        {
+            if (diff.x < 0) angle = 180 - angle;
+            if (diff.y < 0) angle = -angle;
+        }
+
+        transform.rotation = Quaternion.Euler(0f, 0f, angle);
     }
 
     private IEnumerator DelayNextShot()
@@ -62,4 +77,5 @@ public class GunController : ActorPartController
         yield return new WaitForSeconds(downtime);
         canFire = true;
     }
+
 }

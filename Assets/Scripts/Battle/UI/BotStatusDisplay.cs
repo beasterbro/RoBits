@@ -7,19 +7,31 @@ using UnityEngine.UI;
 public class BotStatusDisplay : MonoBehaviour
 {
 
-    public BotController bot;
+    static Color HEALTHY_COLOR = Color.green;
+    static Color DEAD_COLOR = Color.red;
+
+    private BotController bot;
     public GameObject previewPanel;
     public Slider healthBar;
+    public Image healthImage;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    private GameObject previewBot;
 
-    // Update is called once per frame
     void Update()
     {
-        healthBar.value = bot.currentHealth / bot.MAX_HEALTH;
+        healthBar.value = bot.currentHealth / bot.maxHealth;
+        healthImage.color = Color.Lerp(DEAD_COLOR, HEALTHY_COLOR, healthBar.value);
     }
+
+    public void LoadBot(BotController bot)
+    {
+        this.bot = bot;
+        previewBot = bot.BuildPreview();
+
+        previewBot.transform.parent = previewPanel.transform;
+        previewBot.transform.localPosition = Vector3.zero;
+        previewBot.transform.localRotation = bot.gameObject.transform.rotation;
+        previewBot.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+    }
+
 }

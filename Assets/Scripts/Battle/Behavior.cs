@@ -24,9 +24,9 @@ public class Behavior
         executionFunction.Invoke();
     }
 
-    public static Behavior BasicOffense(BotController bot)
+    public static Behavior BasicOffense(BotController bot, WheelsController wheels)
     {
-        return new Behavior(bot, () => true, () => { bot.SetMovementValue(0.3f); });
+        return new Behavior(bot, () => !bot.isDead, () => wheels.SetForward(1f));
     }
 
 }

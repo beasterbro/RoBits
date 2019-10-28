@@ -36,10 +36,11 @@ public class Bullet : MonoBehaviour
             if (armor.CanReflect())
             {
                 Rigidbody2D body = GetComponent<Rigidbody2D>();
+                body.rotation += 180f;
                 body.velocity = -body.velocity;
                 isRebound = true;
 
-                armor.TakeDamange(damage);
+                armor.TakeDamage(damage);
             }
         }
     }

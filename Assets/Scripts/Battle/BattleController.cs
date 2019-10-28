@@ -1,9 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class BattleController : MonoBehaviour
 {
+
+    private static BattleController currentInstance;
+
     public GameObject team1HUD;
     public GameObject team2HUD;
 
@@ -15,11 +18,23 @@ public class BattleController : MonoBehaviour
     private Transform[][] locations = new Transform[2][];
 
     private TeamInfo[] teams = new TeamInfo[2];
+    private int winner;
 
     private List<BotController>[] bots = new List<BotController>[2];
 
+    private bool allLoaded = false;
+
+    public static BattleController GetShared()
+    {
+        if (currentInstance == null) currentInstance = FindObjectOfType<BattleController>();
+
+        return currentInstance;
+    }
+
     async void Start()
     {
+        winner = -1;
+
         DataManager.GetManager().EstablishAuth("lucaspopp0@gmail.com");
         await DataManager.GetManager().FetchInitialData();
 
@@ -34,6 +49,9 @@ public class BattleController : MonoBehaviour
 
         LoadTeam(0);
         LoadTeam(1);
+
+        allLoaded = true;
+        SetAllBotsEnabled(true);
     }
 
     private void LoadTeam(int teamIndex)
@@ -61,6 +79,33 @@ public class BattleController : MonoBehaviour
         GameObject statusDisplayObject =
             Instantiate(Resources.Load<GameObject>("Battle/BotStatusDisplay"), huds[teamIndex].transform);
         BotStatusDisplay display = statusDisplayObject.GetComponent<BotStatusDisplay>();
-        display.bot = controller;
+        display.LoadBot(controller);
     }
+
+    private void Update()
+    {
+        if (!allLoaded) return;
+
+        for (int i = 0; i <= 1; i++)
+        {
+            if (!bots[i].All(bot => bot.isDead)) continue;
+
+            winner = 1 - i;
+            break;
+        }
+
+        if (winner != -1) SetAllBotsEnabled(false);
+    }
+
+    private void SetAllBotsEnabled(bool enabled)
+    {
+        foreach (var team in bots)
+            team.ForEach(bot => bot.SetEnabled(enabled));
+    }
+
+    public IEnumerable<BotController> GetAllBots()
+    {
+        return bots[0].Concat(bots[1]);
+    }
+
 }

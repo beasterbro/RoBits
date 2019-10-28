@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 
 [JsonConverter(typeof(JsonData.BotConverter))]
@@ -29,6 +30,11 @@ public class BotInfo
     public string GetName()
     {
         return name;
+    }
+
+    public string GetResourceName()
+    {
+        return Regex.Replace(name, "[\\W]", "");
     }
 
     public void SetName(string name)
