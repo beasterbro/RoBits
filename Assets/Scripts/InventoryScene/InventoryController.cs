@@ -192,7 +192,7 @@ public class InventoryController : MonoBehaviour
     
     private void SwapItems(ItemSlot dropItemSlot)
     {
-        Item dragEquipItem = dropItemSlot.Item;
+        Item dragEquipItem = draggedItemSlot.Item;
         Item dropEquipItem = dropItemSlot.Item;
         
         if (dropItemSlot is EquipmentSlot)
