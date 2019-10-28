@@ -32,11 +32,6 @@ public class BotInfo
         return name;
     }
 
-    public string GetResourceName()
-    {
-        return Regex.Replace(name, "[\\W]", "");
-    }
-
     public void SetName(string name)
     {
         this.name = name;
