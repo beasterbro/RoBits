@@ -99,9 +99,9 @@ public class InventoryController : MonoBehaviour
 
     private void Drop(ItemSlot dropItemSlot)
     {
-     
+        if (draggedItemSlot == null) return;
         //TODO: Work on can receive method so that empty slots can be considered
-       // if (dropItemSlot.CanReceiveItem(draggedItemSlot.Item) && draggedItemSlot.CanReceiveItem(dropItemSlot.Item))
+        if (dropItemSlot.CanReceiveItem(draggedItemSlot.Item) && draggedItemSlot.CanReceiveItem(dropItemSlot.Item))
         {
             SwapItems(dropItemSlot);
         }
@@ -194,13 +194,19 @@ public class InventoryController : MonoBehaviour
     {
         Item dragEquipItem = draggedItemSlot.Item;
         Item dropEquipItem = dropItemSlot.Item;
-        
-        if (dropItemSlot is EquipmentSlot)
+        if (draggedItemSlot is EquipmentSlot && dropItemSlot is EquipmentSlot)
+        {
+            Item tempItem = draggedItemSlot.Item;
+            draggedItemSlot.Item = dropItemSlot.Item;
+            dropItemSlot.Item = tempItem;
+            return;
+        }
+        if (draggedItemSlot is EquipmentSlot)
         {
             if (dragEquipItem != null) Equip(dragEquipItem);
             if (dropEquipItem != null) Unequip(dropEquipItem);
         }
-        if (draggedItemSlot is EquipmentSlot)
+        if (dropItemSlot is EquipmentSlot)
         {
             if (dragEquipItem != null) Unequip(dragEquipItem);
             if (dropEquipItem != null) Equip(dropEquipItem);
@@ -298,6 +304,8 @@ public class InventoryController : MonoBehaviour
         //Temp vars for testing
         var item1 = new InventoryItem(treads,1);
         var item2 = new InventoryItem(baseBody,2);
+        var item3 = new InventoryItem(gun,1);
+        var  item4 = new InventoryItem(tankGun,1);
         
         
         var allParts = new List<PartInfo>(new PartInfo[]{tankGun,treads,armor});
@@ -306,7 +314,7 @@ public class InventoryController : MonoBehaviour
         
         
         var bot0 = new BotInfo(0,"bot0",0,allParts,baseBody);
-        var bot1 = new BotInfo(1,"bot1",1,allParts,baseBody);
+        var bot1 = new BotInfo(1,"bot1",1,allParts2,baseBody);
         var bot2 = new BotInfo(2,"bot2",2,allParts3,baseBody);
         
         
@@ -315,7 +323,7 @@ public class InventoryController : MonoBehaviour
         botTeam.Add(bot2);
         userBots = botTeam;
         //userInventory = DataManager.instance().GetUserInventory();
-        userInventory = new List<InventoryItem>{item1,item2};
+        userInventory = new List<InventoryItem>{item1,item2,item3,item4};
         currentBot = userBots[0];
         UpdateInventory();
         UpdateEquipment();
