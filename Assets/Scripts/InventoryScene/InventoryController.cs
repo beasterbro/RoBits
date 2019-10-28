@@ -20,7 +20,6 @@ public class InventoryController : MonoBehaviour
 
     //Displaying info to user
     [SerializeField] ItemToolTip itemToolTip;
-    [SerializeField] Text testText;
     [SerializeField] Text botInfoText;
     
     //Managing user input
@@ -78,7 +77,12 @@ public class InventoryController : MonoBehaviour
         {
             draggedItemSlot = itemSlot;
             draggableItem.sprite = itemSlot.Item.Icon;
-            draggableItem.transform.position = Input.mousePosition;
+            
+            var v3 = Input.mousePosition;
+            v3.z = 1;
+            v3 = Camera.main.ScreenToWorldPoint(v3);
+            draggableItem.transform.position = v3;
+            
             draggableItem.gameObject.SetActive(true);
         }
     }
@@ -91,16 +95,18 @@ public class InventoryController : MonoBehaviour
 
     private void Drag(ItemSlot itemSlot)
     {
-     
-        draggableItem.transform.position = Input.mousePosition;
+        var v3 = Input.mousePosition;
+        v3.z = 1;
+        v3 = Camera.main.ScreenToWorldPoint(v3);
+        draggableItem.transform.position = v3;
             
         
     }
 
     private void Drop(ItemSlot dropItemSlot)
     {
-        if (draggedItemSlot == null) return;
-        //TODO: Work on can receive method so that empty slots can be considered
+        if (dropItemSlot == null) return;
+        //TODO: Fix Dupe with dropping item out and then swapping bots and getting new item
         if (dropItemSlot.CanReceiveItem(draggedItemSlot.Item) && draggedItemSlot.CanReceiveItem(dropItemSlot.Item))
         {
             SwapItems(dropItemSlot);
@@ -194,6 +200,7 @@ public class InventoryController : MonoBehaviour
     {
         Item dragEquipItem = draggedItemSlot.Item;
         Item dropEquipItem = dropItemSlot.Item;
+        
         if (draggedItemSlot is EquipmentSlot && dropItemSlot is EquipmentSlot)
         {
             Item tempItem = draggedItemSlot.Item;
@@ -258,6 +265,7 @@ public class InventoryController : MonoBehaviour
         //for testing purposes of setting the actively edited bot
         // currentBot = DataManager.instance().GetAllBots()[botValue];
         currentBot = userBots[botValue];
+        botInfoText.text = currentBot.GetName();
         UpdateEquipment();
     }
 
@@ -313,9 +321,9 @@ public class InventoryController : MonoBehaviour
         var allParts3 = new List<PartInfo>(new PartInfo[]{tankGun,gun});
         
         
-        var bot0 = new BotInfo(0,"bot0",0,allParts,baseBody);
-        var bot1 = new BotInfo(1,"bot1",1,allParts2,baseBody);
-        var bot2 = new BotInfo(2,"bot2",2,allParts3,baseBody);
+        var bot0 = new BotInfo(0,"OmegaBot",0,allParts,baseBody);
+        var bot1 = new BotInfo(1,"MiniBot",1,allParts2,baseBody);
+        var bot2 = new BotInfo(2,"MadBot",2,allParts3,baseBody);
         
         
         botTeam.Add(bot0);
@@ -324,7 +332,7 @@ public class InventoryController : MonoBehaviour
         userBots = botTeam;
         //userInventory = DataManager.instance().GetUserInventory();
         userInventory = new List<InventoryItem>{item1,item2,item3,item4};
-        currentBot = userBots[0];
+        SetActiveBot(0);
         UpdateInventory();
         UpdateEquipment();
         
