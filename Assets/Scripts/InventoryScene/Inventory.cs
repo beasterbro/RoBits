@@ -66,7 +66,7 @@ public class Inventory : MonoBehaviour
            
             // if (itemSlots[i].PartType == item.type)
             //if (itemSlots[i].Item == null)
-            if (slot.CanReceiveItem(item))
+            if (slot.CanReceiveItem(item) && slot.Item == null)
             {
                 slot.Item = item;
                 return true;
