@@ -68,6 +68,7 @@ public class SlotInputComponent : BlockComponent
     {
         if (this.IsFull())
         {
+            // TODO: drop should also reset if dropped doesn't match type.
             DragAndDropController.Instance().ResetDrop();
         }
         else

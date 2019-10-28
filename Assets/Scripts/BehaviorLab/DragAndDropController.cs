@@ -9,6 +9,8 @@ public class DragAndDropController : MonoBehaviour
     private static DragAndDropController _dndCtrl;
     public static DragAndDropController Instance() { return _dndCtrl; }
     public static bool IsPresent() { return _dndCtrl != null; }
+    public static bool IsAvailable() { return IsPresent() && !Instance().IsHolding(); }
+    public static bool IsOccupied() { return IsPresent() && Instance().IsHolding(); }
 
     [Tooltip("Disables the ability to drag items. Stops dragging, grabbing, and dropping. Useful for pausing.")]
     [SerializeField] private bool isEnabled = true;
@@ -120,6 +122,7 @@ public class DragAndDropController : MonoBehaviour
             }
             held = block;
             held.GetComponent<Collider2D>().enabled = false;
+            held.SetContainer(null);
 
             Vector3 mousePos = MousePosition();
             originalOffset = block.transform.position - mousePos;
