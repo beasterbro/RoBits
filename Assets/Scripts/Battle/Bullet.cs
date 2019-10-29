@@ -8,12 +8,14 @@ public class Bullet : MonoBehaviour
     public float maxLifetime = 2f;
 
     private bool isRebound = false;
+    private Rigidbody2D body;
 
     [HideInInspector] public BotController firedBy;
 
     private void Start()
     {
         Destroy(gameObject, maxLifetime);
+        body = gameObject.GetComponent<Rigidbody2D>();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -28,21 +30,23 @@ public class Bullet : MonoBehaviour
             return;
         }
 
-        ReflectiveArmorController armor = other.GetComponent<ReflectiveArmorController>();
-        if (armor != null)
+        ArmorController armor = other.GetComponent<ArmorController>();
+        if (armor != null && !ShouldIgnoreCollision(armor))
         {
-            if (!isRebound && armor.bot.Equals(firedBy)) return;
-
-            if (armor.CanReflect())
-            {
-                Rigidbody2D body = GetComponent<Rigidbody2D>();
-                body.rotation += 180f;
-                body.velocity = -body.velocity;
-                isRebound = true;
-
-                armor.TakeDamage(damage);
-            }
+            armor.CollideWith(this);
         }
+    }
+
+    private bool ShouldIgnoreCollision(ArmorController withArmor)
+    {
+        return withArmor.bot.Equals(firedBy) && !isRebound;
+    }
+
+    public void Rebound()
+    {
+        body.rotation += 180f;
+        body.velocity *= -1;
+        isRebound = true;
     }
 
 }

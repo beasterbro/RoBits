@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BattleController : MonoBehaviour
 {
@@ -9,6 +11,7 @@ public class BattleController : MonoBehaviour
 
     public GameObject team1HUD;
     public GameObject team2HUD;
+    public Text winnerText;
 
     private GameObject[] huds = new GameObject[2];
 
@@ -34,6 +37,7 @@ public class BattleController : MonoBehaviour
     async void Start()
     {
         winner = -1;
+        winnerText.text = "Loading...";
 
         DataManager.GetManager().EstablishAuth("lucaspopp0@gmail.com");
         await DataManager.GetManager().FetchInitialData();
@@ -50,7 +54,12 @@ public class BattleController : MonoBehaviour
         LoadTeam(0);
         LoadTeam(1);
 
+        SetAllBotsEnabled(false);
+
         allLoaded = true;
+        winnerText.text = "START!";
+        await Task.Delay(1000);
+        winnerText.gameObject.SetActive(false);
         SetAllBotsEnabled(true);
     }
 
@@ -94,7 +103,12 @@ public class BattleController : MonoBehaviour
             break;
         }
 
-        if (winner != -1) SetAllBotsEnabled(false);
+        if (winner != -1)
+        {
+            SetAllBotsEnabled(false);
+            winnerText.text = "Winner: " + teams[winner].GetUserID();
+            winnerText.gameObject.SetActive(true);
+        }
     }
 
     private void SetAllBotsEnabled(bool enabled)

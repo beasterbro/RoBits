@@ -7,6 +7,7 @@ public abstract class PartController : MonoBehaviour
 
     [HideInInspector] public BotController bot;
     [HideInInspector] public PartInfo info;
+    private SpriteRenderer spriteRenderer;
 
     public static PartController ControllerForPart(PartInfo info)
     {
@@ -27,6 +28,11 @@ public abstract class PartController : MonoBehaviour
         return null;
     }
 
+    private void Start()
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
     public virtual void Setup() { }
 
     public virtual void Position()
@@ -35,14 +41,25 @@ public abstract class PartController : MonoBehaviour
         gameObject.transform.localPosition = Vector3.zero;
     }
 
+    public void Undim()
+    {
+        if (spriteRenderer == null) return;
+        var spriteColor = spriteRenderer.color;
+        spriteColor.a = 1f;
+        spriteRenderer.color = spriteColor;
+    }
+
     public void Dim()
     {
-        var renderer = GetComponent<SpriteRenderer>();
-        if (renderer == null) return;
-
-        var spriteColor = renderer.color;
+        if (spriteRenderer == null) return;
+        var spriteColor = spriteRenderer.color;
         spriteColor.a = 0.2f;
-        renderer.color = spriteColor;
+        spriteRenderer.color = spriteColor;
+    }
+
+    public bool HasSprite()
+    {
+        return GetComponent<SpriteRenderer>() != null;
     }
 
 }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using Extensions;
 
 public class WheelsController : MovementController
 {
@@ -20,11 +21,13 @@ public class WheelsController : MovementController
 
     private void FixedUpdate()
     {
+        if (!bot.IsEnabled()) return;
+
         botBody.MoveRotation(botBody.rotation - (turningValue * turningSpeed * Time.deltaTime));
 
-        float dm = forwardValue * movementSpeed * Time.deltaTime;
-        float angle = botBody.rotation * Mathf.PI / 180;
-        botBody.MovePosition(botBody.position + new Vector2(Mathf.Cos(angle) * dm, Mathf.Sin(angle) * dm));
+        var dm = forwardValue * movementSpeed * Time.deltaTime;
+        var angle = botBody.rotation;
+        botBody.MovePosition(botBody.position + VectorHelper.MakeVector(dm, angle));
     }
 
 }

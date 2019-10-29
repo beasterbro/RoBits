@@ -109,3 +109,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1dd4afd68aa8944ac8cdc0d211d3fc80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bot: {fileID: 0}
+  protection: 0.05
+  maxEnergy: 30
+  rechargeTime: 3

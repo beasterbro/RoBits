@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ReflectiveArmorController : ArmorController
 {
@@ -17,19 +17,25 @@ public class ReflectiveArmorController : ArmorController
         canReflect = true;
     }
 
-    public override void TakeDamage(float amount)
+    public override void CollideWith(Bullet bullet)
+    {
+        if (canReflect) bullet.Rebound();
+        base.CollideWith(bullet);
+    }
+
+    public override void TakeDamage(float amount, Bullet source)
     {
         currentEnergy -= amount;
 
         if (currentEnergy <= 0 && canReflect)
         {
-            SpriteRenderer renderer = GetComponent<SpriteRenderer>();
-            Color spriteColor = renderer.color;
-            spriteColor.a = 0.2f;
-            renderer.color = spriteColor;
-
+            Dim();
             canReflect = false;
             StartCoroutine(Recharge());
+        }
+        else if (!canReflect)
+        {
+            base.TakeDamage(amount, source);
         }
     }
 
@@ -41,11 +47,7 @@ public class ReflectiveArmorController : ArmorController
             currentEnergy = maxEnergy;
             canReflect = true;
 
-            // Dim sprite
-            SpriteRenderer renderer = GetComponent<SpriteRenderer>();
-            Color spriteColor = renderer.color;
-            spriteColor.a = 1f;
-            renderer.color = spriteColor;
+            Undim();
         }
     }
 
