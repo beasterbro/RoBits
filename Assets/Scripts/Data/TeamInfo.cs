@@ -83,7 +83,7 @@ public class TeamInfo
 
     public async Task<bool> FetchUserInfo()
     {
-        UserInfo result = await DataManager.GetManager().FetchUser(userId);
+        UserInfo result = await DataManager.Instance().FetchUser(userId);
 
         if (result != null)
         {

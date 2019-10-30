@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -33,7 +34,7 @@ public class DataManager
     }
 
     // Returns a reference to the shared instance
-    public static DataManager GetManager()
+    public static DataManager Instance()
     {
         if (shared == null)
         {
@@ -132,13 +133,13 @@ public class DataManager
         return inventory;
     }
 
-    public bool RemoveItemFromUserInventory(PartInfo item)
+    public bool SellPart(PartInfo item)
     {
         // TODO: Implement
         return true;
     }
 
-    public bool AddItemToUserInventory(PartInfo item)
+    public bool PurchasePart(PartInfo item)
     {
         // TODO: Implement
         return true;
@@ -151,11 +152,7 @@ public class DataManager
 
     public PartInfo GetPart(int pid)
     {
-        foreach (PartInfo part in allParts)
-            if (part.GetID() == pid)
-                return part;
-
-        return null;
+        return allParts.First(part => part.GetID() == pid);
     }
 
     public BotInfo[] GetAllBots()
@@ -165,11 +162,7 @@ public class DataManager
 
     public BotInfo GetBot(int bid)
     {
-        foreach (BotInfo bot in allBots)
-            if (bot.GetID() == bid)
-                return bot;
-
-        return null;
+        return allBots.First(bot => bot.GetID() == bid);
     }
 
     public async Task UpdateBot(BotInfo bot)
@@ -185,11 +178,7 @@ public class DataManager
 
     public TeamInfo GetTeam(int tid)
     {
-        foreach (TeamInfo team in userTeams)
-            if (team.GetID() == tid)
-                return team;
-
-        return null;
+        return userTeams.First(team => team.GetID() == tid);
     }
 
     public async Task UpdateTeam(TeamInfo team)

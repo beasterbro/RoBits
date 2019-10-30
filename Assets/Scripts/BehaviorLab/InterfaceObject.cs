@@ -2,26 +2,79 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InterfaceObject : MonoBehaviour
+[AddComponentMenu("Interface Objects/Interface Object")]
+[RequireComponent(typeof(ScaleController))]
+public abstract class InterfaceObject : MonoBehaviour
 {
+    // Note: container should not be changed except when an object is independent of its container
     [SerializeField] private InterfaceObject container;
-    //[SerializeField] private Color color; // Handled by material
+    protected ScaleController scaleController;
+
+    protected virtual void Start()
+    {
+        scaleController = GetComponent<ScaleController>();
+    }
+
+    public InterfaceObject GetContainer()
+    {
+        return container;
+    }
+
+    public void SetContainer(InterfaceObject container)
+    {
+        this.container = container;
+    }
 
     public bool IsTopLevel()
     {
         return this.container == null;
     }
 
-    // Updates the style of the object, without redrawing the whole thing
-    public virtual void UpdateStyle()
+    // TODO: this should be fixed to only give Blocks to drag and drop
+    // Default implementation is to select the top level object
+    protected virtual void OnGrab()
     {
-        // Still don't know what this means
+        if (this.IsTopLevel())
+        {
+            DragAndDropController.Instance().Grab(this);
+        }
+        else
+        {
+            this.container.OnGrab();
+        }
+    }
+
+    // Default implementation is to reset position when dropped on top of another interface object
+    public virtual void OnDrop()
+    {
+        DragAndDropController.Instance().ResetDrop();
+    }
+
+    protected virtual void OnMouseOver()
+    {
+        DragAndDropController.Instance().HoverOn(this);
+    }
+
+    protected virtual void OnMouseExit()
+    {
+        DragAndDropController.Instance().HoverOff(this);
     }
 
     // Updates the object's physical display
+    // Implementations of this SHOULD update the boundary object
     public void Redraw()
     {
+        // no default implementation
+    }
 
+    public Vector2 Scale()
+    {
+        return scaleController != null ? scaleController.Scale() : Vector2.zero;
+    }
+
+    public Boundary Bounds()
+    {
+        return scaleController != null ? scaleController.Bounds() : Boundary.NONE;
     }
 
     // Makes any necessary updates to the object's frame after a state change

@@ -25,9 +25,9 @@ namespace JsonData
             int tier = helper.GetValue<int>("tier", 0);
             Dictionary<string, string> ai = helper.GetValue<Dictionary<string, string>>("ai", new Dictionary<string, string>());
 
-            List<PartInfo> equipment = new List<PartInfo>(partIds.Select<int, PartInfo>(DataManager.GetManager().GetPart));
+            List<PartInfo> equipment = new List<PartInfo>(partIds.Select<int, PartInfo>(DataManager.Instance().GetPart));
             equipment.RemoveAll(p => p == null);
-            PartInfo bodyType = DataManager.GetManager().GetPart(bodyTypeId);
+            PartInfo bodyType = DataManager.Instance().GetPart(bodyTypeId);
 
             return new BotInfo(id, name, tier, equipment, bodyType);
         }

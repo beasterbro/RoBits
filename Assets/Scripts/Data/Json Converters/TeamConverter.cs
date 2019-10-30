@@ -31,10 +31,10 @@ namespace JsonData
 
             BotInfo[] bots;
 
-            if (uid == DataManager.GetManager().GetCurrentUser().GetID())
+            if (uid == DataManager.Instance().GetCurrentUser().GetID())
             {
                 int[] botIds = helper.GetValue<int[]>("bots", new int[0]);
-                List<BotInfo> botList = new List<BotInfo>(botIds.Select(DataManager.GetManager().GetBot));
+                List<BotInfo> botList = new List<BotInfo>(botIds.Select(DataManager.Instance().GetBot));
                 botList.RemoveAll(bot => bot == null);
                 bots = botList.ToArray();
             }

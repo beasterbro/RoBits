@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 public class MainMenu : MonoBehaviour
 {
 
+    //Changes the scene to the battle scene
     public void PlayGame()
     {
         SceneManager.LoadScene(1);
@@ -18,27 +19,22 @@ public class MainMenu : MonoBehaviour
         Debug.Log("Quit");
         Application.Quit();
     }
-    
-    
+
+
     // Start is called before the first frame update
     async void Start()
     {
-        DataManager.GetManager().EstablishAuth("lucaspopp0@gmail.com");
-        await DataManager.GetManager().FetchInitialData();
+        DataManager.Instance().EstablishAuth("lucaspopp0@gmail.com");
+        await DataManager.Instance().FetchInitialData();
 
         Debug.Log("All Parts:");
-        Debug.Log(JsonConvert.SerializeObject(DataManager.GetManager().GetAllParts()));
+        Debug.Log(JsonConvert.SerializeObject(DataManager.Instance().GetAllParts()));
 
         Debug.Log("Inventory:");
-        Debug.Log(JsonConvert.SerializeObject(DataManager.GetManager().GetUserInventory()));
+        Debug.Log(JsonConvert.SerializeObject(DataManager.Instance().GetUserInventory()));
 
         Debug.Log("Teams:");
-        Debug.Log(JsonConvert.SerializeObject(DataManager.GetManager().GetUserTeams()));
+        Debug.Log(JsonConvert.SerializeObject(DataManager.Instance().GetUserTeams()));
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

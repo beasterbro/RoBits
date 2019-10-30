@@ -39,11 +39,11 @@ public class BattleController : MonoBehaviour
         winner = -1;
         winnerText.text = "Loading...";
 
-        DataManager.GetManager().EstablishAuth("lucaspopp0@gmail.com");
-        await DataManager.GetManager().FetchInitialData();
+        DataManager.Instance().EstablishAuth("lucaspopp0@gmail.com");
+        await DataManager.Instance().FetchInitialData();
 
-        teams[0] = DataManager.GetManager().GetTeam(0);
-        teams[1] = await DataManager.GetManager().GetOtherUserTeam("axs1477", 0);
+        teams[0] = DataManager.Instance().GetTeam(0);
+        teams[1] = await DataManager.Instance().GetOtherUserTeam("axs1477", 0);
 
         huds[0] = team1HUD;
         huds[1] = team2HUD;
