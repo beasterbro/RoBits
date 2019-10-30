@@ -272,7 +272,7 @@ public class InventoryController : MonoBehaviour
     {
         //TODO: Current Implementation bug, hard wired bot parts reset upon switch
         //for testing purposes of setting the actively edited bot
-        // currentBot = DataManager.instance().GetAllBots()[botValue];
+        // currentBot = DataManager.Instance().GetAllBots()[botValue];
         currentBot = userBots[botValue];
         botInfoText.text = currentBot.GetName();
         UpdateEquipment();
@@ -340,7 +340,7 @@ public class InventoryController : MonoBehaviour
         botTeam.Add(bot1);
         botTeam.Add(bot2);
         userBots = botTeam;
-        //userInventory = DataManager.instance().GetUserInventory();
+        //userInventory = DataManager.Instance().GetUserInventory();
         userInventory = new List<InventoryItem>{item1,item2,item3,item4};
         SetActiveBot(0);
         UpdateInventory();

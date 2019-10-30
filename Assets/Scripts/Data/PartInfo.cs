@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using Newtonsoft.Json;
 
@@ -16,7 +17,8 @@ public class PartInfo
     private Dictionary<string, double> attributes;
     private Sprite sprite;
 
-    public PartInfo(int id, string name, string description, PartType type, int price, int levelToUnlock, bool isActor, Dictionary<string, double> attributes)
+    public PartInfo(int id, string name, string description, PartType type, int price, int levelToUnlock, bool isActor,
+        Dictionary<string, double> attributes)
     {
         this.id = id;
         this.name = name;
@@ -36,6 +38,11 @@ public class PartInfo
     public string GetName()
     {
         return name;
+    }
+
+    public string GetResourceName()
+    {
+        return Regex.Replace(name, "[\\W]", "");
     }
 
     public string GetDescription()

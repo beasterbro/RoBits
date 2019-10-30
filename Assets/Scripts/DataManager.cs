@@ -15,12 +15,11 @@ public class DataManager
     private HttpClient api = new HttpClient();
 
     private UserInfo currentUser;
-     PartInfo[] allParts;
-    private List<InventoryItem> inventory_;
+    private PartInfo[] allParts;
+    private List<InventoryItem> inventory;
 
     private BotInfo[] allBots;
     private TeamInfo[] userTeams;
-
 
     public DataManager()
     {
@@ -35,12 +34,13 @@ public class DataManager
     }
 
     // Returns a reference to the shared instance
-    public static DataManager instance()
+    public static DataManager Instance()
     {
         if (shared == null)
         {
             shared = new DataManager();
         }
+
         return shared;
     }
 
@@ -59,8 +59,7 @@ public class DataManager
 
         if (response.IsSuccessStatusCode)
         {
-            string json = await response.Content.ReadAsStringAsync();
-            currentUser = JsonUtils.DeserializeObject<UserInfo>(json);
+            currentUser = JsonUtils.DeserializeObject<UserInfo>(await response.Content.ReadAsStringAsync());
         }
     }
 
@@ -81,7 +80,8 @@ public class DataManager
 
         if (response.IsSuccessStatusCode)
         {
-            inventory_ = new List<InventoryItem>(JsonUtils.DeserializeArray<InventoryItem>(await response.Content.ReadAsStringAsync()));
+            inventory = new List<InventoryItem>(
+                JsonUtils.DeserializeArray<InventoryItem>(await response.Content.ReadAsStringAsync()));
         }
     }
 
@@ -95,7 +95,26 @@ public class DataManager
         {
             allBots = JsonUtils.DeserializeArray<BotInfo>(await botsResponse.Content.ReadAsStringAsync());
             userTeams = JsonUtils.DeserializeArray<TeamInfo>(await teamsResponse.Content.ReadAsStringAsync());
+
+            foreach (TeamInfo team in userTeams)
+            {
+                await team.FetchUserInfo();
+            }
         }
+    }
+
+    public async Task<UserInfo> FetchUser(string uid)
+    {
+        if (uid == currentUser.GetID()) return currentUser;
+
+        HttpResponseMessage response = await api.GetAsync("/api/user/" + uid);
+
+        if (response.IsSuccessStatusCode)
+        {
+            return JsonUtils.DeserializeObject<UserInfo>(await response.Content.ReadAsStringAsync());
+        }
+
+        return null;
     }
 
     public UserInfo GetCurrentUser()
@@ -111,7 +130,7 @@ public class DataManager
 
     public List<InventoryItem> GetUserInventory()
     {
-        return inventory_;
+        return inventory;
     }
 
     public bool SellPart(PartInfo item)
@@ -166,6 +185,35 @@ public class DataManager
     {
         HttpContent updateBody = JsonUtils.SerializeObject(team);
         HttpResponseMessage updateResponse = await api.PutAsync("/api/teams/" + team.GetID(), updateBody);
+    }
+
+    public async Task<TeamInfo[]> GetOtherUserTeams(string uid)
+    {
+        HttpResponseMessage response = await api.GetAsync("/api/users/" + uid + "/teams?expandBots=true");
+
+        if (response.IsSuccessStatusCode)
+        {
+            TeamInfo[] teams = JsonUtils.DeserializeArray<TeamInfo>(await response.Content.ReadAsStringAsync());
+
+            foreach (TeamInfo team in teams)
+            {
+                await team.FetchUserInfo();
+            }
+
+            return teams;
+        }
+
+        return null;
+    }
+
+    public async Task<TeamInfo> GetOtherUserTeam(string uid, int tid)
+    {
+        TeamInfo[] teams = await GetOtherUserTeams(uid);
+        foreach (TeamInfo team in teams)
+            if (team.GetID() == tid)
+                return team;
+
+        return null;
     }
 
 }

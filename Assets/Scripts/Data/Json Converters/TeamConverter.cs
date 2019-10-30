@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace JsonData
 {
+
     public class TeamConverter : Converter<TeamInfo>
     {
 
@@ -14,23 +15,37 @@ namespace JsonData
             serializer.WriteKeyValue<string>("last_maintenance", obj.GetDateLastMaintained().ToString("MM/dd/yyyy"));
             serializer.WriteKeyValue<double>("rank", obj.GetRank());
             serializer.WriteKeyValue<int>("tier", obj.GetTier());
-            serializer.SerializeKeyValue<int[]>("bots", obj.GetBots().Select<BotInfo, int>(bot => bot.GetID()).ToArray());
+            serializer.SerializeKeyValue<int[]>("bots",
+                obj.GetBots().Select<BotInfo, int>(bot => bot.GetID()).ToArray());
+            serializer.WriteKeyValue<string>("uid", obj.GetUserID());
         }
 
         public override TeamInfo DeserializeJson(DeserializationHelper helper)
         {
+            string uid = helper.GetValue<string>("uid");
             int id = helper.GetValue<int>("tid");
             string name = helper.GetValue<string>("name", "");
             string lastMaintenance = helper.GetValue<string>("last_maintenance", "");
             double rank = helper.GetValue<double>("rank", 0);
             int tier = helper.GetValue<int>("tier", 0);
-            int[] botIds = helper.GetValue<int[]>("bots", new int[0]);
 
-            List<BotInfo> bots = new List<BotInfo>(botIds.Select(DataManager.instance().GetBot));
-            bots.RemoveAll(bot => bot == null);
+            BotInfo[] bots;
 
-            return new TeamInfo(id, name, DateTime.Parse(lastMaintenance), bots.ToArray(), rank, tier);
+            if (uid == DataManager.Instance().GetCurrentUser().GetID())
+            {
+                int[] botIds = helper.GetValue<int[]>("bots", new int[0]);
+                List<BotInfo> botList = new List<BotInfo>(botIds.Select(DataManager.Instance().GetBot));
+                botList.RemoveAll(bot => bot == null);
+                bots = botList.ToArray();
+            }
+            else
+            {
+                bots = helper.GetArrayValue("bots", new BotInfo[0]);
+            }
+
+            return new TeamInfo(id, name, DateTime.Parse(lastMaintenance), bots, rank, tier, uid);
         }
 
     }
+
 }
