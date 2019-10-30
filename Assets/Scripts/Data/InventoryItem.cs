@@ -23,11 +23,18 @@ public class InventoryItem
         return count;
     }
 
+    /*
+     *  increases the count of this specific inventory item
+     */
     public void IncreaseCount()
     {
         count++;
     }
 
+    /*
+     * Attempts to decrease the count of this specific inventory item that this user has
+     * returns false if the user has no more of this specific inventory item
+     */
     public bool DecreaseCount()
     {
         if (count > 0)

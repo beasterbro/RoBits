@@ -26,7 +26,7 @@ namespace JsonData
             int tier = helper.GetValue<int>("tier", 0);
             int[] botIds = helper.GetValue<int[]>("bots", new int[0]);
 
-            List<BotInfo> bots = new List<BotInfo>(botIds.Select(DataManager.GetManager().GetBot));
+            List<BotInfo> bots = new List<BotInfo>(botIds.Select(DataManager.instance().GetBot));
             bots.RemoveAll(bot => bot == null);
 
             return new TeamInfo(id, name, DateTime.Parse(lastMaintenance), bots.ToArray(), rank, tier);
