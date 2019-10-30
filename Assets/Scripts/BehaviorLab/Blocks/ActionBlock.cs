@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[AddComponentMenu("Interface Objects/Blocks/Trigger")]
-public class TriggerBlock : Block
+[AddComponentMenu("Interface Objects/Blocks/Action")]
+public class ActionBlock : Block
 {
-    [SerializeField] private ReturnType outputType = ReturnType.LOGICAL;
-
     public override ReturnType OutputType()
     {
-        return outputType;
+        return ReturnType.EMPTY;
     }
 
     public override bool IsValid()
