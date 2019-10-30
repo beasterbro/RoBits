@@ -9,8 +9,8 @@ EditorBuildSettings:
     path: Assets/Scenes/Menu.unity
     guid: cb01d9d3e70ac8a44942830b87479531
   - enabled: 1
-    path: Assets/Scenes/Battle.unity
-    guid: 6ba1e57cea40706438b676e176ae90cc
+    path: Assets/Scenes/Simulation.unity
+    guid: 56b6da63625ea492498d6242dfd13718
   - enabled: 1
     path: Assets/Scenes/BehaviorLab.unity
     guid: cbc39ce154faa11418a5548365c94145
