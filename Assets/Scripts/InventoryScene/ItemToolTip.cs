@@ -14,6 +14,7 @@ public class ItemToolTip : MonoBehaviour
  [SerializeField] Text ItemStatText;
 
  private StringBuilder sb = new StringBuilder();
+ //Displays the tooltip with all of the specified stats added
  public void ShowTooltip(Item item)
  {
   ItemNameText.text = item.ItemName;
@@ -36,6 +37,7 @@ public class ItemToolTip : MonoBehaviour
   gameObject.SetActive(false);
  }
 
+ //Adds a stat to the toolTip for it to display
  private void AddStat(String info, string statName)
  {
   String value = info.ToString();

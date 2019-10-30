@@ -36,6 +36,7 @@ public class EquipmentPanel : MonoBehaviour
         equipmentSlots = equipmentSlotsParent.GetComponentsInChildren<EquipmentSlot>();
     }
 
+    //Adds an item to the equipment panel
     public bool AddItem(Item item,out  Item previousItem)
     {
         for (int i = 0; i < equipmentSlots.Length; i++)
@@ -52,6 +53,7 @@ public class EquipmentPanel : MonoBehaviour
         return false;
     }
 
+    //removes an item from the equipment panel
     public bool RemoveItem(Item item)
     {
         for (int i = 0; i < equipmentSlots.Length; i++)

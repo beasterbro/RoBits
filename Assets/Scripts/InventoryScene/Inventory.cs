@@ -43,6 +43,7 @@ public class Inventory : MonoBehaviour
         SetStartingItems();
     }
 
+    //Instantiates the starting items and adds them to the Inventory
     private void SetStartingItems()
     {
         int i = 0;
@@ -58,6 +59,7 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    //Adds an item to the inventory, returns false if the item cannot be added
     public bool AddItem(Item item)
     {
         //for (int i = 0; i < itemSlots.Length; i++)
@@ -76,6 +78,7 @@ public class Inventory : MonoBehaviour
         return false;
     }
 
+    //Removes an item from the inventory, returns falso if the item cannot be removed
     public bool RemoveItem(Item item)
     {
         for (int i = 0; i < itemSlots.Length; i++)
@@ -105,6 +108,7 @@ public class Inventory : MonoBehaviour
         return null;
     }
 
+    //Returns whether or not the inventory is full 
     public bool IsFull()
     {
         for (int i = 0; i < itemSlots.Length; i++)

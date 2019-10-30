@@ -78,13 +78,19 @@ public class InventoryController : MonoBehaviour
             draggedItemSlot = itemSlot;
             draggableItem.sprite = itemSlot.Item.Icon;
             
-            var v3 = Input.mousePosition;
-            v3.z = 1;
-            v3 = Camera.main.ScreenToWorldPoint(v3);
-            draggableItem.transform.position = v3;
+           
+            draggableItem.transform.position = MousePosition();
             
             draggableItem.gameObject.SetActive(true);
         }
+    }
+
+    Vector3 MousePosition()
+    {
+        var v3 = Input.mousePosition;
+        v3.z = 1;
+        v3 = Camera.main.ScreenToWorldPoint(v3);
+        return v3;
     }
 
     private void EndDrag(ItemSlot itemSlot)
@@ -95,10 +101,8 @@ public class InventoryController : MonoBehaviour
 
     private void Drag(ItemSlot itemSlot)
     {
-        var v3 = Input.mousePosition;
-        v3.z = 1;
-        v3 = Camera.main.ScreenToWorldPoint(v3);
-        draggableItem.transform.position = v3;
+      
+        draggableItem.transform.position = MousePosition();
             
         
     }
@@ -196,6 +200,7 @@ public class InventoryController : MonoBehaviour
     
 
     
+    //Swaps the inputted item with the currently stored draggedItemSlot item
     private void SwapItems(ItemSlot dropItemSlot)
     {
         Item dragEquipItem = draggedItemSlot.Item;
@@ -208,15 +213,18 @@ public class InventoryController : MonoBehaviour
             dropItemSlot.Item = tempItem;
             return;
         }
+        //Behavior here could stand being tweaked a bit more
         if (draggedItemSlot is EquipmentSlot)
         {
-            if (dragEquipItem != null) Equip(dragEquipItem);
-            if (dropEquipItem != null) Unequip(dropEquipItem);
+             Unequip(dragEquipItem);
+            Equip(dropEquipItem);
+           
         }
         if (dropItemSlot is EquipmentSlot)
         {
-            if (dragEquipItem != null) Unequip(dragEquipItem);
-            if (dropEquipItem != null) Equip(dropEquipItem);
+            Equip(dragEquipItem);
+            Unequip(dropEquipItem);
+            
         }
         Item draggedItem = draggedItemSlot.Item;
         draggedItemSlot.Item = dropItemSlot.Item;
@@ -259,6 +267,7 @@ public class InventoryController : MonoBehaviour
         }
     }
 
+    //Sets the currently active bot 
     public void SetActiveBot(int botValue)
     {
         //TODO: Current Implementation bug, hard wired bot parts reset upon switch
@@ -269,6 +278,7 @@ public class InventoryController : MonoBehaviour
         UpdateEquipment();
     }
 
+    //Refreshes the displayed Equipment from the current Bot's parts
     public void UpdateEquipment()
     {
         
@@ -280,7 +290,7 @@ public class InventoryController : MonoBehaviour
         {
         //Creating new item to add to equipment panel
 
-            Item item = partToItem(part);
+            Item item = PartToItem(part);
             equipmentPanel.AddItem(item,out previousItem);
             
             inventory.AddItem(previousItem);
@@ -288,9 +298,9 @@ public class InventoryController : MonoBehaviour
     }
 
     //Converts inputted part into an item to be put in the inventory
-    Item partToItem(PartInfo part)
+    Item PartToItem(PartInfo part)
     {
-        Item item = new Item();
+        Item item = ScriptableObject.CreateInstance<Item>();
         item.part = part;
         item.partID = part.GetID();
         item.type = part.GetPartType();
@@ -338,11 +348,12 @@ public class InventoryController : MonoBehaviour
         
     }
 
+    //Called on start to add all of the items in the user's inventory to the inventory panel
     private void UpdateInventory()
     {
         foreach (var inventoryItem in userInventory)
         {
-            inventory.AddItem(partToItem(inventoryItem.GetPart()));
+            inventory.AddItem(PartToItem(inventoryItem.GetPart()));
         }
     }
 

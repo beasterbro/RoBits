@@ -44,6 +44,7 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandl
             }
         }
 
+        //Checks whether this can receive an item
         public virtual bool CanReceiveItem(Item item)
         {
             //TODO: Implement

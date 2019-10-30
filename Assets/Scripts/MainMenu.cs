@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 public class MainMenu : MonoBehaviour
 {
 
+    //Changes the scene to the battle scene
     public void PlayGame()
     {
         SceneManager.LoadScene(1);
@@ -36,9 +37,4 @@ public class MainMenu : MonoBehaviour
         Debug.Log(JsonConvert.SerializeObject(DataManager.instance().GetUserTeams()));
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 }
