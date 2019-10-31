@@ -9,11 +9,11 @@ public class BotInfo
     private int id;
     private string name;
     private int tier;
-    private Dictionary<string, string> behavior;
-    private List<PartInfo> equipment;
+    private readonly Dictionary<string, string> behavior;
+    private readonly List<PartInfo> equipment;
     private PartInfo bodyType;
 
-    public BotInfo(int id, string name, int tier, ICollection<PartInfo> equipment, PartInfo bodyType)
+    public BotInfo(int id, string name, int tier, IEnumerable<PartInfo> equipment, PartInfo bodyType)
     {
         this.id = id;
         this.name = name;
@@ -22,30 +22,25 @@ public class BotInfo
         this.bodyType = bodyType;
     }
 
-    public int GetID()
+    public int ID
     {
-        return id;
+        get => id;
+        set => id = value;
     }
 
-    public string GetName()
+    public string Name
     {
-        return name;
+        get => name;
+        set => name = value;
     }
 
-    public void SetName(string name)
+    public int Tier
     {
-        this.name = name;
+        get => tier;
+        set => tier = value;
     }
 
-    public int GetTier()
-    {
-        return tier;
-    }
-
-    public PartInfo[] GetEquippedParts()
-    {
-        return equipment.ToArray();
-    }
+    public PartInfo[] Equipment => equipment.ToArray();
 
     public void AddPart(PartInfo part)
     {
@@ -57,20 +52,13 @@ public class BotInfo
         return equipment.Remove(part);
     }
 
-    public PartInfo GetBodyType()
+    public PartInfo BodyType
     {
-        return bodyType;
+        get => bodyType;
+        set => bodyType = value;
     }
 
-    public void SetBodyType(PartInfo bodyType)
-    {
-        this.bodyType = bodyType;
-    }
-
-    public Dictionary<string, string> GetBehaviors()
-    {
-        return behavior;
-    }
+    public Dictionary<string, string> Behaviors => behavior;
 
     // TODO: Implement
     // GetBotBehavior

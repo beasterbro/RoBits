@@ -19,15 +19,15 @@ namespace JsonData
         // Serializes the object to JSON (C# -> JSON)
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            T obj = value as T;
-            SerializationHelper helper = new SerializationHelper(writer, serializer);
+            var obj = value as T;
+            var helper = new SerializationHelper(writer, serializer);
             helper.Start();
             SerializeJson(helper, obj);
             helper.End();
         }
 
         // Abstract convenience method for serialization, to be implemented by subclasses
-        public abstract void SerializeJson(SerializationHelper serializer, T obj);
+        protected abstract void SerializeJson(SerializationHelper serializer, T obj);
 
         // Deserializes the JSON object (JSON -> C#)
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
@@ -41,7 +41,7 @@ namespace JsonData
         }
 
         // Abstract convenience method for deserialization, to be implemented by subclasses
-        public abstract T DeserializeJson(DeserializationHelper helper);
+        protected abstract T DeserializeJson(DeserializationHelper helper);
 
     }
 

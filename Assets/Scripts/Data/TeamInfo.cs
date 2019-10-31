@@ -6,13 +6,13 @@ using Newtonsoft.Json;
 public class TeamInfo
 {
 
-    private int id;
+    private readonly int id;
     private string name;
     private DateTime lastMaintained;
     private BotInfo[] bots;
     private double rank;
     private int tier;
-    private string userId;
+    private readonly string userId;
     private UserInfo user;
 
     public TeamInfo(int id, string name, DateTime lastMaintained, BotInfo[] bots, double rank, int tier, string userId)
@@ -26,64 +26,36 @@ public class TeamInfo
         this.userId = userId;
     }
 
-    public int GetID()
+    public int ID => id;
+
+    public string Name
     {
-        return id;
+        get => name;
+        set => name = value;
     }
 
-    public string GetName()
-    {
-        return name;
-    }
-
-    public void SetName(string name)
-    {
-        this.name = name;
-    }
-
-    public DateTime GetDateLastMaintained()
-    {
-        return lastMaintained;
-    }
+    public DateTime DateLastMaintained => lastMaintained;
 
     public void SetMaintained()
     {
         lastMaintained = DateTime.Now;
     }
 
-    public BotInfo[] GetBots()
+    public BotInfo[] Bots => bots;
+
+    public double Rank
     {
-        return bots;
+        get => rank;
+        set => rank = value;
     }
 
-    public double GetRank()
-    {
-        return rank;
-    }
-
-    public void SetRank(double rank)
-    {
-        this.rank = rank;
-    }
-
-    public int GetTier()
-    {
-        return tier;
-    }
-
-    public string GetUserID()
-    {
-        return userId;
-    }
-
-    public UserInfo GetUser()
-    {
-        return user;
-    }
+    public int Tier => tier;
+    public string UserID => userId;
+    public UserInfo User => user;
 
     public async Task<bool> FetchUserInfo()
     {
-        UserInfo result = await DataManager.Instance().FetchUser(userId);
+        UserInfo result = await DataManager.Instance.FetchUser(userId);
 
         if (result != null)
         {

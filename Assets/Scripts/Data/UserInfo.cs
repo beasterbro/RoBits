@@ -6,15 +6,16 @@ using Newtonsoft.Json;
 public class UserInfo
 {
 
-    private string id;
-    private string email;
+    private readonly string id;
+    private readonly string email;
     private string username;
     private int currency;
     private int xp;
     private bool canCompete;
-    private Dictionary<string, string> settings;
+    private readonly Dictionary<string, string> settings;
 
-    public UserInfo(string id, string email, string username, int currency, int xp, bool canCompete, Dictionary<string, string> settings)
+    public UserInfo(string id, string email, string username, int currency, int xp, bool canCompete,
+        Dictionary<string, string> settings)
     {
         this.id = id;
         this.email = email;
@@ -25,54 +26,24 @@ public class UserInfo
         this.settings = settings;
     }
 
-    public string GetID()
+    public string ID => id;
+    public string Email => email;
+    public string Username => username;
+
+    public int Currency
     {
-        return id;
+        get => currency;
+        set => currency = value;
     }
 
-    public string GetEmail()
+    public int XP
     {
-        return email;
+        get => xp;
+        set => xp = value;
     }
 
-    public string GetUsername()
-    {
-        return username;
-    }
-
-    public int GetCurrency()
-    {
-        return currency;
-    }
-
-    public void SetCurrency(int currency)
-    {
-        this.currency = currency;
-    }
-
-    public int GetXP()
-    {
-        return xp;
-    }
-
-    public void SetXP(int xp)
-    {
-        this.xp = xp;
-    }
-
-    public int GetLevel()
-    {
-        return (int)Math.Floor(((float)xp) / 1000f);
-    }
-
-    public bool CanCompete()
-    {
-        return canCompete;
-    }
-
-    public Dictionary<string, string> GetSettings()
-    {
-        return settings;
-    }
+    public int Level => (int) Math.Floor(xp / 1000f);
+    public bool CanCompete => canCompete;
+    public Dictionary<string, string> Settings => settings;
 
 }

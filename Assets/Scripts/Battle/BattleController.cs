@@ -39,11 +39,11 @@ public class BattleController : MonoBehaviour
         winner = -1;
         winnerText.text = "Loading...";
 
-        DataManager.Instance().EstablishAuth("lucaspopp0@gmail.com");
-        await DataManager.Instance().FetchInitialData();
+        DataManager.Instance.EstablishAuth("lucaspopp0@gmail.com");
+        await DataManager.Instance.FetchInitialData();
 
-        teams[0] = DataManager.Instance().GetTeam(0);
-        teams[1] = await DataManager.Instance().GetOtherUserTeam("axs1477", 0);
+        teams[0] = DataManager.Instance.GetTeam(0);
+        teams[1] = await DataManager.Instance.GetOtherUserTeam("axs1477", 0);
 
         huds[0] = team1HUD;
         huds[1] = team2HUD;
@@ -68,7 +68,7 @@ public class BattleController : MonoBehaviour
         TeamInfo teamInfo = teams[teamIndex];
         bots[teamIndex] = new List<BotController>();
 
-        for (var botIndex = 0; botIndex < teams[teamIndex].GetBots().Length; botIndex++)
+        for (var botIndex = 0; botIndex < teams[teamIndex].Bots.Length; botIndex++)
         {
             LoadBot(teamIndex, botIndex);
         }
@@ -76,7 +76,7 @@ public class BattleController : MonoBehaviour
 
     private void LoadBot(int teamIndex, int botIndex)
     {
-        BotInfo botInfo = teams[teamIndex].GetBots()[botIndex];
+        BotInfo botInfo = teams[teamIndex].Bots[botIndex];
         GameObject botObject = Instantiate(Resources.Load<GameObject>("Battle/BasicBot"));
         BotController controller = botObject.GetComponent<BotController>();
         if (controller != null) bots[teamIndex].Add(controller);
@@ -106,7 +106,7 @@ public class BattleController : MonoBehaviour
         if (winner != -1)
         {
             SetAllBotsEnabled(false);
-            winnerText.text = "Winner: " + teams[winner].GetUserID();
+            winnerText.text = "Winner: " + teams[winner].UserID;
             winnerText.gameObject.SetActive(true);
         }
     }

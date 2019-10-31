@@ -4,7 +4,7 @@
 public class InventoryItem
 {
 
-    private PartInfo part;
+    private readonly PartInfo part;
     private int count;
 
     public InventoryItem(PartInfo part, int count)
@@ -13,15 +13,9 @@ public class InventoryItem
         this.count = count;
     }
 
-    public PartInfo GetPart()
-    {
-        return part;
-    }
+    public PartInfo Part => part;
 
-    public int GetCount()
-    {
-        return count;
-    }
+    public int Count => count;
 
     /*
      *  increases the count of this specific inventory item

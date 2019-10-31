@@ -6,28 +6,28 @@ namespace JsonData
     public class BotConverter : Converter<BotInfo>
     {
 
-        public override void SerializeJson(SerializationHelper serializer, BotInfo obj)
+        protected override void SerializeJson(SerializationHelper serializer, BotInfo obj)
         {
-            serializer.WriteKeyValue<int>("bid", obj.GetID());
-            serializer.WriteKeyValue<string>("name", obj.GetName());
-            serializer.WriteKeyValue<int>("tier", obj.GetTier());
-            serializer.SerializeKeyValue<int[]>("parts", obj.GetEquippedParts().Select<PartInfo, int>(part => part.GetID()).ToArray());
-            serializer.WriteKeyValue<int>("bodyType", obj.GetBodyType().GetID());
-            serializer.SerializeKeyValue<Dictionary<string, string>>("ai", obj.GetBehaviors());
+            serializer.WriteKeyValue("bid", obj.ID);
+            serializer.WriteKeyValue("name", obj.Name);
+            serializer.WriteKeyValue("tier", obj.Tier);
+            serializer.SerializeKeyValue("parts", obj.Equipment.Select(part => part.ID).ToArray());
+            serializer.WriteKeyValue("bodyType", obj.BodyType.ID);
+            serializer.SerializeKeyValue("ai", obj.Behaviors);
         }
 
-        public override BotInfo DeserializeJson(DeserializationHelper helper)
+        protected override BotInfo DeserializeJson(DeserializationHelper helper)
         {
-            int id = helper.GetValue<int>("bid");
-            string name = helper.GetValue<string>("name", "");
-            int[] partIds = helper.GetValue<int[]>("parts", new int[0]);
-            int bodyTypeId = helper.GetValue<int>("bodyType", 0);
-            int tier = helper.GetValue<int>("tier", 0);
-            Dictionary<string, string> ai = helper.GetValue<Dictionary<string, string>>("ai", new Dictionary<string, string>());
+            var id = helper.GetValue<int>("bid");
+            var name = helper.GetValue("name", "");
+            var partIds = helper.GetValue("parts", new int[0]);
+            var bodyTypeId = helper.GetValue("bodyType", 0);
+            var tier = helper.GetValue("tier", 0);
+            var ai = helper.GetValue("ai", new Dictionary<string, string>());
 
-            List<PartInfo> equipment = new List<PartInfo>(partIds.Select<int, PartInfo>(DataManager.Instance().GetPart));
+            var equipment = new List<PartInfo>(partIds.Select(DataManager.Instance.GetPart));
             equipment.RemoveAll(p => p == null);
-            PartInfo bodyType = DataManager.Instance().GetPart(bodyTypeId);
+            var bodyType = DataManager.Instance.GetPart(bodyTypeId);
 
             return new BotInfo(id, name, tier, equipment, bodyType);
         }

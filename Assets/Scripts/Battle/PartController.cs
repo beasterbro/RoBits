@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text.RegularExpressions;
 using UnityEngine;
 
 public abstract class PartController : MonoBehaviour
@@ -11,18 +10,16 @@ public abstract class PartController : MonoBehaviour
 
     public static PartController ControllerForPart(PartInfo info)
     {
-        string stripped = Regex.Replace(info.GetName(), "[\\W]", "");
-
         try
         {
-            GameObject obj = Instantiate(Resources.Load<GameObject>("Battle/" + stripped));
+            GameObject obj = Instantiate(Resources.Load<GameObject>("Battle/" + info.ResourceName));
             PartController controller = obj.GetComponent<PartController>();
             controller.info = info;
             return controller;
         }
         catch (ArgumentException exc)
         {
-            Debug.LogWarning("Attempted to load missing asset: Battle/" + stripped);
+            Debug.LogWarning("Attempted to load missing asset: Battle/" + info.ResourceName);
         }
 
         return null;
