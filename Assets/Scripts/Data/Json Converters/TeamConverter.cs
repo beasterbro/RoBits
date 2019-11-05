@@ -8,33 +8,32 @@ namespace JsonData
     public class TeamConverter : Converter<TeamInfo>
     {
 
-        public override void SerializeJson(SerializationHelper serializer, TeamInfo obj)
+        protected override void SerializeJson(SerializationHelper serializer, TeamInfo obj)
         {
-            serializer.WriteKeyValue<int>("tid", obj.GetID());
-            serializer.WriteKeyValue<string>("name", obj.GetName());
-            serializer.WriteKeyValue<string>("last_maintenance", obj.GetDateLastMaintained().ToString("MM/dd/yyyy"));
-            serializer.WriteKeyValue<double>("rank", obj.GetRank());
-            serializer.WriteKeyValue<int>("tier", obj.GetTier());
-            serializer.SerializeKeyValue<int[]>("bots",
-                obj.GetBots().Select<BotInfo, int>(bot => bot.GetID()).ToArray());
-            serializer.WriteKeyValue<string>("uid", obj.GetUserID());
+            serializer.WriteKeyValue("tid", obj.ID);
+            serializer.WriteKeyValue("name", obj.Name);
+            serializer.WriteKeyValue("last_maintenance", obj.DateLastMaintained.ToString("MM/dd/yyyy"));
+            serializer.WriteKeyValue("rank", obj.Rank);
+            serializer.WriteKeyValue("tier", obj.Tier);
+            serializer.SerializeKeyValue("bots", obj.Bots.Select(bot => bot.ID).ToArray());
+            serializer.WriteKeyValue("uid", obj.UserID);
         }
 
-        public override TeamInfo DeserializeJson(DeserializationHelper helper)
+        protected override TeamInfo DeserializeJson(DeserializationHelper helper)
         {
-            string uid = helper.GetValue<string>("uid");
-            int id = helper.GetValue<int>("tid");
-            string name = helper.GetValue<string>("name", "");
-            string lastMaintenance = helper.GetValue<string>("last_maintenance", "");
-            double rank = helper.GetValue<double>("rank", 0);
-            int tier = helper.GetValue<int>("tier", 0);
+            var uid = helper.GetValue<string>("uid");
+            var id = helper.GetValue<int>("tid");
+            var name = helper.GetValue("name", "");
+            var lastMaintenance = helper.GetValue("last_maintenance", "");
+            var rank = helper.GetValue("rank", 0f);
+            var tier = helper.GetValue("tier", 0);
 
             BotInfo[] bots;
 
-            if (uid == DataManager.Instance().GetCurrentUser().GetID())
+            if (uid == DataManager.Instance.CurrentUser.ID)
             {
-                int[] botIds = helper.GetValue<int[]>("bots", new int[0]);
-                List<BotInfo> botList = new List<BotInfo>(botIds.Select(DataManager.Instance().GetBot));
+                var botIds = helper.GetValue("bots", new int[0]);
+                var botList = new List<BotInfo>(botIds.Select(DataManager.Instance.GetBot));
                 botList.RemoveAll(bot => bot == null);
                 bots = botList.ToArray();
             }

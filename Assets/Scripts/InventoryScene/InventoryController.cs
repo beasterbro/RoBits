@@ -183,15 +183,15 @@ public class InventoryController : MonoBehaviour
        
        
     
-    private PartInfo tankGun= new PartInfo(112, "Tank Gun", "Shoot Shells", PartType.Weapon, 100, 2, true, attributes1);
-    private PartInfo gun = new PartInfo(113, "Base Gun", "Shoot Bullets", PartType.Weapon, 1, 0, true, attributes2);
-    private PartInfo baseBody = new PartInfo(222, "Base Body", "Body of Bot", PartType.BodyType, 1, 1, true, attributes1);
-    private PartInfo armor = new PartInfo(333, "Reflective Armor", "Reflects Bullets", PartType.Armor, 1, 1, true, attributes1);
-    private PartInfo wheels = new PartInfo(444, "Wheels", "High Speed, Low Load", PartType.Transport, 1, 1, true, attributes1);
-    private PartInfo treads = new PartInfo(555, "Tank Treads", "Low Speed High Load", PartType.Transport, 1, 1, true, attributes1);
+    private PartInfo tankGun= new PartInfo(112, "Tank Gun", "Shoot Shells", PartType.Weapon, 100, 2, attributes1);
+    private PartInfo gun = new PartInfo(113, "Base Gun", "Shoot Bullets", PartType.Weapon, 1, 0, attributes2);
+    private PartInfo baseBody = new PartInfo(222, "Base Body", "Body of Bot", PartType.BodyType, 1, 1, attributes1);
+    private PartInfo armor = new PartInfo(333, "Reflective Armor", "Reflects Bullets", PartType.Armor, 1, 1, attributes1);
+    private PartInfo wheels = new PartInfo(444, "Wheels", "High Speed, Low Load", PartType.Transport, 1, 1, attributes1);
+    private PartInfo treads = new PartInfo(555, "Tank Treads", "Low Speed High Load", PartType.Transport, 1, 1, attributes1);
     
     
-    private PartInfo body = new PartInfo(222, "body", "Main Body part", PartType.BodyType, 2, 2, false, bodySpec);
+    private PartInfo body = new PartInfo(222, "body", "Main Body part", PartType.BodyType, 2, 2, bodySpec);
 
     private UserInfo user = new UserInfo("testUser","ass@ass.com","tester101",100,200,true,settings);
      
@@ -274,7 +274,7 @@ public class InventoryController : MonoBehaviour
         //for testing purposes of setting the actively edited bot
         // currentBot = DataManager.Instance().GetAllBots()[botValue];
         currentBot = userBots[botValue];
-        botInfoText.text = currentBot.GetName();
+        botInfoText.text = currentBot.Name;
         UpdateEquipment();
     }
 
@@ -286,7 +286,7 @@ public class InventoryController : MonoBehaviour
         List<Item> addToInventory = equipmentPanel.ClearEquipped();
        
         Item previousItem;
-        foreach (PartInfo part in currentBot.GetEquippedParts())
+        foreach (PartInfo part in currentBot.Equipment)
         {
         //Creating new item to add to equipment panel
 
@@ -302,16 +302,15 @@ public class InventoryController : MonoBehaviour
     {
         Item item = ScriptableObject.CreateInstance<Item>();
         item.part = part;
-        item.partID = part.GetID();
-        item.type = part.GetPartType();
-        item.price = part.GetPrice();
-        item.description = part.GetDescription();
-        item.Icon = part.GetSprite();
-        item.attributes = part.GetAttributes();
-        item.ItemName = part.GetName();
-        item.levelToUnlock = part.GetLevelToUnlock();
-        item.isActor = part.IsActor();
-        item.Icon = this.GetComponentInParent<ItemImageGenrator>().generateImage(part.GetID());
+        item.partID = part.ID;
+        item.type = part.PartType;
+        item.price = part.Price;
+        item.description = part.Description;
+        item.Icon = part.Sprite;
+        item.attributes = part.Attributes;
+        item.ItemName = part.Name;
+        item.levelToUnlock = part.LevelToUnlock;
+        item.Icon = GetComponentInParent<ItemImageGenrator>().generateImage(part.ID);
 
         return item;
     }
@@ -353,7 +352,7 @@ public class InventoryController : MonoBehaviour
     {
         foreach (var inventoryItem in userInventory)
         {
-            inventory.AddItem(PartToItem(inventoryItem.GetPart()));
+            inventory.AddItem(PartToItem(inventoryItem.Part));
         }
     }
 

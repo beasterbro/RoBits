@@ -13,13 +13,13 @@ namespace JsonData
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            string enumString = (string)reader.Value;
+            var enumString = (string)reader.Value;
             return Enum.Parse(typeof(PartType), enumString, true);
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            PartType t = (PartType)value;
+            var t = (PartType)value;
             writer.WriteValue(t.ToString().ToLower());
         }
 

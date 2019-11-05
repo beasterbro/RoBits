@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design.Serialization;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -21,7 +22,7 @@ public class DataManager
     private BotInfo[] allBots;
     private TeamInfo[] userTeams;
 
-    public DataManager()
+    private DataManager()
     {
         api.BaseAddress = new Uri("http://robits.us-east-2.elasticbeanstalk.com");
         api.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -34,15 +35,7 @@ public class DataManager
     }
 
     // Returns a reference to the shared instance
-    public static DataManager Instance()
-    {
-        if (shared == null)
-        {
-            shared = new DataManager();
-        }
-
-        return shared;
-    }
+    public static DataManager Instance => shared ?? (shared = new DataManager());
 
     // Fetches all necessary initial data
     public async Task FetchInitialData()
@@ -55,7 +48,7 @@ public class DataManager
 
     public async Task FetchCurrentUser()
     {
-        HttpResponseMessage response = await api.GetAsync("/api/user");
+        var response = await api.GetAsync("/api/user");
 
         if (response.IsSuccessStatusCode)
         {
@@ -65,7 +58,7 @@ public class DataManager
 
     public async Task FetchAllParts()
     {
-        HttpResponseMessage response = await api.GetAsync("/api/parts");
+        var response = await api.GetAsync("/api/parts");
 
         if (response.IsSuccessStatusCode)
         {
@@ -76,7 +69,7 @@ public class DataManager
     // Must be called after calling FetchAllParts
     public async Task FetchUserInventory()
     {
-        HttpResponseMessage response = await api.GetAsync("/api/inventory");
+        var response = await api.GetAsync("/api/inventory");
 
         if (response.IsSuccessStatusCode)
         {
@@ -88,8 +81,8 @@ public class DataManager
     // Must be called after calling FetchAllParts
     public async Task FetchUserTeams()
     {
-        HttpResponseMessage botsResponse = await api.GetAsync("/api/bots");
-        HttpResponseMessage teamsResponse = await api.GetAsync("/api/teams");
+        var botsResponse = await api.GetAsync("/api/bots");
+        var teamsResponse = await api.GetAsync("/api/teams");
 
         if (botsResponse.IsSuccessStatusCode && teamsResponse.IsSuccessStatusCode)
         {
@@ -105,9 +98,9 @@ public class DataManager
 
     public async Task<UserInfo> FetchUser(string uid)
     {
-        if (uid == currentUser.GetID()) return currentUser;
+        if (uid == currentUser.ID) return currentUser;
 
-        HttpResponseMessage response = await api.GetAsync("/api/user/" + uid);
+        var response = await api.GetAsync("/api/user/" + uid);
 
         if (response.IsSuccessStatusCode)
         {
@@ -117,21 +110,15 @@ public class DataManager
         return null;
     }
 
-    public UserInfo GetCurrentUser()
-    {
-        return currentUser;
-    }
+    public UserInfo CurrentUser => currentUser;
 
     public async Task UpdateCurrentUser()
     {
-        HttpContent updateBody = JsonUtils.SerializeObject(currentUser);
-        HttpResponseMessage updateResponse = await api.PutAsync("/api/user", updateBody);
+        var updateBody = JsonUtils.SerializeObject(currentUser);
+        var updateResponse = await api.PutAsync("/api/user", updateBody);
     }
 
-    public List<InventoryItem> GetUserInventory()
-    {
-        return inventory;
-    }
+    public List<InventoryItem> UserInventory => inventory;
 
     public bool SellPart(PartInfo item)
     {
@@ -145,57 +132,48 @@ public class DataManager
         return true;
     }
 
-    public PartInfo[] GetAllParts()
-    {
-        return allParts;
-    }
+    public PartInfo[] AllParts => allParts;
 
     public PartInfo GetPart(int pid)
     {
-        return allParts.First(part => part.GetID() == pid);
+        return allParts.First(part => part.ID == pid);
     }
 
-    public BotInfo[] GetAllBots()
-    {
-        return allBots;
-    }
+    public BotInfo[] AllBots => allBots;
 
     public BotInfo GetBot(int bid)
     {
-        return allBots.First(bot => bot.GetID() == bid);
+        return allBots.First(bot => bot.ID == bid);
     }
 
     public async Task UpdateBot(BotInfo bot)
     {
-        HttpContent updateBody = JsonUtils.SerializeObject(bot);
-        HttpResponseMessage updateResponse = await api.PutAsync("/api/bots/" + bot.GetID(), updateBody);
+        var updateBody = JsonUtils.SerializeObject(bot);
+        var updateResponse = await api.PutAsync("/api/bots/" + bot.ID, updateBody);
     }
 
-    public TeamInfo[] GetUserTeams()
-    {
-        return userTeams;
-    }
+    public TeamInfo[] UserTeams => userTeams;
 
     public TeamInfo GetTeam(int tid)
     {
-        return userTeams.First(team => team.GetID() == tid);
+        return userTeams.First(team => team.ID == tid);
     }
 
     public async Task UpdateTeam(TeamInfo team)
     {
-        HttpContent updateBody = JsonUtils.SerializeObject(team);
-        HttpResponseMessage updateResponse = await api.PutAsync("/api/teams/" + team.GetID(), updateBody);
+        var updateBody = JsonUtils.SerializeObject(team);
+        var updateResponse = await api.PutAsync("/api/teams/" + team.ID, updateBody);
     }
 
     public async Task<TeamInfo[]> GetOtherUserTeams(string uid)
     {
-        HttpResponseMessage response = await api.GetAsync("/api/users/" + uid + "/teams?expandBots=true");
+        var response = await api.GetAsync("/api/users/" + uid + "/teams?expandBots=true");
 
         if (response.IsSuccessStatusCode)
         {
-            TeamInfo[] teams = JsonUtils.DeserializeArray<TeamInfo>(await response.Content.ReadAsStringAsync());
+            var teams = JsonUtils.DeserializeArray<TeamInfo>(await response.Content.ReadAsStringAsync());
 
-            foreach (TeamInfo team in teams)
+            foreach (var team in teams)
             {
                 await team.FetchUserInfo();
             }
@@ -208,12 +186,8 @@ public class DataManager
 
     public async Task<TeamInfo> GetOtherUserTeam(string uid, int tid)
     {
-        TeamInfo[] teams = await GetOtherUserTeams(uid);
-        foreach (TeamInfo team in teams)
-            if (team.GetID() == tid)
-                return team;
-
-        return null;
+        var teams = await GetOtherUserTeams(uid);
+        return teams.FirstOrDefault(team => team.ID == tid);
     }
 
 }

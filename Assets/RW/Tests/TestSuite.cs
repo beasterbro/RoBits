@@ -35,12 +35,12 @@ namespace Tests
        };
        
        
-        private static PartInfo part1 = new PartInfo(0, "0", "first part", PartType.Weapon, 1, 1, true, attributes1);
-        private static PartInfo part2 = new PartInfo(1, "1", "second part", PartType.Weapon, 2, 2, true, attributes2);
+        private static PartInfo part1 = new PartInfo(0, "0", "first part", PartType.Weapon, 1, 1, attributes1);
+        private static PartInfo part2 = new PartInfo(1, "1", "second part", PartType.Weapon, 2, 2, attributes2);
 
         private static List<PartInfo> allParts = new List<PartInfo>(new PartInfo[]{part1,part2});
         
-        private static PartInfo body = new PartInfo(2, "body", "thrid part", PartType.BodyType, 2, 2, false, bodySpec);
+        private static PartInfo body = new PartInfo(2, "body", "thrid part", PartType.BodyType, 2, 2, bodySpec);
 
         private UserInfo _userInfo = new UserInfo("testUser","ass@ass.com","tester101",100,200,true,settings);
        

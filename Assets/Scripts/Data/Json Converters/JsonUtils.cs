@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 
 namespace JsonData
 {
+
     public class JsonUtils
     {
 
@@ -11,7 +12,9 @@ namespace JsonData
         [System.Serializable]
         private class Wrapper<T>
         {
+
             public T[] Items = new T[0];
+
         }
 
         public static T DeserializeObject<T>(string json, params JsonConverter[] converters)
@@ -32,4 +35,5 @@ namespace JsonData
         }
 
     }
+
 }

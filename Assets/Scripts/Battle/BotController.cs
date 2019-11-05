@@ -43,11 +43,11 @@ public class BotController : MonoBehaviour
         var visSensor = sensors.Find(part => part is VisionSensor) as VisionSensor;
         var wheels = parts.Find(part => part is WheelsController) as WheelsController;
 
-        switch (teamInfo.GetUserID())
+        switch (teamInfo.UserID)
         {
             case "lmp122":
 
-                switch (botInfo.GetID())
+                switch (botInfo.ID)
                 {
                     case 0:
                         behaviors.Add(new Behavior(this, proxSensor.OpponentIsInRange, () =>
@@ -100,7 +100,7 @@ public class BotController : MonoBehaviour
 
             case "ax1477":
 
-                switch (botInfo.GetID())
+                switch (botInfo.ID)
                 {
                     case 0:
                         proxSensor.maxRange = 10;
@@ -153,7 +153,7 @@ public class BotController : MonoBehaviour
     {
         List<GunController> guns = new List<GunController>();
 
-        foreach (PartInfo partInfo in info.GetEquippedParts())
+        foreach (PartInfo partInfo in info.Equipment)
         {
             PartController partController = PartController.ControllerForPart(partInfo);
             if (partController != null)

@@ -6,8 +6,8 @@ namespace JsonData
     public class SerializationHelper
     {
 
-        private JsonWriter writer;
-        private JsonSerializer serializer;
+        private readonly JsonWriter writer;
+        private readonly JsonSerializer serializer;
 
         public SerializationHelper(JsonWriter writer)
         {
