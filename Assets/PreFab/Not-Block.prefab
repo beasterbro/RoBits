@@ -215,6 +215,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offset: {x: 0, y: 0}
+  minimum: {x: 0, y: 0}
+  boundary:
+    transform: {fileID: 0}
+    width: 0
+    height: 0
 --- !u!1 &7359098405657575521
 GameObject:
   m_ObjectHideFlags: 0
@@ -435,13 +440,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   container: {fileID: 0}
-  lines: []
   isMovable: 1
   isDeletable: 1
   prev: {fileID: 0}
   next: {fileID: 0}
   containing: {fileID: 0}
-  condition: {fileID: 3289716059615831779}
+  conditions:
+  - {fileID: 3289716059615831779}
+  idealConditionCount: 1
 --- !u!61 &1442680848701633316
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -481,4 +487,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offset: {x: 2, y: 0.75}
+  minimum: {x: 0, y: 0}
+  boundary:
+    transform: {fileID: 0}
+    width: 0
+    height: 0
   onScale: {fileID: 486473813}
