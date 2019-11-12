@@ -15,11 +15,13 @@ public class MinigameController : MonoBehaviour
     {
         loadingPanel.SetActive(true);
 
-        DataManager.Instance.EstablishAuth("jackson.nelsongal@gmail.com");
+        DataManager.Instance.EstablishAuth("lucaspopp0@gmail.com");
         Debug.Log("Auth established.");
         await DataManager.Instance.FetchInitialData();
         Debug.Log("Data loaded.");
         UpdateRemaining();
+
+        Debug.Log(DataManager.Instance.UserTeams[0].Name);
 
         loadingPanel.SetActive(false);
     }
@@ -37,17 +39,23 @@ public class MinigameController : MonoBehaviour
             UpdateRemaining();
             if (actions >= actionsNeeded)
             {
+                loadingPanel.SetActive(true);
                 OnActionsCompleted();
             }
         }
     }
 
-    private void OnActionsCompleted()
+    private async void OnActionsCompleted()
     {
         foreach (TeamInfo team in DataManager.Instance.UserTeams)
         {
+            Debug.Log(team.DateLastMaintained);
             team.SetMaintained();
-            DataManager.Instance.UpdateTeam(team);
+            await DataManager.Instance.UpdateTeam(team);
         }
+        Debug.Log("Updated teams.");
+        actions = 0;
+        UpdateRemaining();
+        loadingPanel.SetActive(false);
     }
 }
