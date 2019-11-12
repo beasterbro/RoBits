@@ -35,6 +35,11 @@ public class SlotInputComponent : BlockComponent
         }
     }
 
+    public Block Peek()
+    {
+        return slot;
+    }
+
     public Block Pop()
     {
         Block result = slot;

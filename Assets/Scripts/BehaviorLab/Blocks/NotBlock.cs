@@ -10,4 +10,9 @@ public class NotBlock : LogicBlock
     {
         return !first;
     }
+
+    protected override string Type()
+    {
+        return "not";
+    }
 }

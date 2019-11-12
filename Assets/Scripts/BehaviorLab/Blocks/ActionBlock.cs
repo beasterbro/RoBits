@@ -19,4 +19,19 @@ public class ActionBlock : Block
     {
         return BehaviorData.EMPTY;
     }
+
+    protected override List<Block> Children()
+    {
+        return new List<Block>();
+    }
+
+    protected override string Type()
+    {
+        return "action";
+    }
+
+    protected override int[] ChunkSizes()
+    {
+        return new int[0];
+    }
 }

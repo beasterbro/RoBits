@@ -59,4 +59,19 @@ public abstract class LogicBlock : Block
         }
         return true;
     }
+
+    protected override List<Block> Children()
+    {
+        List<Block> children = new List<Block>();
+        foreach (SlotInputComponent condition in conditions)
+        {
+            children.Add(condition.Peek());
+        }
+        return children;
+    }
+
+    protected override int[] ChunkSizes()
+    {
+        return new int[0];
+    }
 }

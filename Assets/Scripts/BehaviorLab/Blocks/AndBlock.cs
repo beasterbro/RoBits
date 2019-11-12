@@ -9,4 +9,9 @@ public class AndBlock : LogicBlock
     {
         return first && next;
     }
+
+    protected override string Type()
+    {
+        return "and";
+    }
 }

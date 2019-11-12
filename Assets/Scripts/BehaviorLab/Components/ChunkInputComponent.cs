@@ -10,6 +10,11 @@ public class ChunkInputComponent : BlockComponent
     [SerializeField] private GameObject indicator;
     [SerializeField] private GameObject elementContainer;
 
+    public List<Block> Elements()
+    {
+        return _blocks.elements;
+    }
+
     private ScalingList<Block> blocks
     {
         get

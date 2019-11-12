@@ -9,4 +9,9 @@ public class OrBlock : LogicBlock
     {
         return first || next;
     }
+
+    protected override string Type()
+    {
+        return "or";
+    }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
 
 [AddComponentMenu("Interface Objects/Block")]
 public abstract class Block : InterfaceObject
@@ -49,6 +50,36 @@ public abstract class Block : InterfaceObject
             this.OnGrab();
         }
     }
+
+    // Generates and lists out all BlockInfo states below this and including this
+    public List<BlockInfo> States(int startingId)
+    {
+        List<BlockInfo> working_states = new List<BlockInfo>();
+        foreach (Block child in Children())
+        {
+            working_states.AddRange(child.States(startingId + 1 + working_states.Count));
+        }
+        working_states.Add(State(startingId, working_states.Count));
+        return working_states;
+    }
+
+    // Generates the BlockInfo state for this object given a unique id and the highest id of their children.
+    // This assumes that all ids falling between id (non-inclusive) and maxChildId (inclusive) are children to this Block.
+    public BlockInfo State(int id, int maxChildId)
+    {
+        return new BlockInfo(id, Type(), new Dictionary<string, string>(), IDs(id + 1, maxChildId), ChunkSizes());
+    }
+
+    private int[] IDs(int first, int last)
+    {
+        return Enumerable.Range(first, last - first + 1).ToArray();
+    }
+
+    protected abstract List<Block> Children();
+
+    protected abstract string Type();
+
+    protected abstract int[] ChunkSizes();
 
     // Move the block to a specific point in the view
     public void Move(Vector3 pos)
