@@ -20,12 +20,12 @@ public class Item : ScriptableObject
     public PartType type;
     public int price;
     public int levelToUnlock;
-    public Dictionary<String, double> attributes;
+    public Dictionary<String, float> attributes;
 
     private void OnValidate()
     {
-        part = new PartInfo(partID,ItemName,description,type,price,levelToUnlock,attributes);
-        string path = AssetDatabase.GetAssetPath(this);
-        id = AssetDatabase.AssetPathToGUID(path);
+//        part = new PartInfo(partID,ItemName,description,type,price,levelToUnlock,attributes);
+//        string path = AssetDatabase.GetAssetPath(this);
+//        id = AssetDatabase.AssetPathToGUID(path);
     }
 }

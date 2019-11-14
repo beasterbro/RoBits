@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Extensions;
@@ -8,31 +7,36 @@ using UnityEngine.UI;
 public class BotController : MonoBehaviour
 {
 
+    [HideInInspector] public BotInfo info;
     private TeamInfo team;
 
-    public float maxHealth = 100.0f;
+    [HideInInspector] public float maxHealth;
     [HideInInspector] public float currentHealth;
     [HideInInspector] public bool isDead;
 
     private bool actionsEnabled;
 
-    [HideInInspector] public BotInfo info;
-
     [HideInInspector] public List<PartController> parts = new List<PartController>();
     private readonly List<SensorPartController> sensors = new List<SensorPartController>();
-
-    [HideInInspector] public Transform target;
+    private BodyTypeController body;
 
     private readonly List<Behavior> behaviors = new List<Behavior>();
-
     private Behavior activeBehavior;
 
     public void LoadInfo(BotInfo botInfo, TeamInfo teamInfo)
     {
         team = teamInfo;
         info = botInfo;
-        LoadParts();
 
+        maxHealth = info.Equipment.Sum(part => part.Attributes.GetOrDefault("health", 0f)) +
+                    info.BodyType.Attributes.GetOrDefault("health", 0f);
+
+        LoadParts();
+        AddDemoBehaviors();
+    }
+
+    private void AddDemoBehaviors()
+    {
         var guns = new List<GunController>();
         parts.ForEach(part =>
         {
@@ -43,11 +47,11 @@ public class BotController : MonoBehaviour
         var visSensor = sensors.Find(part => part is VisionSensor) as VisionSensor;
         var wheels = parts.Find(part => part is WheelsController) as WheelsController;
 
-        switch (teamInfo.UserID)
+        switch (team.UserID)
         {
             case "lmp122":
 
-                switch (botInfo.ID)
+                switch (info.ID)
                 {
                     case 0:
                         behaviors.Add(new Behavior(this, proxSensor.OpponentIsInRange, () =>
@@ -100,16 +104,14 @@ public class BotController : MonoBehaviour
 
             case "ax1477":
 
-                switch (botInfo.ID)
+                switch (info.ID)
                 {
                     case 0:
-                        proxSensor.maxRange = 10;
-
                         behaviors.Add(new Behavior(this, proxSensor.OpponentIsInRange, () =>
                         {
                             for (var i = 0; i < guns.Count; i++)
                             {
-                                BotController opponent = proxSensor.GetNthOpponent(i);
+                                var opponent = proxSensor.GetNthOpponent(i);
                                 if (opponent != null)
                                 {
                                     guns[i].FocusOn(opponent.gameObject.transform);
@@ -124,7 +126,7 @@ public class BotController : MonoBehaviour
                         {
                             for (var i = 0; i < guns.Count; i++)
                             {
-                                BotController opponent = proxSensor.GetNthOpponent(i);
+                                var opponent = proxSensor.GetNthOpponent(i);
                                 if (opponent != null)
                                 {
                                     guns[i].FocusOn(opponent.gameObject.transform);
@@ -151,11 +153,15 @@ public class BotController : MonoBehaviour
 
     private void LoadParts()
     {
-        List<GunController> guns = new List<GunController>();
+        body = PartController.ControllerForPart(info.BodyType) as BodyTypeController;
+        body.bot = this;
+        body.gameObject.transform.parent = transform;
+        body.Setup();
+        body.Position();
 
-        foreach (PartInfo partInfo in info.Equipment)
+        foreach (var partInfo in info.Equipment)
         {
-            PartController partController = PartController.ControllerForPart(partInfo);
+            var partController = PartController.ControllerForPart(partInfo);
             if (partController != null)
             {
                 partController.bot = this;
@@ -165,35 +171,10 @@ public class BotController : MonoBehaviour
                 parts.Add(partController);
 
                 if (partController is SensorPartController sensor) sensors.Add(sensor);
-                else if (partController is GunController gun) guns.Add(gun);
             }
         }
 
-        PositionWeapons();
-    }
-
-    private void PositionWeapons()
-    {
-        var guns = parts.Where(part => part is GunController).Cast<GunController>().ToArray();
-
-        if (guns.Length > 1)
-        {
-            const float distance = 0.42f;
-            var rotationInterval = 360f / guns.Length;
-            var startingRotation = rotationInterval / 2f;
-
-            for (var i = 0; i < guns.Length; i++)
-            {
-                var rotation = startingRotation - (i * rotationInterval);
-                var empty = new GameObject();
-                empty.transform.parent = gameObject.transform;
-                empty.transform.localPosition = VectorHelper.MakeVector(distance, rotation, -1f);
-                empty.transform.localRotation = Quaternion.Euler(0f, 0f, rotation);
-
-                guns[i].Position(empty.transform);
-                Destroy(empty);
-            }
-        }
+        body?.PositionWeapons();
     }
 
     private void Start()
@@ -209,14 +190,7 @@ public class BotController : MonoBehaviour
 
     private void PickActiveBehavior()
     {
-        foreach (Behavior behavior in behaviors)
-        {
-            if (behavior.IsApplicable())
-            {
-                activeBehavior = behavior;
-                break;
-            }
-        }
+        activeBehavior = behaviors.Find(behavior => behavior.IsApplicable());
     }
 
     private void Update()
@@ -231,22 +205,13 @@ public class BotController : MonoBehaviour
     private void FixedUpdate()
     {
         if (!actionsEnabled) return;
-
         activeBehavior?.Execute();
-    }
-
-    public void SetTarget(Transform target)
-    {
-        this.target = target;
     }
 
     public void TakeDamage(float amount)
     {
         currentHealth -= amount;
-        if (currentHealth <= 0 && !isDead)
-        {
-            Die();
-        }
+        if (currentHealth <= 0 && !isDead) Die();
     }
 
     private void Die()
@@ -258,12 +223,12 @@ public class BotController : MonoBehaviour
 
         gameObject.transform.SetZ(10f);
 
-        // Dim sprite
         var renderer = GetComponent<SpriteRenderer>();
         var spriteColor = renderer.color;
         spriteColor.a = 0.2f;
         renderer.color = spriteColor;
 
+        body.Dim();
         parts.ForEach(part => part.Dim());
     }
 
@@ -287,7 +252,9 @@ public class BotController : MonoBehaviour
         var children = new List<GameObject>();
 
         var container = new GameObject();
-        children.Add(CopySprite(gameObject, container.transform));
+        var bodyObj = CopySprite(body.gameObject, container.transform);
+        bodyObj.transform.CopyLocal(body.transform);
+        children.Add(bodyObj);
 
         foreach (var part in parts)
         {
@@ -305,7 +272,7 @@ public class BotController : MonoBehaviour
         return container;
     }
 
-    private GameObject CopySprite(GameObject obj, Transform parent)
+    private static GameObject CopySprite(GameObject obj, Transform parent)
     {
         var sprite = obj.GetComponent<SpriteRenderer>().sprite;
 

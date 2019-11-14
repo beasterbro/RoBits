@@ -4,9 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Newtonsoft.Json;
+using System.Runtime.InteropServices;
 
 public class MainMenu : MonoBehaviour
 {
+
+    [DllImport("__Internal")]
+    private static extern void SayHello(string name);
 
     //Changes the scene to the battle scene
     public void PlayGame()
@@ -40,6 +44,9 @@ public class MainMenu : MonoBehaviour
 
         Debug.Log("Teams:");
         Debug.Log(JsonConvert.SerializeObject(DataManager.Instance.UserTeams));
+        
+        MainMenu.SayHello("Lucas");
     }
+
 
 }

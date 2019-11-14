@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 
@@ -59,7 +60,7 @@ public class BotInfo
     }
 
     public Dictionary<string, string> Behaviors => behavior;
-
+    
     // TODO: Implement
     // GetBotBehavior
     // SetCodeBlocks
