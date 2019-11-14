@@ -16,10 +16,11 @@ public class InventoryController : MonoBehaviour
     
     public BotInfo currentBot ;
     public List<Image> itemImages;
-
+    //Generates Bot Images
+    [SerializeField] private GameObject BotGenerator;
 
     //Displaying info to user
-    [SerializeField] ItemToolTip itemToolTip;
+    [SerializeField] public ItemToolTip itemToolTip;
     [SerializeField] Text botInfoText;
     
     //Managing user input
@@ -41,6 +42,18 @@ public class InventoryController : MonoBehaviour
         }
     }
 
+    void CreateBotImage(BotInfo botInfo)
+    {
+        BotGenerator.GetComponent<BotController>().LoadInfo(botInfo,null);
+        BotGenerator.GetComponent<BotController>().BuildPreview().transform.lossyScale.Scale(new Vector3(75,75,75)) ;
+        BotGenerator.transform.lossyScale.Scale(new Vector3(75,75,75)) ;
+
+        List<Transform> childrenToScale = new List<Transform>(BotGenerator.GetComponentsInChildren<Transform>());
+        foreach (var transform in childrenToScale)
+        {
+            transform.localScale = new Vector3(75,75,75);
+        }
+    }
     private void Awake()
     {
 
@@ -139,7 +152,7 @@ public class InventoryController : MonoBehaviour
         }
     }
     
-    private void ShowTooltip(ItemSlot itemSlot)
+    public void ShowTooltip(ItemSlot itemSlot)
     {
         if (itemSlot.Item != null)
         {
@@ -147,7 +160,7 @@ public class InventoryController : MonoBehaviour
         }
     }
 
-    private void HideTooltip(ItemSlot itemSlot)
+    public void HideTooltip(ItemSlot itemSlot)
     {
         
         itemToolTip.HideToolTip();
@@ -157,46 +170,7 @@ public class InventoryController : MonoBehaviour
 
 
 
-    private static Dictionary<String,double> attributes1 = new Dictionary<string, double>
-    {
-        {"DMG",23.0},
-        {"DIST",12}
-    };
-       
-    private static Dictionary<String,double> attributes2 = new Dictionary<string, double>
-    {
-        {"DMG",23.0},
-        {"DIST",12}
-    };
-       
-    private static Dictionary<String,string> settings = new Dictionary<string, string>
-    {
-        {"DARK","yes"},
-        {"LOUD","no"}
-    };
-       
-    private static Dictionary<String,double> bodySpec = new Dictionary<string, double>
-    {
-        {"THICC",11},
-        {"SANIC",101}
-    };
-       
-       
-    
-    private PartInfo tankGun= new PartInfo(112, "Tank Gun", "Shoot Shells", PartType.Weapon, 100, 2, attributes1);
-    private PartInfo gun = new PartInfo(113, "Base Gun", "Shoot Bullets", PartType.Weapon, 1, 0, attributes2);
-    private PartInfo baseBody = new PartInfo(222, "Base Body", "Body of Bot", PartType.BodyType, 1, 1, attributes1);
-    private PartInfo armor = new PartInfo(333, "Reflective Armor", "Reflects Bullets", PartType.Armor, 1, 1, attributes1);
-    private PartInfo wheels = new PartInfo(444, "Wheels", "High Speed, Low Load", PartType.Transport, 1, 1, attributes1);
-    private PartInfo treads = new PartInfo(555, "Tank Treads", "Low Speed High Load", PartType.Transport, 1, 1, attributes1);
-    
-    
-    private PartInfo body = new PartInfo(222, "body", "Main Body part", PartType.BodyType, 2, 2, bodySpec);
 
-    private UserInfo user = new UserInfo("testUser","ass@ass.com","tester101",100,200,true,settings);
-     
-
-    private  List<BotInfo> botTeam = new List<BotInfo>();
     
 
     
@@ -216,7 +190,7 @@ public class InventoryController : MonoBehaviour
         //Behavior here could stand being tweaked a bit more
         if (draggedItemSlot is EquipmentSlot)
         {
-             Unequip(dragEquipItem);
+            Unequip(dragEquipItem);
             Equip(dropEquipItem);
            
         }
@@ -288,7 +262,7 @@ public class InventoryController : MonoBehaviour
         Item previousItem;
         foreach (PartInfo part in currentBot.Equipment)
         {
-        //Creating new item to add to equipment panel
+            //Creating new item to add to equipment panel
 
             Item item = PartToItem(part);
             equipmentPanel.AddItem(item,out previousItem);
@@ -298,7 +272,7 @@ public class InventoryController : MonoBehaviour
     }
 
     //Converts inputted part into an item to be put in the inventory
-    Item PartToItem(PartInfo part)
+    public Item PartToItem(PartInfo part)
     {
         Item item = ScriptableObject.CreateInstance<Item>();
         item.part = part;
@@ -316,32 +290,16 @@ public class InventoryController : MonoBehaviour
     }
 
 
-    void Start()
+    async void Start()
     {
-        //Temp vars for testing
-        var item1 = new InventoryItem(treads,1);
-        var item2 = new InventoryItem(baseBody,2);
-        var item3 = new InventoryItem(gun,1);
-        var  item4 = new InventoryItem(tankGun,1);
         
-        
-        var allParts = new List<PartInfo>(new PartInfo[]{tankGun,treads,armor});
-        var allParts2 = new List<PartInfo>(new PartInfo[]{gun,wheels,baseBody});
-        var allParts3 = new List<PartInfo>(new PartInfo[]{tankGun,gun});
-        
-        
-        var bot0 = new BotInfo(0,"OmegaBot",0,allParts,baseBody);
-        var bot1 = new BotInfo(1,"MiniBot",1,allParts2,baseBody);
-        var bot2 = new BotInfo(2,"MadBot",2,allParts3,baseBody);
-        
-        
-        botTeam.Add(bot0);
-        botTeam.Add(bot1);
-        botTeam.Add(bot2);
-        userBots = botTeam;
-        //userInventory = DataManager.Instance().GetUserInventory();
-        userInventory = new List<InventoryItem>{item1,item2,item3,item4};
+        DataManager.Instance.EstablishAuth("lucaspopp0@gmail.com");
+        await DataManager.Instance.FetchInitialData();
+        userInventory = DataManager.Instance.UserInventory;
+        userBots = new List<BotInfo>(DataManager.Instance.AllBots);
         SetActiveBot(0);
+        CreateBotImage(userBots[0]);
+        
         UpdateInventory();
         UpdateEquipment();
         
@@ -355,5 +313,7 @@ public class InventoryController : MonoBehaviour
             inventory.AddItem(PartToItem(inventoryItem.Part));
         }
     }
+    
+
 
 }

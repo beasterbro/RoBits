@@ -5,11 +5,16 @@ using UnityEngine;
 using UnityEngine.Serialization;
 
 public class Inventory : MonoBehaviour
-{//TODO: Implement Specified Item Categories
+{
    
     [SerializeField] List<Item> startingitems;
     [SerializeField] Transform itemsParent;
     [SerializeField] ItemSlot[] itemSlots;
+
+    public ItemSlot[] ItemSlots
+    {
+        get => itemSlots;
+    }
     
     public static event Action<ItemSlot> OnRightClickEvent;
     public static event Action<ItemSlot> OnPointerEnterEvent;
@@ -60,7 +65,7 @@ public class Inventory : MonoBehaviour
     }
 
     //Adds an item to the inventory, returns false if the item cannot be added
-    public bool AddItem(Item item)
+    public virtual bool AddItem(Item item)
     {
         //for (int i = 0; i < itemSlots.Length; i++)
         foreach (var slot in itemSlots)

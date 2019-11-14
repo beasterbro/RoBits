@@ -32,6 +32,23 @@ public class ItemToolTip : MonoBehaviour
   gameObject.SetActive(true);
  }
 
+ public void ShowPartInfo(PartInfo part)
+ {
+  ItemNameText.text = part.Name;
+  ItemSlotText.text = part.PartType.ToString();
+
+  //Add more Stats here
+  sb.Length = 0;
+  AddStat(part.Price.ToString(), "Price:");
+  AddStat(part.LevelToUnlock.ToString(), "Unlock At:");
+  AddStat(part.ID.ToString(), "ID:");
+  AddStat(part.Description,"Desc:");
+
+  ItemStatText.text = sb.ToString();
+  
+  gameObject.SetActive(true);
+ }
+
  public void HideToolTip()
  {
   gameObject.SetActive(false);
