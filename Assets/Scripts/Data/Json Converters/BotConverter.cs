@@ -21,7 +21,7 @@ namespace JsonData
             var id = helper.GetValue<int>("bid");
             var name = helper.GetValue("name", "");
             var partIds = helper.GetValue("parts", new int[0]);
-            var bodyTypeId = helper.GetValue("bodyType", 0);
+            var bodyTypeId = helper.GetValue("bodyType", 100);
             var tier = helper.GetValue("tier", 0);
             var ai = helper.GetValue("ai", new Dictionary<string, string>());
 

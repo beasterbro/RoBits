@@ -14,18 +14,18 @@ public class BuyMenu : MonoBehaviour
      
     }
 
-    void ShowBuyMenu(int partID)
+    public void ShowBuyMenu(int partID)
     {
         gameObject.SetActive(true);
         PartID = partID;
     }
 
-    void Buy(int PartID)
+    public void Buy(int PartID)
     {
         DataManager.Instance.PurchasePart(AllParts.ToList().Find(info => info.ID == PartID));
     }
 
-    void CancelBuyMenu()
+     public void CancelBuyMenu()
     {
         gameObject.SetActive(false);
     }

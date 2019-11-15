@@ -284,7 +284,7 @@ public class InventoryController : MonoBehaviour
         item.attributes = part.Attributes;
         item.ItemName = part.Name;
         item.levelToUnlock = part.LevelToUnlock;
-        item.Icon = GetComponentInParent<ItemImageGenrator>().generateImage(part.ID);
+        item.Icon = ItemImageGenrator.GenerateImage(part.ResourceName);
 
         return item;
     }

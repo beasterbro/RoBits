@@ -7,6 +7,7 @@ public class StoreController : MonoBehaviour
 {
     
     [SerializeField] public ItemToolTip itemToolTip;
+    [SerializeField] public BuyMenu BuyOptionMenu;
 
     private PartInfo[] allParts;
     
@@ -26,6 +27,17 @@ public class StoreController : MonoBehaviour
         {
             itemToolTip.ShowPartInfo(partInfo);
         }
+    }
+
+    public void ShowBuyMenu(int partID)
+    {
+        BuyOptionMenu.ShowBuyMenu(partID);
+    }
+
+    public void CancelBuyMenu()
+    {
+        BuyOptionMenu.CancelBuyMenu();
+        HideTooltip();
     }
 
     void SortPartsByType()
@@ -104,9 +116,7 @@ public class StoreController : MonoBehaviour
             ShowTooltip(cpu[i - 600]);
         }
         
-        await Task.Delay(5000);
-        HideTooltip();
-    }
+       }
 
     private async void Start()
     {
