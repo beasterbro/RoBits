@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -15,9 +16,8 @@ public class InventoryController : MonoBehaviour
     
     
     public BotInfo currentBot ;
-    public List<Image> itemImages;
     //Generates Bot Images
-    [SerializeField] private GameObject BotGenerator;
+    [SerializeField] private List<GameObject> BotGenerators;
 
     //Displaying info to user
     [SerializeField] public ItemToolTip itemToolTip;
@@ -42,17 +42,9 @@ public class InventoryController : MonoBehaviour
         }
     }
 
-    void CreateBotImage(BotInfo botInfo)
-    {
-        BotGenerator.GetComponent<BotController>().LoadInfo(botInfo,null);
-        BotGenerator.GetComponent<BotController>().BuildPreview().transform.lossyScale.Scale(new Vector3(75,75,75)) ;
-        BotGenerator.transform.lossyScale.Scale(new Vector3(75,75,75)) ;
-
-        List<Transform> childrenToScale = new List<Transform>(BotGenerator.GetComponentsInChildren<Transform>());
-        foreach (var transform in childrenToScale)
-        {
-            transform.localScale = new Vector3(75,75,75);
-        }
+    void CreateBotImage(BotInfo botInfo, GameObject botGenerator)
+    {   
+        botGenerator.GetComponent<BotController>().LoadInfo(botInfo,null); 
     }
     private void Awake()
     {
@@ -298,11 +290,24 @@ public class InventoryController : MonoBehaviour
         userInventory = DataManager.Instance.UserInventory;
         userBots = new List<BotInfo>(DataManager.Instance.AllBots);
         SetActiveBot(0);
-        CreateBotImage(userBots[0]);
+        CreateAllBotImages();
         
         UpdateInventory();
         UpdateEquipment();
         
+    }
+
+    private void CreateAllBotImages()
+    {
+        IEnumerator<BotInfo> BotInfoGenerator = userBots.GetEnumerator();
+       // BotInfoGenerator.Reset();
+        BotInfoGenerator.MoveNext();
+        foreach (var botObject in BotGenerators)
+        {    
+        CreateBotImage(BotInfoGenerator.Current,botObject);
+        BotInfoGenerator.MoveNext();
+        }
+        BotInfoGenerator.Dispose();
     }
 
     //Called on start to add all of the items in the user's inventory to the inventory panel
