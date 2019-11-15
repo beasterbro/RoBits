@@ -330,9 +330,9 @@ public class InventoryController : MonoBehaviour
         var allParts3 = new List<PartInfo>(new PartInfo[]{tankGun,gun});
         
         
-        var bot0 = new BotInfo(0,"OmegaBot",0,allParts,baseBody);
-        var bot1 = new BotInfo(1,"MiniBot",1,allParts2,baseBody);
-        var bot2 = new BotInfo(2,"MadBot",2,allParts3,baseBody);
+        var bot0 = new BotInfo(0,"OmegaBot",0,allParts,baseBody, new BehaviorInfo[0]);
+        var bot1 = new BotInfo(1,"MiniBot",1,allParts2,baseBody, new BehaviorInfo[0]);
+        var bot2 = new BotInfo(2,"MadBot",2,allParts3,baseBody, new BehaviorInfo[0]);
         
         
         botTeam.Add(bot0);
