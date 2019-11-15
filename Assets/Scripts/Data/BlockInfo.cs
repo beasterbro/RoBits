@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
+[JsonConverter(typeof(JsonData.BlockConverter))]
 public class BlockInfo
 {
 

@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
 
+[JsonConverter(typeof(JsonData.BehaviorConverter))]
 public class BehaviorInfo
 {
 
