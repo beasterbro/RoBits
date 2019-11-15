@@ -4,10 +4,9 @@ using UnityEngine;
 using System;
 
 [AddComponentMenu("Interface Objects/Blocks/If")]
-public class IfBlock : Block
+public class IfBlock : BodyBlock
 {
     [SerializeField] private SlotInputComponent condition;
-    [SerializeField] private ChunkInputComponent thenChunk;
 
     protected override void Start()
     {
@@ -16,20 +15,13 @@ public class IfBlock : Block
         {
             throw new ArgumentException("Condition MUST be a logical slot component!!!");
         }
-
-        thenChunk.LinkScaleController(this.scaleController);
-    }
-
-    public override ReturnType OutputType()
-    {
-        return ReturnType.EMPTY;
     }
 
     protected override BehaviorData InnerEvaluate()
     {
         if (condition.Evaluate().GetLogical())
         {
-            thenChunk.Evaluate();
+            base.InnerEvaluate();
         }
         return BehaviorData.EMPTY;
     }
@@ -37,24 +29,19 @@ public class IfBlock : Block
     public override bool IsValid()
     {
         return condition != null && condition.GetExpectedOutputType() == ReturnType.LOGICAL
-            && condition.IsValid();
+            && condition.IsValid() && base.IsValid();
     }
 
     protected override List<Block> Children()
     {
         List<Block> children = new List<Block>();
         children.Add(condition.Peek());
-        children.AddRange(thenChunk.Elements());
+        children.AddRange(base.Children());
         return children;
     }
 
     protected override string Type()
     {
         return "if";
-    }
-
-    protected override int[] ChunkSizes()
-    {
-        return new int[] { thenChunk.Elements().Count };
     }
 }

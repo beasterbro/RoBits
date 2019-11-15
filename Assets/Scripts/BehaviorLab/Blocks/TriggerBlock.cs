@@ -2,38 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// Note: This is used as the top level block in a behavior scene
 [AddComponentMenu("Interface Objects/Blocks/Trigger")]
-public class TriggerBlock : Block
+public class TriggerBlock : BodyBlock
 {
-    [SerializeField] private ReturnType outputType = ReturnType.LOGICAL;
+    [SerializeField] private int id;
 
-    public override ReturnType OutputType()
+    public BehaviorInfo BehaviorState()
     {
-        return outputType;
-    }
-
-    public override bool IsValid()
-    {
-        return false;
-    }
-
-    protected override BehaviorData InnerEvaluate()
-    {
-        return BehaviorData.EMPTY;
-    }
-
-    protected override List<Block> Children()
-    {
-        return new List<Block>();
+        int initial = 0;
+        List<BlockInfo> blockStates = States(initial);
+        return new BehaviorInfo(id, initial, blockStates.ToArray());
     }
 
     protected override string Type()
     {
         return "trigger";
-    }
-
-    protected override int[] ChunkSizes()
-    {
-        return new int[0];
     }
 }

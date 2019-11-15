@@ -810,8 +810,8 @@ MonoBehaviour:
   prev: {fileID: 0}
   next: {fileID: 0}
   containing: {fileID: 0}
+  bodyChunk: {fileID: 6324006933701584948}
   condition: {fileID: 3289716059615831779}
-  thenChunk: {fileID: 6324006933701584948}
 --- !u!61 &1442680848701633316
 BoxCollider2D:
   m_ObjectHideFlags: 0
