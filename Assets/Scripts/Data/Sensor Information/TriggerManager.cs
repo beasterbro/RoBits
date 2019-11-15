@@ -8,6 +8,8 @@ public class TriggerManager
     private readonly static Dictionary<int, TriggerInfo> triggers = new Dictionary<int, TriggerInfo>();
     private readonly static Dictionary<SensorType, List<TriggerInfo>> sensorsToTriggers = new Dictionary<SensorType, List<TriggerInfo>>();
 
+    private readonly static TriggerInfo EMPTY_TRIGGER = new TriggerInfo(-1, SensorType.NULL, "null");
+
     // TODO: have the database store the trigger information so it's not dependent on the creation on system and have this loaded in from DataManager instead of created as follows
     static TriggerManager()
     {
@@ -19,7 +21,7 @@ public class TriggerManager
         {
             for (int i = 0; i < names.Length; i++)
             {
-                int id = 100 * types.IndexOf(type) + i;
+                int id = 20 * types.IndexOf(type) + i;
                 AddTrigger(id, type, names[i]);
             }
         }
@@ -40,7 +42,7 @@ public class TriggerManager
 
     public static TriggerInfo GetTrigger(int id)
     {
-        return triggers[id];
+        return triggers.ContainsKey(id) ? triggers[id] : EMPTY_TRIGGER;
     }
 
     public static List<TriggerInfo> GetTriggersFor(SensorType sensor)

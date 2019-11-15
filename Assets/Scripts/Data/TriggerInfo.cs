@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Sensors;
 
-public class TriggerInfo : MonoBehaviour
+public class TriggerInfo
 {
     private readonly int id;
     private readonly SensorType sensor;
