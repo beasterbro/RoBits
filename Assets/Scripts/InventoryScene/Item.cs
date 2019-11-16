@@ -12,16 +12,23 @@ public class Item : ScriptableObject
     public PartInfo part;
     [SerializeField] string id;
     public int partID;
-    public string ID
-    {
-        get { return id; }
-    }
+    public string ID => id;
     public String description;
     public PartType type;
     public int price;
     public int levelToUnlock;
     public Dictionary<String, double> attributes;
 
+    public virtual Item GetCopy()
+    {
+        return this;
+    }
+
+    public virtual void Destroy()
+    {
+        
+    }
+    
     private void OnValidate()
     {
         part = new PartInfo(partID,ItemName,description,type,price,levelToUnlock,attributes);

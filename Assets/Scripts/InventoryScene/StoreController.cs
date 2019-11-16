@@ -78,7 +78,7 @@ public class StoreController : MonoBehaviour
         
     }
 
-    public async void showPartSpecs(int i)
+    public void showPartSpecs(int i)
     {
         if (100 <= i && i <= 199)
         {
