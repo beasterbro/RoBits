@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BotPreviewGenerator : MonoBehaviour
+public class BotPreviewGenerator
 {
     public static List<GameObject> BotGenerators;
    public static void CreateBotImage(BotInfo botInfo, GameObject botGenerator)
