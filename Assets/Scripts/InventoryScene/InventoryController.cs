@@ -303,6 +303,7 @@ public class InventoryController : MonoBehaviour
         
         UpdateInventory();
         UpdateEquipment();
+        UpdateCurrency();
         
     }
 
