@@ -22,6 +22,7 @@ public class InventoryController : MonoBehaviour
     //Displaying info to user
     [SerializeField] public ItemToolTip itemToolTip;
     [SerializeField] Text botInfoText;
+    [SerializeField] private Text Currency;
     
     //Managing user input
     [SerializeField]  Inventory inventory;
@@ -34,18 +35,24 @@ public class InventoryController : MonoBehaviour
  
  
 
-    private void OnValidate()
+    private async void OnValidate()
     {
         if (itemToolTip == null)
         {
             itemToolTip = FindObjectOfType<ItemToolTip>();
         }
+
     }
 
+    void ClearBotImage(GameObject botGenrator)
+    {
+       BotPreviewGenerator.ClearBotImage(botGenrator);
+        }
     void CreateBotImage(BotInfo botInfo, GameObject botGenerator)
     {   
-        botGenerator.GetComponent<BotController>().LoadInfo(botInfo,null); 
+       BotPreviewGenerator.CreateBotImage(botInfo,botGenerator);
     }
+    
     private void Awake()
     {
 
@@ -215,6 +222,7 @@ public class InventoryController : MonoBehaviour
                     Unequip(previousItem);
                 }
                 currentBot.AddPart(item.part);
+                CreateAllBotImages();
             }
             else
             {
@@ -230,6 +238,7 @@ public class InventoryController : MonoBehaviour
         {
             inventory.AddItem(item);
             currentBot.RemovePart(item.part);
+            CreateAllBotImages();
         }
     }
 
@@ -247,7 +256,7 @@ public class InventoryController : MonoBehaviour
     //Refreshes the displayed Equipment from the current Bot's parts
     public void UpdateEquipment()
     {
-        
+       // SetEquipmentMax(currentBot);
         //Retrieves all of the items currently equipped and store them
         List<Item> addToInventory = equipmentPanel.ClearEquipped();
        
@@ -299,15 +308,8 @@ public class InventoryController : MonoBehaviour
 
     private void CreateAllBotImages()
     {
-        IEnumerator<BotInfo> BotInfoGenerator = userBots.GetEnumerator();
-       // BotInfoGenerator.Reset();
-        BotInfoGenerator.MoveNext();
-        foreach (var botObject in BotGenerators)
-        {    
-        CreateBotImage(BotInfoGenerator.Current,botObject);
-        BotInfoGenerator.MoveNext();
-        }
-        BotInfoGenerator.Dispose();
+        BotPreviewGenerator.BotGenerators = BotGenerators;
+        BotPreviewGenerator.CreateAllBotImages();
     }
 
     //Called on start to add all of the items in the user's inventory to the inventory panel
@@ -317,6 +319,11 @@ public class InventoryController : MonoBehaviour
         {
             inventory.AddItem(PartToItem(inventoryItem.Part));
         }
+    }
+
+    private void UpdateCurrency()
+    {
+        Currency.text = DataManager.Instance.CurrentUser.Currency.ToString();
     }
     
 
