@@ -25,8 +25,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 152838600}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.07, y: 0, z: -0.01}
-  m_LocalScale: {x: 1.1, y: 0.02, z: 1}
+  m_LocalPosition: {x: -0.07, y: 0, z: -0.5}
+  m_LocalScale: {x: 1.1, y: 0.04, z: 1}
   m_Children: []
   m_Father: {fileID: 5623973304310932087}
   m_RootOrder: 0
@@ -134,8 +134,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 539328204}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.07, y: -0.01, z: -0.01}
-  m_LocalScale: {x: 0.36666667, y: 0.36666667, z: 1}
+  m_LocalPosition: {x: -0.07, y: -0.02, z: -0.5}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_Children: []
   m_Father: {fileID: 5623973304310932087}
   m_RootOrder: 2
@@ -213,8 +213,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 555427968}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.03, y: -0.01, z: -0.01}
-  m_LocalScale: {x: 0.36666667, y: 0.36666667, z: 1}
+  m_LocalPosition: {x: 1.03, y: -0.02, z: -0.5}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_Children: []
   m_Father: {fileID: 5623973304310932087}
   m_RootOrder: 1
@@ -469,6 +469,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   container: {fileID: 7632182399473827592}
+  _elements: []
   indicator: {fileID: 2944750750461550339}
   elementContainer: {fileID: 512551544}
 --- !u!61 &3599335211854601221
@@ -558,6 +559,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offset: {x: -0.3, y: -1.2}
+  minimum: {x: 0, y: 0}
+  boundary:
+    transform: {fileID: 0}
+    width: 0
+    height: 0
 --- !u!1 &5410264117888517098
 GameObject:
   m_ObjectHideFlags: 0
@@ -651,6 +657,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offset: {x: 0, y: 0}
+  minimum: {x: 0, y: 0}
+  boundary:
+    transform: {fileID: 0}
+    width: 0
+    height: 0
 --- !u!1 &7359098405657575521
 GameObject:
   m_ObjectHideFlags: 0
@@ -794,7 +805,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   container: {fileID: 0}
-  lines: []
   isMovable: 1
   isDeletable: 0
   prev: {fileID: 0}
@@ -840,7 +850,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcfff279d4d8281489e809fa04b0776a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 1.28, y: 1.5}
+  offset: {x: 1.28, y: 1.2}
+  minimum: {x: 0, y: 0.3}
+  boundary:
+    transform: {fileID: 0}
+    width: 0
+    height: 0
   scaleControllers:
   - {fileID: 6493163359699411452}
   - {fileID: 4535200170775010010}

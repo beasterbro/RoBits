@@ -35,6 +35,11 @@ public class SlotInputComponent : BlockComponent
         }
     }
 
+    public Block Peek()
+    {
+        return slot;
+    }
+
     public Block Pop()
     {
         Block result = slot;
@@ -68,6 +73,7 @@ public class SlotInputComponent : BlockComponent
     {
         if (this.IsFull())
         {
+            // TODO: drop should also reset if dropped doesn't match type.
             DragAndDropController.Instance().ResetDrop();
         }
         else
