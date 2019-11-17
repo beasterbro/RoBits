@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BotPreviewGenerator
+public class BotPreviewGenerator : MonoBehaviour
 {
+    
     public static List<GameObject> BotGenerators;
     static TeamInfo teamInfo = new TeamInfo(1,"tempTeam",new DateTime(1,1,1),DataManager.Instance.AllBots ,1,1,DataManager.Instance.CurrentUser.ID  );
 
