@@ -29,4 +29,9 @@ public class BehaviorInfo
         get => blocks;
         set => blocks = value;
     }
+
+    public override string ToString()
+    {
+        return string.Format("ID = {0} (EntryID = {1}): [{2}]({3})", TriggerId, EntryBlockId, string.Join(",", (IEnumerable<BlockInfo>)Blocks), Blocks.Length);
+    }
 }

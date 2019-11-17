@@ -52,14 +52,23 @@ public abstract class Block : InterfaceObject
     }
 
     // Generates and lists out all BlockInfo states below this and including this
+    // If a state is null it is because there was no block in the defined space involved
     public List<BlockInfo> States(int startingId)
     {
         List<BlockInfo> working_states = new List<BlockInfo>();
         foreach (Block child in Children())
         {
-            working_states.AddRange(child.States(startingId + 1 + working_states.Count));
+            if (child != null)
+            {
+                working_states.AddRange(child.States(startingId + 1 + working_states.Count));
+            }
+            else
+            {
+                working_states.Add(null);
+                Debug.Log("Found a null within " + Type() + " statement! - Block");
+            }
         }
-        working_states.Add(State(startingId, working_states.Count));
+        working_states.Add(State(startingId, startingId + working_states.Count));
         return working_states;
     }
 
@@ -67,11 +76,13 @@ public abstract class Block : InterfaceObject
     // This assumes that all ids falling between id (non-inclusive) and maxChildId (inclusive) are children to this Block.
     public BlockInfo State(int id, int maxChildId)
     {
+        //Debug.Log("id: " + id + ", maxChild: " + maxChildId);
         return new BlockInfo(id, Type(), new Dictionary<string, string>(), IDs(id + 1, maxChildId), ChunkSizes());
     }
 
     private int[] IDs(int first, int last)
     {
+        //Debug.Log("1st: " + first + ", Last: " + last);
         return Enumerable.Range(first, last - first + 1).ToArray();
     }
 

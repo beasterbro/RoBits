@@ -28,4 +28,9 @@ public class BlockInfo
 
     public int[] InputIds => inputIds;
     public int[] ChunkSizes => chunkSizes;
+
+    public override string ToString()
+    {
+        return string.Format("{1}Info(ID = {0}, Children:[{2}]", ID, Type.ToUpper(), string.Join(" ", InputIds)) + (ChunkSizes.Length > 0 ? string.Format(", Chunks:[{0}])", string.Join(" ", ChunkSizes)) : ")");
+    }
 }
