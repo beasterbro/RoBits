@@ -5,16 +5,43 @@ using UnityEngine;
 [AddComponentMenu("Interface Objects/Components/Chunk Component")]
 public class ChunkInputComponent : BlockComponent
 {
-    [SerializeField] private ScalingList<Block> blocks;
+    [SerializeField] private ScalingList<Block> _blocks;
     [SerializeField] private List<Block> _elements;
     [SerializeField] private GameObject indicator;
     [SerializeField] private GameObject elementContainer;
 
+    public List<Block> Elements()
+    {
+        return _blocks.elements;
+    }
+
+    private ScalingList<Block> blocks
+    {
+        get
+        {
+            if (_blocks == null)
+            {
+                _blocks = new ScalingList<Block>(this.transform);
+            }
+            return _blocks;
+        }
+    }
+
     protected override void Start()
     {
         base.Start();
-        blocks = new ScalingList<Block>(this.transform);
         _elements = blocks.elements;
+    }
+
+    public override void Redraw()
+    {
+        blocks.UpdateScale();
+        base.Redraw();
+    }
+
+    private void RedrawParent()
+    {
+        base.Redraw();
     }
 
     public void LinkScaleController(ScaleController scaleController)
@@ -69,6 +96,7 @@ public class ChunkInputComponent : BlockComponent
         block.SetContainer(this);
         block.transform.parent = this.elementContainer.transform;
         // TODO: probably some other stuff to setup the block
+        RedrawParent();
     }
 
     public Block Remove(Block block)
@@ -93,6 +121,7 @@ public class ChunkInputComponent : BlockComponent
         block.SetContainer(null);
         block.transform.parent = null;
         // TODO: probably some other stuff to de-setup the block
+        RedrawParent();
     }
 
     public BehaviorData Evaluate()
@@ -128,7 +157,7 @@ public class ChunkInputComponent : BlockComponent
     // Override meant to place item into index corresponding to it's position (upon dropping)
     public override void OnDrop()
     {
-        if (DragAndDropController.Instance().IsHolding())
+        if (DragAndDropController.IsOccupied())
         {
             if (MatchesOutputType(DragAndDropController.Instance().GetHeld()))
             {
@@ -148,17 +177,16 @@ public class ChunkInputComponent : BlockComponent
     private void OnMouseDown()
     {
         Debug.Log("Click " + this);
-        if (DragAndDropController.IsPresent() && !DragAndDropController.Instance().IsHolding())
+        if (DragAndDropController.IsAvailable())
         {
             this.OnGrab();
         }
     }
 
     // Display indicator of where a dragged item would go if it can
-    protected override void OnMouseOver()
+    protected override void OnOver()
     {
-        base.OnMouseOver();
-        if (DragAndDropController.Instance().IsHolding())
+        if (DragAndDropController.IsOccupied())
         {
             indicator.SetActive(true);
             indicator.transform.position =
@@ -167,9 +195,8 @@ public class ChunkInputComponent : BlockComponent
     }
 
     // Remove indicator of dragged item placement
-    protected override void OnMouseExit()
+    protected override void OnExit()
     {
-        base.OnMouseExit();
         indicator.SetActive(false);
     }
 

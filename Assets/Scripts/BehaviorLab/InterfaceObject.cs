@@ -4,7 +4,7 @@ using UnityEngine;
 
 [AddComponentMenu("Interface Objects/Interface Object")]
 [RequireComponent(typeof(ScaleController))]
-public abstract class InterfaceObject : MonoBehaviour
+public class InterfaceObject : MonoBehaviour
 {
     // Note: container should not be changed except when an object is independent of its container
     [SerializeField] private InterfaceObject container;
@@ -50,21 +50,30 @@ public abstract class InterfaceObject : MonoBehaviour
         DragAndDropController.Instance().ResetDrop();
     }
 
-    protected virtual void OnMouseOver()
+    protected virtual void OnOver() { }
+
+    protected virtual void OnExit() { }
+
+    protected void OnMouseOver()
     {
         DragAndDropController.Instance().HoverOn(this);
+        this.OnOver();
     }
 
-    protected virtual void OnMouseExit()
+    protected void OnMouseExit()
     {
         DragAndDropController.Instance().HoverOff(this);
+        this.OnExit();
     }
 
     // Updates the object's physical display
     // Implementations of this SHOULD update the boundary object
-    public void Redraw()
+    public virtual void Redraw()
     {
-        // no default implementation
+        if (!this.IsTopLevel())
+        {
+            this.container.Redraw();
+        }
     }
 
     public Vector2 Scale()

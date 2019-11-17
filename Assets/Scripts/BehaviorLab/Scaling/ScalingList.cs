@@ -26,7 +26,7 @@ public class ScalingList<T> : IList<T> where T : InterfaceObject
         UpdateScale();
     }
 
-    private void UpdateScale()
+    public void UpdateScale()
     {
         if (scaleController != null)
         {
