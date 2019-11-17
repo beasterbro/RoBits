@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Extensions
@@ -42,6 +43,16 @@ namespace Extensions
             transform.localPosition = from.localPosition;
             transform.localRotation = from.localRotation;
             transform.localScale = from.localScale;
+        }
+
+    }
+
+    public static class DictExtensions
+    {
+
+        public static TV GetOrDefault<TK, TV>(this Dictionary<TK, TV> dict, TK key, TV defaultValue)
+        {
+            return dict.TryGetValue(key, out var output) ? output : defaultValue;
         }
 
     }

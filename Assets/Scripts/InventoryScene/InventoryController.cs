@@ -170,6 +170,7 @@ public class InventoryController : MonoBehaviour
 
 
 
+
     
 
     
@@ -281,7 +282,6 @@ public class InventoryController : MonoBehaviour
         item.type = part.PartType;
         item.price = part.Price;
         item.description = part.Description;
-        item.Icon = part.Sprite;
         item.attributes = part.Attributes;
         item.ItemName = part.Name;
         item.levelToUnlock = part.LevelToUnlock;
