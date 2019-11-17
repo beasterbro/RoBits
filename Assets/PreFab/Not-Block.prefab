@@ -215,6 +215,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offset: {x: 0, y: 0}
+  minimum: {x: 0, y: 0}
+  boundary:
+    transform: {fileID: 0}
+    width: 0
+    height: 0
 --- !u!1 &7359098405657575521
 GameObject:
   m_ObjectHideFlags: 0
@@ -331,7 +336,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7943032638065624526}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.05, y: -0.275, z: 0}
+  m_LocalPosition: {x: -0.08, y: -0.2665, z: 0.001}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1661533222765257553}
@@ -379,7 +384,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 1
-  m_Size: {x: 0.1, y: 0.2}
+  m_Size: {x: 0.2, y: 0.225}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -435,13 +440,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   container: {fileID: 0}
-  lines: []
   isMovable: 1
   isDeletable: 1
   prev: {fileID: 0}
   next: {fileID: 0}
   containing: {fileID: 0}
-  condition: {fileID: 3289716059615831779}
+  conditions:
+  - {fileID: 3289716059615831779}
+  idealConditionCount: 1
 --- !u!61 &1442680848701633316
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -481,4 +487,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offset: {x: 2, y: 0.75}
+  minimum: {x: 0, y: 0}
+  boundary:
+    transform: {fileID: 0}
+    width: 0
+    height: 0
   onScale: {fileID: 486473813}

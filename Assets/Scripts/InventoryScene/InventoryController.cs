@@ -294,10 +294,11 @@ public class InventoryController : MonoBehaviour
     async void Start()
     {
         
+
         DataManager.Instance.EstablishAuth("lucaspopp0@gmail.com");
         await DataManager.Instance.FetchInitialData();
         userInventory = DataManager.Instance.UserInventory;
-        userBots = new List<BotInfo>(DataManager.Instance.AllBots);
+
         SetActiveBot(0);
         CreateAllBotImages();
         

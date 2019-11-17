@@ -44,6 +44,11 @@ namespace JsonData
             }
         }
 
+        public T[] GetArrayValue<T>(string key)
+        {
+            return GetArrayValue<T>(key, new T[0]);
+        }
+
         public T[] GetArrayValue<T>(string key, T[] defaultValue)
         {
             if (item[key].GetType() == typeof(JArray))

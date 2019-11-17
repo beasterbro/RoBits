@@ -39,4 +39,22 @@ public class IfBlock : Block
         return condition != null && condition.GetExpectedOutputType() == ReturnType.LOGICAL
             && condition.IsValid();
     }
+
+    protected override List<Block> Children()
+    {
+        List<Block> children = new List<Block>();
+        children.Add(condition.Peek());
+        children.AddRange(thenChunk.Elements());
+        return children;
+    }
+
+    protected override string Type()
+    {
+        return "if";
+    }
+
+    protected override int[] ChunkSizes()
+    {
+        return new int[] { thenChunk.Elements().Count };
+    }
 }

@@ -44,9 +44,9 @@ namespace Tests
 
         private UserInfo _userInfo = new UserInfo("testUser","ass@ass.com","tester101",100,200,true,settings);
        
-        private static BotInfo bot0 = new BotInfo(0,"bot0",0,allParts,body);
-        private static BotInfo bot1 = new BotInfo(1,"bot1",1,allParts,body);
-        private static BotInfo bot2 = new BotInfo(2,"bot2",2,allParts,body);
+        private static BotInfo bot0 = new BotInfo(0,"bot0",0,allParts,body,new BehaviorInfo[0]);
+        private static BotInfo bot1 = new BotInfo(1,"bot1",1,allParts,body,new BehaviorInfo[0]);
+        private static BotInfo bot2 = new BotInfo(2,"bot2",2,allParts,body,new BehaviorInfo[0]);
 
         private static BotInfo[] botTeam = new[] {bot0, bot1, bot2};
         
