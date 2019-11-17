@@ -6,10 +6,11 @@ using UnityEngine;
 public class BotPreviewGenerator
 {
     public static List<GameObject> BotGenerators;
+    static TeamInfo teamInfo = new TeamInfo(1,"tempTeam",new DateTime(1,1,1),DataManager.Instance.AllBots ,1,1,DataManager.Instance.CurrentUser.ID  );
+
    public static void CreateBotImage(BotInfo botInfo, GameObject botGenerator)
     {   
         ClearBotImage(botGenerator);
-        TeamInfo teamInfo = new TeamInfo(1,"tempTeam",new DateTime(1,1,1),DataManager.Instance.AllBots ,1,1,DataManager.Instance.CurrentUser.ID  );
         botGenerator.GetComponent<BotController>().LoadInfo(botInfo,teamInfo); 
     }
 
