@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using Extensions;
@@ -10,10 +9,17 @@ public class GunController : PartController
 
     public Rigidbody2D bullet;
     private Transform weaponLocation;
-    public float launchSpeed = 5f;
-    public float downtime = 0.5f;
+    public float launchSpeed;
+    public float downtime;
 
     private bool canFire = true;
+
+    public override void Setup()
+    {
+        base.Setup();
+        launchSpeed = info.Attributes.GetOrDefault("launchSpeed", 5f);
+        downtime = info.Attributes.GetOrDefault("downtime", 2f);
+    }
 
     public override void Position()
     {
