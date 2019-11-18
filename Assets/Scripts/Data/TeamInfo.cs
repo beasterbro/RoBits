@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using UnityEngine;
 
 [JsonConverter(typeof(JsonData.TeamConverter))]
 public class TeamInfo
@@ -53,17 +55,10 @@ public class TeamInfo
     public string UserID => userId;
     public UserInfo User => user;
 
-    public async Task<bool> FetchUserInfo()
+    public IEnumerator FetchUserInfo(MonoBehaviour coroutineRunner, Action callback = null)
     {
-        UserInfo result = await DataManager.Instance.FetchUser(userId);
-
-        if (result != null)
-        {
-            user = result;
-            return true;
-        }
-
-        return false;
+        yield return coroutineRunner.StartCoroutine(DataManager.Instance.FetchUser(userId,
+            userInfo => { user = userInfo; }));
     }
 
 }

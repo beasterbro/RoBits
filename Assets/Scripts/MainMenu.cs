@@ -28,20 +28,21 @@ public class MainMenu : MonoBehaviour
 
 
     // Start is called before the first frame update
-    async void Start()
+    void Start()
     {
+        DataManager.Instance.Latch(this);
         DataManager.Instance.EstablishAuth("lucaspopp0@gmail.com");
-        await DataManager.Instance.FetchInitialData();
+        StartCoroutine(DataManager.Instance.FetchInitialData(() =>
+        {
+            Debug.Log("All Parts:");
+            Debug.Log(JsonConvert.SerializeObject(DataManager.Instance.AllParts));
 
-        Debug.Log("All Parts:");
-        Debug.Log(JsonConvert.SerializeObject(DataManager.Instance.AllParts));
+            Debug.Log("Inventory:");
+            Debug.Log(JsonConvert.SerializeObject(DataManager.Instance.UserInventory));
 
-        Debug.Log("Inventory:");
-        Debug.Log(JsonConvert.SerializeObject(DataManager.Instance.UserInventory));
-
-        Debug.Log("Teams:");
-        Debug.Log(JsonConvert.SerializeObject(DataManager.Instance.UserTeams));
+            Debug.Log("Teams:");
+            Debug.Log(JsonConvert.SerializeObject(DataManager.Instance.UserTeams));
+        }));
     }
-
 
 }

@@ -28,10 +28,9 @@ namespace JsonData
             return wrapped.Items;
         }
 
-        public static HttpContent SerializeObject(object obj, params JsonConverter[] converters)
+        public static string SerializeObject(object obj, params JsonConverter[] converters)
         {
-            string json = JsonConvert.SerializeObject(obj, converters);
-            return new StringContent(json, Encoding.UTF8, "application/json");
+            return JsonConvert.SerializeObject(obj, converters);
         }
 
     }

@@ -1,19 +1,20 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.Design.Serialization;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
 using JsonData;
+using UnityEngine;
+using UnityEngine.Networking;
 
 // Collects and manages necessary information that needs to be taken from the backend to the frontend and vice versa.
 public class DataManager
 {
 
+    private static string baseUrl = "http://robits.us-east-2.elasticbeanstalk.com/api";
     private static DataManager shared;
 
-    private HttpClient api = new HttpClient();
+    private string bearerToken;
+    private MonoBehaviour runner;
 
     private UserInfo currentUser;
     private PartInfo[] allParts;
@@ -22,100 +23,126 @@ public class DataManager
     private BotInfo[] allBots;
     private TeamInfo[] userTeams;
 
-    private DataManager()
+    private DataManager() { }
+
+    public void Latch(MonoBehaviour coroutineRunner)
     {
-        api.BaseAddress = new Uri("http://robits.us-east-2.elasticbeanstalk.com");
-        api.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        runner = coroutineRunner;
+    }
+
+    private UnityWebRequest WrapRequest(UnityWebRequest request)
+    {
+        request.SetRequestHeader("Authorization", "Bearer " + bearerToken);
+        request.SetRequestHeader("Accept", "application/json");
+        return request;
+    }
+
+    private UnityWebRequest BasicGet(string endpt)
+    {
+        return WrapRequest(UnityWebRequest.Get(baseUrl + endpt));
+    }
+
+    private UnityWebRequest BasicPost(string endpt, string content)
+    {
+        return WrapRequest(UnityWebRequest.Post(baseUrl + endpt, content));
+    }
+
+    private UnityWebRequest BasicPut(string endpt, string content)
+    {
+        return WrapRequest(UnityWebRequest.Put(baseUrl + endpt, content));
+    }
+
+    private UnityWebRequest BasicDelete(string endpt)
+    {
+        return WrapRequest(UnityWebRequest.Delete(baseUrl + endpt));
     }
 
     // Adds the auth header to the HTTP client
     public void EstablishAuth(string token)
     {
-        api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        bearerToken = token;
     }
 
     // Returns a reference to the shared instance
     public static DataManager Instance => shared ?? (shared = new DataManager());
 
     // Fetches all necessary initial data
-    public async Task FetchInitialData()
+    public IEnumerator FetchInitialData(Action callback = null)
     {
-        await FetchCurrentUser();
-        await FetchAllParts();
-        await FetchUserInventory();
-        await FetchUserTeams();
+        yield return runner.StartCoroutine(FetchCurrentUser());
+        yield return runner.StartCoroutine(FetchAllParts());
+        yield return runner.StartCoroutine(FetchUserInventory());
+        yield return runner.StartCoroutine(FetchUserTeams());
+        callback?.Invoke();
     }
 
-    public async Task FetchCurrentUser()
+    private IEnumerator FetchCurrentUser(Action callback = null)
     {
-        var response = await api.GetAsync("/api/user");
-
-        if (response.IsSuccessStatusCode)
-        {
-            currentUser = JsonUtils.DeserializeObject<UserInfo>(await response.Content.ReadAsStringAsync());
-        }
+        var request = BasicGet("/user");
+        yield return request.SendWebRequest();
+        currentUser = JsonUtils.DeserializeObject<UserInfo>(request.downloadHandler.text);
+        callback?.Invoke();
     }
 
-    public async Task FetchAllParts()
+    private IEnumerator FetchAllParts(Action callback = null)
     {
-        var response = await api.GetAsync("/api/parts");
-
-        if (response.IsSuccessStatusCode)
-        {
-            allParts = JsonUtils.DeserializeArray<PartInfo>(await response.Content.ReadAsStringAsync());
-        }
+        var request = BasicGet("/parts");
+        yield return request.SendWebRequest();
+        allParts = JsonUtils.DeserializeArray<PartInfo>(request.downloadHandler.text);
+        callback?.Invoke();
     }
 
-    // Must be called after calling FetchAllParts
-    public async Task FetchUserInventory()
+    private IEnumerator FetchUserInventory(Action callback = null)
     {
-        var response = await api.GetAsync("/api/inventory");
-
-        if (response.IsSuccessStatusCode)
-        {
-            inventory = new List<InventoryItem>(
-                JsonUtils.DeserializeArray<InventoryItem>(await response.Content.ReadAsStringAsync()));
-        }
+        var request = BasicGet("/inventory");
+        yield return request.SendWebRequest();
+        inventory = new List<InventoryItem>(JsonUtils.DeserializeArray<InventoryItem>(request.downloadHandler.text));
+        callback?.Invoke();
     }
 
     // Must be called after calling FetchAllParts
-    public async Task FetchUserTeams()
+    private IEnumerator FetchUserTeams(Action callback = null)
     {
-        var botsResponse = await api.GetAsync("/api/bots");
-        var teamsResponse = await api.GetAsync("/api/teams");
+        var botsRequest = BasicGet("/bots");
+        var teamsRequest = BasicGet("/teams");
 
-        if (botsResponse.IsSuccessStatusCode && teamsResponse.IsSuccessStatusCode)
+        yield return botsRequest.SendWebRequest();
+        yield return teamsRequest.SendWebRequest();
+
+        allBots = JsonUtils.DeserializeArray<BotInfo>(botsRequest.downloadHandler.text);
+        userTeams = JsonUtils.DeserializeArray<TeamInfo>(teamsRequest.downloadHandler.text);
+
+        foreach (var team in userTeams)
         {
-            allBots = JsonUtils.DeserializeArray<BotInfo>(await botsResponse.Content.ReadAsStringAsync());
-            userTeams = JsonUtils.DeserializeArray<TeamInfo>(await teamsResponse.Content.ReadAsStringAsync());
-
-            foreach (TeamInfo team in userTeams)
-            {
-                await team.FetchUserInfo();
-            }
+            yield return team.FetchUserInfo(runner);
         }
+
+        callback?.Invoke();
     }
 
-    public async Task<UserInfo> FetchUser(string uid)
+    public IEnumerator FetchUser(string uid, Action<UserInfo> callback)
     {
-        if (uid == currentUser.ID) return currentUser;
-
-        var response = await api.GetAsync("/api/user/" + uid);
-
-        if (response.IsSuccessStatusCode)
+        if (uid == currentUser.ID)
         {
-            return JsonUtils.DeserializeObject<UserInfo>(await response.Content.ReadAsStringAsync());
+            callback.Invoke(currentUser);
         }
-
-        return null;
+        else
+        {
+            var request = BasicGet("/user/" + uid);
+            yield return request.SendWebRequest();
+            var user = JsonUtils.DeserializeObject<UserInfo>(request.downloadHandler.text);
+            callback.Invoke(user);
+        }
     }
 
     public UserInfo CurrentUser => currentUser;
 
-    public async Task UpdateCurrentUser()
+    public IEnumerator UpdateCurrentUser(Action callback = null)
     {
         var updateBody = JsonUtils.SerializeObject(currentUser);
-        var updateResponse = await api.PutAsync("/api/user", updateBody);
+        var request = BasicPut("/user", updateBody);
+        yield return request.SendWebRequest();
+        callback?.Invoke();
     }
 
     public List<InventoryItem> UserInventory => inventory;
@@ -146,10 +173,12 @@ public class DataManager
         return allBots.First(bot => bot.ID == bid);
     }
 
-    public async Task UpdateBot(BotInfo bot)
+    public IEnumerator UpdateBot(BotInfo bot, Action callback = null)
     {
         var updateBody = JsonUtils.SerializeObject(bot);
-        var updateResponse = await api.PutAsync("/api/bots/" + bot.ID, updateBody);
+        var request = BasicPut("/bots" + bot.ID, updateBody);
+        yield return request.SendWebRequest();
+        callback?.Invoke();
     }
 
     public TeamInfo[] UserTeams => userTeams;
@@ -159,35 +188,32 @@ public class DataManager
         return userTeams.First(team => team.ID == tid);
     }
 
-    public async Task UpdateTeam(TeamInfo team)
+    public IEnumerator UpdateTeam(TeamInfo team, Action callback = null)
     {
         var updateBody = JsonUtils.SerializeObject(team);
-        var updateResponse = await api.PutAsync("/api/teams/" + team.ID, updateBody);
+        var request = BasicPut("/teams" + team.ID, updateBody);
+        yield return request.SendWebRequest();
+        callback?.Invoke();
     }
 
-    public async Task<TeamInfo[]> GetOtherUserTeams(string uid)
+    public IEnumerator GetOtherUserTeams(string uid, Action<TeamInfo[]> callback)
     {
-        var response = await api.GetAsync("/api/users/" + uid + "/teams?expandBots=true");
+        var request = BasicGet("/users/" + uid + "/teams?expandBots=true");
+        yield return request.SendWebRequest();
+        var teams = JsonUtils.DeserializeArray<TeamInfo>(request.downloadHandler.text);
 
-        if (response.IsSuccessStatusCode)
+        foreach (var team in teams)
         {
-            var teams = JsonUtils.DeserializeArray<TeamInfo>(await response.Content.ReadAsStringAsync());
-
-            foreach (var team in teams)
-            {
-                await team.FetchUserInfo();
-            }
-
-            return teams;
+            yield return team.FetchUserInfo(runner);
         }
 
-        return null;
+        callback.Invoke(teams);
     }
 
-    public async Task<TeamInfo> GetOtherUserTeam(string uid, int tid)
+    public IEnumerator GetOtherUserTeam(string uid, int tid, Action<TeamInfo> callback)
     {
-        var teams = await GetOtherUserTeams(uid);
-        return teams.FirstOrDefault(team => team.ID == tid);
+        yield return runner.StartCoroutine(GetOtherUserTeams(uid,
+            teamInfo => { callback.Invoke(teamInfo.FirstOrDefault(team => team.ID == tid)); }));
     }
 
 }
