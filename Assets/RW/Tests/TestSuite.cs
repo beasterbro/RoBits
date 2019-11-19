@@ -10,25 +10,25 @@ namespace Tests
 {
     public class TestSuite
     {
-       private static Dictionary<String,double> attributes1 = new Dictionary<string, double>
+       private static Dictionary<string,float> attributes1 = new Dictionary<string, float>
         {
-            {"DMG",23.0},
+            {"DMG",23},
             {"DIST",12}
         };
        
-       private static Dictionary<String,double> attributes2 = new Dictionary<string, double>
+       private static Dictionary<string,float> attributes2 = new Dictionary<string, float>
        {
-           {"DMG",23.0},
+           {"DMG",23},
            {"DIST",12}
        };
        
-       private static Dictionary<String,string> settings = new Dictionary<string, string>
+       private static Dictionary<string,string> settings = new Dictionary<string, string>
        {
            {"DARK","yes"},
            {"LOUD","no"}
        };
        
-       private static Dictionary<String,double> bodySpec = new Dictionary<string, double>
+       private static Dictionary<string,float> bodySpec = new Dictionary<string, float>
        {
            {"THICC",11},
            {"SANIC",101}
