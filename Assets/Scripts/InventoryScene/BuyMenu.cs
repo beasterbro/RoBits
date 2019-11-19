@@ -5,15 +5,8 @@ using UnityEngine;
 
 public class BuyMenu : MonoBehaviour
 {
-    // Start is called before the first frame update
-    PartInfo[] AllParts = DataManager.Instance.AllParts;
-
     private int PartID;
-    void Start()
-    {
-     
-    }
-
+    
     public void ShowBuyMenu(int partID)
     {
         gameObject.SetActive(true);
@@ -23,7 +16,7 @@ public class BuyMenu : MonoBehaviour
     public void Buy()
     {
         gameObject.SetActive(false);
-        DataManager.Instance.PurchasePart(AllParts.ToList().Find(info => info.ID == PartID));
+        DataManager.Instance.PurchasePart(DataManager.Instance.GetPart(PartID));
        
     }
 
