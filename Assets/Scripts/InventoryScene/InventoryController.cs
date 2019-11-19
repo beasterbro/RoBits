@@ -248,8 +248,7 @@ public class InventoryController : MonoBehaviour
     {
         //TODO: Current Implementation bug, hard wired bot parts reset upon switch
         //for testing purposes of setting the actively edited bot
-        // currentBot = DataManager.Instance().GetAllBots()[botValue];
-        currentBot = userBots[botValue];
+        currentBot = DataManager.Instance.AllBots[botValue];
         botInfoText.text = currentBot.Name;
         UpdateEquipment();
     }
@@ -293,10 +292,12 @@ public class InventoryController : MonoBehaviour
 
     async void Start()
     {
+        if (!DataManager.Instance.InitialFetchPerformed)
+        {
+            DataManager.Instance.EstablishAuth("lucaspopp0@gmail.com");
+            await DataManager.Instance.FetchInitialData();
+        }
         
-
-        DataManager.Instance.EstablishAuth("lucaspopp0@gmail.com");
-        await DataManager.Instance.FetchInitialData();
         userInventory = DataManager.Instance.UserInventory;
 
         SetActiveBot(0);

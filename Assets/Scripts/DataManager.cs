@@ -14,6 +14,7 @@ public class DataManager
     private static DataManager shared;
 
     private HttpClient api = new HttpClient();
+    private bool initialFetchPerformed;
 
     private UserInfo currentUser;
     private PartInfo[] allParts;
@@ -37,6 +38,8 @@ public class DataManager
     // Returns a reference to the shared instance
     public static DataManager Instance => shared ?? (shared = new DataManager());
 
+    public bool InitialFetchPerformed => initialFetchPerformed;
+
     // Fetches all necessary initial data
     public async Task FetchInitialData()
     {
@@ -44,6 +47,7 @@ public class DataManager
         await FetchAllParts();
         await FetchUserInventory();
         await FetchUserTeams();
+        initialFetchPerformed = true;
     }
 
     public async Task FetchCurrentUser()
