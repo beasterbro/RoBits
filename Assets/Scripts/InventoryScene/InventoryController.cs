@@ -7,14 +7,14 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 //Character
-public class InventoryController : MonoBehaviour 
+public class InventoryController : MonoBehaviour
 {
-    
+
     //For integration with BE
     private List<BotInfo> userBots;
     private  List<InventoryItem> userInventory;
-    
-    
+
+
     public BotInfo currentBot ;
     //Generates Bot Images
     [SerializeField] private List<GameObject> BotGenerators;
@@ -23,17 +23,17 @@ public class InventoryController : MonoBehaviour
     [SerializeField] public ItemToolTip itemToolTip;
     [SerializeField] Text botInfoText;
     [SerializeField] private Text Currency;
-    
+
     //Managing user input
     [SerializeField]  Inventory inventory;
     [SerializeField] EquipmentPanel equipmentPanel;
-   
+
     //Managing Dragged and Dropped items
     private ItemSlot draggedItemSlot;
     //Drag and Drop does not work if DraggableItem has RayCast Target Enabled
     [SerializeField] Image draggableItem;
- 
- 
+
+
     //Called every time Unity compiles scripts
     private async void OnValidate()
     {
@@ -50,14 +50,14 @@ public class InventoryController : MonoBehaviour
     {
        BotPreviewGenerator.ClearBotImage(botGenrator);
         }
-    
+
     //Generates an image for the bot via the BotPreviewGenerator using the given bot info and the object
     //the Image is to be generated onto
     void CreateBotImage(BotInfo botInfo, GameObject botGenerator)
-    {   
+    {
        BotPreviewGenerator.CreateBotImage(botInfo,botGenerator);
     }
-    
+
     //Delegates the actions to an appropriate method
     private void Awake()
     {
@@ -69,11 +69,11 @@ public class InventoryController : MonoBehaviour
         // Pointer Enter
         Inventory.OnPointerEnterEvent += ShowTooltip;
         EquipmentPanel.OnPointerEnterEvent += ShowTooltip;
-        
+
         // Pointer Exit
         Inventory.OnPointerExitEvent += HideTooltip;
         EquipmentPanel.OnPointerExitEvent += HideTooltip;
-       
+
         // Begin Drag
         Inventory.OnBeingDragEvent += BeginDrag;
         EquipmentPanel.OnBeingDragEvent += BeginDrag;
@@ -86,7 +86,7 @@ public class InventoryController : MonoBehaviour
         // Drop
         Inventory.OnDropEvent += Drop;
         EquipmentPanel.OnDropEvent += Drop;
-       
+
     }
 
     //A method for when ItemSlots are dragged
@@ -96,15 +96,15 @@ public class InventoryController : MonoBehaviour
         {
             draggedItemSlot = itemSlot;
             draggableItem.sprite = itemSlot.Item.icon;
-            
-           
+
+
             draggableItem.transform.position = MousePosition();
-            
+
             draggableItem.gameObject.SetActive(true);
         }
     }
 
-    //Calculates the current mouse position 
+    //Calculates the current mouse position
     Vector3 MousePosition()
     {
         var v3 = Input.mousePosition;
@@ -124,10 +124,10 @@ public class InventoryController : MonoBehaviour
     //sets the draggableItem to the current mouse position
     private void Drag(ItemSlot itemSlot)
     {
-      
+
         draggableItem.transform.position = MousePosition();
-            
-        
+
+
     }
 
     //The procedure to be run when the user drops an item
@@ -140,7 +140,7 @@ public class InventoryController : MonoBehaviour
         {
             SwapItems(dropItemSlot);
         }
-       
+
     }
 
 
@@ -154,7 +154,7 @@ public class InventoryController : MonoBehaviour
             Equip(item);
         }
     }
-    
+
     //Unequips the inputted itemSlot part from the current Bot
     private void Unequip(ItemSlot itemSlot)
     {
@@ -164,7 +164,7 @@ public class InventoryController : MonoBehaviour
             Unequip(item);
         }
     }
-    
+
     //Shows the tool tip for a given item slot if the item slot is not empty
     public void ShowTooltip(ItemSlot itemSlot)
     {
@@ -177,9 +177,9 @@ public class InventoryController : MonoBehaviour
     //Hides the tool tip from the UI
     public void HideTooltip(ItemSlot itemSlot)
     {
-        
+
         itemToolTip.HideToolTip();
-        
+
     }
 
 
@@ -187,15 +187,15 @@ public class InventoryController : MonoBehaviour
 
 
 
-    
 
-    
+
+
     //Swaps the inputted item with the currently stored draggedItemSlot item
     private void SwapItems(ItemSlot dropItemSlot)
     {
         Item dragEquipItem = draggedItemSlot.Item;
         Item dropEquipItem = dropItemSlot.Item;
-        
+
         if (draggedItemSlot is EquipmentSlot && dropItemSlot is EquipmentSlot)
         {
             Item tempItem = draggedItemSlot.Item;
@@ -208,21 +208,21 @@ public class InventoryController : MonoBehaviour
         {
             Unequip(dragEquipItem);
             Equip(dropEquipItem);
-           
+
         }
         if (dropItemSlot is EquipmentSlot)
         {
             Equip(dragEquipItem);
             Unequip(dropEquipItem);
-            
+
         }
         Item draggedItem = draggedItemSlot.Item;
         draggedItemSlot.Item = dropItemSlot.Item;
         dropItemSlot.Item = draggedItem;
-        
+
     }
-    
-    //Removes inputted item from inventory and adds it to equip panel 
+
+    //Removes inputted item from inventory and adds it to equip panel
     public void Equip(Item item)
     {
         //If you can remove the part
@@ -231,7 +231,7 @@ public class InventoryController : MonoBehaviour
             //If you can add it to the equipped
             if (equipmentPanel.AddItem(item,out var previousItem))
             {
-               
+
                 //if equipped is full and it swaps items
                 if (previousItem != null)
                 {
@@ -247,7 +247,7 @@ public class InventoryController : MonoBehaviour
             }
         }
     }
-   
+
     //Removes inputted item from equip panel and adds it to the inventory
     public void Unequip(Item item)
     {
@@ -259,7 +259,7 @@ public class InventoryController : MonoBehaviour
         }
     }
 
-    //Sets the currently active bot 
+    //Sets the currently active bot
     public void SetActiveBot(int botValue)
     {
         currentBot = userBots[botValue];
@@ -273,7 +273,7 @@ public class InventoryController : MonoBehaviour
        // SetEquipmentMax(currentBot);
         //Retrieves all of the items currently equipped and store them
         List<Item> addToInventory = equipmentPanel.ClearEquipped();
-       
+
         Item previousItem;
         foreach (PartInfo part in currentBot.Equipment)
         {
@@ -281,7 +281,7 @@ public class InventoryController : MonoBehaviour
 
             Item item = PartToItem(part);
             equipmentPanel.AddItem(item,out previousItem);
-            
+
             inventory.AddItem(previousItem);
         }
     }
@@ -291,30 +291,32 @@ public class InventoryController : MonoBehaviour
     {
         Item item = ScriptableObject.CreateInstance<Item>();
         item.part = part;
-       
+
         item.icon = ItemImageGenrator.GenerateImage(part.ResourceName);
 
         return item;
     }
 
 
-    
+
     //Called First when entering playmode, before the first fram
     async void Start()
     {
-        
+        if (!DataManager.Instance.InitialFetchPerformed)
+        {
+            DataManager.Instance.EstablishAuth("lucaspopp0@gmail.com");
+            await DataManager.Instance.FetchInitialData();
+        }
 
-        DataManager.Instance.EstablishAuth("lucaspopp0@gmail.com");
-        await DataManager.Instance.FetchInitialData();
         userInventory = DataManager.Instance.UserInventory;
 
         SetActiveBot(0);
         CreateAllBotImages();
-        
+
         UpdateInventory();
         UpdateEquipment();
         UpdateCurrency();
-        
+
     }
 
     //Generates all of the bot images for the current user's bots
@@ -338,7 +340,7 @@ public class InventoryController : MonoBehaviour
     {
         Currency.text = DataManager.Instance.CurrentUser.Currency.ToString();
     }
-    
+
 
 
 }

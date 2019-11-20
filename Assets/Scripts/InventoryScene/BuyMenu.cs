@@ -6,14 +6,14 @@ using UnityEngine;
 //A scripts to manage the buy menu
 public class BuyMenu : MonoBehaviour
 {
-  
+
     PartInfo[] AllParts = DataManager.Instance.AllParts;
 
     //Stores the part ID of the part that activated the buy menu
     private int PartID;
     void Start()
     {
-     
+
     }
 
     //Shows the menu to purchase the part and stores the ID of the part that it was clicked for
@@ -27,8 +27,8 @@ public class BuyMenu : MonoBehaviour
     public void Buy()
     {
         gameObject.SetActive(false);
-        DataManager.Instance.PurchasePart(AllParts.ToList().Find(info => info.ID == PartID));
-       
+        DataManager.Instance.PurchasePart(DataManager.Instance.GetPart(PartID));
+
     }
 
     //Hides the buy menu when the cancel button is clicked
