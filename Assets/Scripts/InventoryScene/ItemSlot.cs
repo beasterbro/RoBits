@@ -9,6 +9,7 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandl
         [SerializeField] public PartType PartType;
        
         public event Action<ItemSlot> OnRightClickEvent;
+        public event Action<ItemSlot> OnLeftClickEvent;
         public event Action<ItemSlot> OnPointerEnterEvent;
         public event Action<ItemSlot> OnPointerExitEvent;
         public event Action<ItemSlot> OnPointerClickEvent;
@@ -76,6 +77,13 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandl
                     OnRightClickEvent(this);
                 }
             }
+            if (eventData != null && eventData.button == PointerEventData.InputButton.Left)
+            {
+                if ( OnLeftClickEvent != null)
+                {
+                    OnLeftClickEvent(this);
+                }
+            }
         }
 
         public void OnPointerEnter(PointerEventData eventData)
@@ -125,4 +133,5 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandl
                 OnDropEvent(this);
             }
         }
+
     }

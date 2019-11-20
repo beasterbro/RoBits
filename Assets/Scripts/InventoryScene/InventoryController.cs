@@ -23,6 +23,7 @@ public class InventoryController : MonoBehaviour
 
     //Displaying info to user
     [SerializeField] private ItemToolTip itemToolTip;
+    [SerializeField] private SellMenu sellMenu;
     [SerializeField] Text botNameText;
     [SerializeField] private Text Currency;
     [SerializeField] private Text botInfoText;
@@ -70,6 +71,8 @@ public class InventoryController : MonoBehaviour
         // Right Click
         Inventory.OnRightClickEvent += Equip;
         EquipmentPanel.OnRightClickEvent += Unequip;
+        // Left Click
+        Inventory.OnLeftClickEvent += ShowSellMenu;
         // Pointer Enter
         Inventory.OnPointerEnterEvent += ShowTooltip;
         EquipmentPanel.OnPointerEnterEvent += ShowTooltip;
@@ -91,6 +94,24 @@ public class InventoryController : MonoBehaviour
         Inventory.OnDropEvent += Drop;
         EquipmentPanel.OnDropEvent += Drop;
 
+    }
+
+    void ShowSellMenu(ItemSlot itemSlot)
+    {
+        sellMenu.CancelSellMenu();
+        
+        sellMenu.ShowSellMenu(itemSlot.Item.part);
+    }
+
+    public void Sell()
+    {
+        sellMenu.Sell();
+        UpdateCurrency();
+        UpdateInventory();
+    }
+    public void HideSellMenu()
+    {
+        sellMenu.CancelSellMenu();
     }
 
     //A method for when ItemSlots are dragged
@@ -355,10 +376,16 @@ public class InventoryController : MonoBehaviour
     //Called on start to add all of the items in the user's inventory to the inventory panel
     private void UpdateInventory()
     {
+        ClearInventory();
         foreach (var inventoryItem in userInventory)
         {
             inventory.AddItem(PartToItem(inventoryItem.Part));
         }
+    }
+
+    private void ClearInventory()
+    {
+        inventory.Clear();
     }
 
     //Updates the shown currency value to the actual currency value

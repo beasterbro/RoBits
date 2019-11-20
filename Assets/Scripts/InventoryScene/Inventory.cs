@@ -17,6 +17,7 @@ public class Inventory : MonoBehaviour
     }
     
     public static event Action<ItemSlot> OnRightClickEvent;
+    public static event Action<ItemSlot> OnLeftClickEvent;
     public static event Action<ItemSlot> OnPointerEnterEvent;
     public static event Action<ItemSlot> OnPointerExitEvent;
     public event Action<ItemSlot> OnPointerClickEvent;
@@ -33,6 +34,7 @@ public class Inventory : MonoBehaviour
             itemSlots[i].OnPointerEnterEvent += OnPointerEnterEvent;
             itemSlots[i].OnPointerExitEvent += OnPointerExitEvent;
             itemSlots[i].OnRightClickEvent += OnRightClickEvent;
+            itemSlots[i].OnLeftClickEvent += OnLeftClickEvent;
             itemSlots[i].OnBeingDragEvent += OnBeingDragEvent;
             itemSlots[i].OnDragEvent += OnDragEvent;
             itemSlots[i].OnEndDragEvent += OnEndDragEvent;
@@ -145,4 +147,11 @@ public class Inventory : MonoBehaviour
         return number;
     }
 
+    public void Clear()
+    {
+        foreach (var slot in itemSlots)
+        {
+            slot.Item = null;
+        }
+    }
 }

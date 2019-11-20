@@ -9,7 +9,7 @@ using UnityEngine.Serialization;
 public class Item : ScriptableObject
 {
     
-    [FormerlySerializedAs("Icon")] public Sprite icon;
+    public Sprite icon;
     public PartInfo part;
     public int PartID => part.ID;
     public string ID => part.ID.ToString();
