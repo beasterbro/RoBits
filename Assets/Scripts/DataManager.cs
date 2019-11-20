@@ -174,10 +174,22 @@ public class DataManager
 
     public List<InventoryItem> UserInventory => inventory;
 
-    public bool SellPart(PartInfo item)
+    public IEnumerator SellPart(PartInfo item, Action<bool> callback)
     {
-        // TODO: Implement
-        return true;
+        var request = BasicPost("/inventory/sell/" + item.ID);
+        yield return request.SendWebRequest();
+
+        if (request.EncounteredError())
+        {
+            Debug.LogError(request.GetError());
+            callback.Invoke(false);
+        }
+        else
+        {
+            yield return runner.StartCoroutine(FetchCurrentUser());
+            yield return runner.StartCoroutine(FetchUserInventory());
+            callback.Invoke(true);
+        }
     }
 
     public bool PurchasePart(PartInfo item)
