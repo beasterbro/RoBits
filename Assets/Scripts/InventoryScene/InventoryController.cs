@@ -24,7 +24,7 @@ public class InventoryController : MonoBehaviour
     [SerializeField] Text botInfoText;
     [SerializeField] private Text Currency;
 
-    //Managing user input
+    //Managing user icunput
     [SerializeField]  Inventory inventory;
     [SerializeField] EquipmentPanel equipmentPanel;
 
@@ -265,6 +265,7 @@ public class InventoryController : MonoBehaviour
         currentBot = userBots[botValue];
         botInfoText.text = currentBot.Name;
         UpdateEquipment();
+        UpdateInventory();
     }
 
     //Refreshes the displayed Equipment from the current Bot's parts
@@ -297,14 +298,18 @@ public class InventoryController : MonoBehaviour
         return item;
     }
 
+    private void Update()
+    {
+        //UpdateCurrency();
+    }
 
 
-    //Called First when entering playmode, before the first fram
+    //Called First when entering playmode, before the first frame
     async void Start()
     {
         if (!DataManager.Instance.InitialFetchPerformed)
         {
-            DataManager.Instance.EstablishAuth("DEV adamjoesph111@gmail.com");
+            DataManager.Instance.EstablishAuth("DEV testUser@gmail.com");
             await DataManager.Instance.FetchInitialData();
         }
 
@@ -313,9 +318,10 @@ public class InventoryController : MonoBehaviour
         SetActiveBot(0);
         CreateAllBotImages();
 
+        UpdateCurrency();
         UpdateInventory();
         UpdateEquipment();
-        UpdateCurrency();
+        
 
     }
 

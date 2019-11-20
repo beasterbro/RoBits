@@ -7,7 +7,6 @@ public class BotPreviewGenerator : MonoBehaviour
 {
     
     public static List<GameObject> BotGenerators;
-    static TeamInfo teamInfo = new TeamInfo(1,"tempTeam",new DateTime(1,1,1),DataManager.Instance.AllBots ,1,1,DataManager.Instance.CurrentUser.ID  );
 
 
     private void GenerateBotImage(BotInfo botInfo)
@@ -20,7 +19,7 @@ public class BotPreviewGenerator : MonoBehaviour
    public static void CreateBotImage(BotInfo botInfo, GameObject botGenerator)
     {   
         ClearBotImage(botGenerator);
-        botGenerator.AddComponent<BotController>().LoadInfo(botInfo,teamInfo); 
+        botGenerator.AddComponent<BotController>().LoadInfoForPreview(botInfo); 
     }
 
    public static void ClearBotImage(GameObject botGenerator)
