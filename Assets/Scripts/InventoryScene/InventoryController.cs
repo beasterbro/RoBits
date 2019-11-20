@@ -2,9 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 //Character
 public class InventoryController : MonoBehaviour
@@ -20,9 +22,11 @@ public class InventoryController : MonoBehaviour
     [SerializeField] private List<GameObject> BotGenerators;
 
     //Displaying info to user
-    [SerializeField] public ItemToolTip itemToolTip;
-    [SerializeField] Text botInfoText;
+    [SerializeField] private ItemToolTip itemToolTip;
+    [SerializeField] Text botNameText;
     [SerializeField] private Text Currency;
+    [SerializeField] private Text botInfoText;
+    [SerializeField] private Text newBotName;
 
     //Managing user icunput
     [SerializeField]  Inventory inventory;
@@ -48,14 +52,14 @@ public class InventoryController : MonoBehaviour
     //This is to prevent duplicate parts being shown to the user when the scene is changed
     void ClearBotImage(GameObject botGenrator)
     {
-       BotPreviewGenerator.ClearBotImage(botGenrator);
-        }
+        BotPreviewGenerator.ClearBotImage(botGenrator);
+    }
 
     //Generates an image for the bot via the BotPreviewGenerator using the given bot info and the object
     //the Image is to be generated onto
     void CreateBotImage(BotInfo botInfo, GameObject botGenerator)
     {
-       BotPreviewGenerator.CreateBotImage(botInfo,botGenerator);
+        BotPreviewGenerator.CreateBotImage(botInfo,botGenerator);
     }
 
     //Delegates the actions to an appropriate method
@@ -262,16 +266,31 @@ public class InventoryController : MonoBehaviour
     //Sets the currently active bot
     public void SetActiveBot(int botValue)
     {
+
         currentBot = userBots[botValue];
-        botInfoText.text = currentBot.Name;
+        botNameText.text = currentBot.Name;
+        UpdateBotInfo();
         UpdateEquipment();
-        UpdateInventory();
+        //   UpdateInventory();
+    }
+
+    private void UpdateBotInfo()
+    {
+        StringBuilder sb = new StringBuilder();
+        foreach (var part in currentBot.Equipment)
+        {
+            sb.Append(part.Name + ": ");
+            sb.Append(part.Description);
+            sb.AppendLine();
+        }
+
+        botInfoText.text = sb.ToString();
     }
 
     //Refreshes the displayed Equipment from the current Bot's parts
     public void UpdateEquipment()
     {
-       // SetEquipmentMax(currentBot);
+        // SetEquipmentMax(currentBot);
         //Retrieves all of the items currently equipped and store them
         List<Item> addToInventory = equipmentPanel.ClearEquipped();
 
@@ -321,6 +340,7 @@ public class InventoryController : MonoBehaviour
         UpdateCurrency();
         UpdateInventory();
         UpdateEquipment();
+        UpdateBotInfo();
         
 
     }
@@ -343,8 +363,16 @@ public class InventoryController : MonoBehaviour
 
     //Updates the shown currency value to the actual currency value
     private void UpdateCurrency()
-    {
+    {//TODO: Breaks if the user does not have a full roster of 9 bots,
+        //this seems to happen because DataManager/LoadInfo errors out if the user has less than 9 bots and so
+        //the instance for DataManager is never finalized or something
         Currency.text = DataManager.Instance.CurrentUser.Currency.ToString();
+    }
+
+    public void ChangeBotName()
+    {
+        currentBot.Name = newBotName.text;
+        botNameText.text = currentBot.Name;
     }
 
 
