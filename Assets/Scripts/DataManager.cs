@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Extensions;
 using JsonData;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -13,6 +14,7 @@ public class DataManager
     private static string baseUrl = "http://robits.us-east-2.elasticbeanstalk.com/api";
     private static DataManager shared;
 
+    private bool initialDataFetched;
     private string bearerToken;
     private MonoBehaviour runner;
 
@@ -42,12 +44,12 @@ public class DataManager
         return WrapRequest(UnityWebRequest.Get(baseUrl + endpt));
     }
 
-    private UnityWebRequest BasicPost(string endpt, string content)
+    private UnityWebRequest BasicPost(string endpt, string content = "")
     {
         return WrapRequest(UnityWebRequest.Post(baseUrl + endpt, content));
     }
 
-    private UnityWebRequest BasicPut(string endpt, string content)
+    private UnityWebRequest BasicPut(string endpt, string content = "")
     {
         return WrapRequest(UnityWebRequest.Put(baseUrl + endpt, content));
     }
@@ -71,8 +73,13 @@ public class DataManager
     {
         yield return runner.StartCoroutine(FetchCurrentUser());
         yield return runner.StartCoroutine(FetchAllParts());
-        yield return runner.StartCoroutine(FetchUserInventory());
-        yield return runner.StartCoroutine(FetchUserTeams());
+        if (currentUser != null && allParts != null)
+        {
+            yield return runner.StartCoroutine(FetchUserInventory());
+            yield return runner.StartCoroutine(FetchUserTeams());
+        }
+
+        initialDataFetched = true;
         callback?.Invoke();
     }
 
@@ -80,7 +87,10 @@ public class DataManager
     {
         var request = BasicGet("/user");
         yield return request.SendWebRequest();
-        currentUser = JsonUtils.DeserializeObject<UserInfo>(request.downloadHandler.text);
+
+        if (request.EncounteredError()) Debug.LogError(request.GetError());
+        else currentUser = JsonUtils.DeserializeObject<UserInfo>(request.downloadHandler.text);
+
         callback?.Invoke();
     }
 
@@ -88,7 +98,10 @@ public class DataManager
     {
         var request = BasicGet("/parts");
         yield return request.SendWebRequest();
-        allParts = JsonUtils.DeserializeArray<PartInfo>(request.downloadHandler.text);
+
+        if (request.EncounteredError()) Debug.LogError(request.GetError());
+        else allParts = JsonUtils.DeserializeArray<PartInfo>(request.downloadHandler.text);
+
         callback?.Invoke();
     }
 
@@ -96,7 +109,12 @@ public class DataManager
     {
         var request = BasicGet("/inventory");
         yield return request.SendWebRequest();
-        inventory = new List<InventoryItem>(JsonUtils.DeserializeArray<InventoryItem>(request.downloadHandler.text));
+
+        if (request.EncounteredError()) Debug.LogError(request.GetError());
+        else
+            inventory = new List<InventoryItem>(
+                JsonUtils.DeserializeArray<InventoryItem>(request.downloadHandler.text));
+
         callback?.Invoke();
     }
 
@@ -109,12 +127,18 @@ public class DataManager
         yield return botsRequest.SendWebRequest();
         yield return teamsRequest.SendWebRequest();
 
-        allBots = JsonUtils.DeserializeArray<BotInfo>(botsRequest.downloadHandler.text);
-        userTeams = JsonUtils.DeserializeArray<TeamInfo>(teamsRequest.downloadHandler.text);
+        if (botsRequest.EncounteredError()) Debug.LogError(botsRequest.GetError());
+        if (teamsRequest.EncounteredError()) Debug.LogError(teamsRequest.GetError());
 
-        foreach (var team in userTeams)
+        if (!botsRequest.EncounteredError() && !teamsRequest.EncounteredError())
         {
-            yield return team.FetchUserInfo(runner);
+            allBots = JsonUtils.DeserializeArray<BotInfo>(botsRequest.downloadHandler.text);
+            userTeams = JsonUtils.DeserializeArray<TeamInfo>(teamsRequest.downloadHandler.text);
+
+            foreach (var team in userTeams)
+            {
+                yield return team.FetchUserInfo(runner);
+            }
         }
 
         callback?.Invoke();
@@ -122,16 +146,18 @@ public class DataManager
 
     public IEnumerator FetchUser(string uid, Action<UserInfo> callback)
     {
-        if (uid == currentUser.ID)
-        {
-            callback.Invoke(currentUser);
-        }
+        if (uid == currentUser.ID) callback.Invoke(currentUser);
         else
         {
             var request = BasicGet("/user/" + uid);
             yield return request.SendWebRequest();
-            var user = JsonUtils.DeserializeObject<UserInfo>(request.downloadHandler.text);
-            callback.Invoke(user);
+
+            if (request.EncounteredError())
+            {
+                Debug.LogError(request.GetError());
+                callback.Invoke(null);
+            }
+            else callback.Invoke(JsonUtils.DeserializeObject<UserInfo>(request.downloadHandler.text));
         }
     }
 
@@ -142,6 +168,7 @@ public class DataManager
         var updateBody = JsonUtils.SerializeObject(currentUser);
         var request = BasicPut("/user", updateBody);
         yield return request.SendWebRequest();
+        if (request.EncounteredError()) Debug.LogError(request.GetError());
         callback?.Invoke();
     }
 
@@ -178,6 +205,7 @@ public class DataManager
         var updateBody = JsonUtils.SerializeObject(bot);
         var request = BasicPut("/bots" + bot.ID, updateBody);
         yield return request.SendWebRequest();
+        if (request.EncounteredError()) Debug.LogError(request.GetError());
         callback?.Invoke();
     }
 
@@ -193,6 +221,7 @@ public class DataManager
         var updateBody = JsonUtils.SerializeObject(team);
         var request = BasicPut("/teams" + team.ID, updateBody);
         yield return request.SendWebRequest();
+        if (request.EncounteredError()) Debug.LogError(request.GetError());
         callback?.Invoke();
     }
 
@@ -200,14 +229,23 @@ public class DataManager
     {
         var request = BasicGet("/users/" + uid + "/teams?expandBots=true");
         yield return request.SendWebRequest();
-        var teams = JsonUtils.DeserializeArray<TeamInfo>(request.downloadHandler.text);
 
-        foreach (var team in teams)
+        if (request.EncounteredError())
         {
-            yield return team.FetchUserInfo(runner);
+            Debug.LogError(request.GetError());
+            callback.Invoke(null);
         }
+        else
+        {
+            var teams = JsonUtils.DeserializeArray<TeamInfo>(request.downloadHandler.text);
 
-        callback.Invoke(teams);
+            foreach (var team in teams)
+            {
+                yield return team.FetchUserInfo(runner);
+            }
+
+            callback.Invoke(teams);
+        }
     }
 
     public IEnumerator GetOtherUserTeam(string uid, int tid, Action<TeamInfo> callback)
@@ -215,5 +253,7 @@ public class DataManager
         yield return runner.StartCoroutine(GetOtherUserTeams(uid,
             teamInfo => { callback.Invoke(teamInfo.FirstOrDefault(team => team.ID == tid)); }));
     }
+
+    public bool InitialFetchPerformed => initialDataFetched;
 
 }

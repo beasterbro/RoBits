@@ -40,23 +40,26 @@ public class BattleController : MonoBehaviour
         winnerText.text = "Loading...";
 
         DataManager.Instance.Latch(this);
-        DataManager.Instance.EstablishAuth("lucaspopp0@gmail.com");
-        StartCoroutine(DataManager.Instance.FetchInitialData(() =>
+        if (!DataManager.Instance.InitialFetchPerformed)
         {
-            huds = new[] {team1HUD, team2HUD};
-            locations = new[] {playerLocations, enemyLocations};
-            teams[0] = DataManager.Instance.GetTeam(0);
-            StartCoroutine(DataManager.Instance.GetOtherUserTeam("axs1477", 0, enemyTeam =>
+            DataManager.Instance.EstablishAuth("DEV lucaspopp0@gmail.com");
+            StartCoroutine(DataManager.Instance.FetchInitialData(() =>
             {
-                teams[1] = enemyTeam;
-                LoadTeam(0);
-                LoadTeam(1);
+                huds = new[] {team1HUD, team2HUD};
+                locations = new[] {playerLocations, enemyLocations};
+                teams[0] = DataManager.Instance.GetTeam(0);
+                StartCoroutine(DataManager.Instance.GetOtherUserTeam("axs1477", 0, enemyTeam =>
+                {
+                    teams[1] = enemyTeam;
+                    LoadTeam(0);
+                    LoadTeam(1);
 
-                SetAllBotsEnabled(false);
+                    SetAllBotsEnabled(false);
 
-                StartCoroutine(BeginBattle());
+                    StartCoroutine(BeginBattle());
+                }));
             }));
-        }));
+        }
     }
 
     private IEnumerator BeginBattle()

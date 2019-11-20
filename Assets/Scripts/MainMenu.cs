@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
-using Newtonsoft.Json;
-using System.Runtime.InteropServices;
 
 public class MainMenu : MonoBehaviour
 {
@@ -31,18 +26,11 @@ public class MainMenu : MonoBehaviour
     void Start()
     {
         DataManager.Instance.Latch(this);
-        DataManager.Instance.EstablishAuth("lucaspopp0@gmail.com");
-        StartCoroutine(DataManager.Instance.FetchInitialData(() =>
+        if (!DataManager.Instance.InitialFetchPerformed)
         {
-            Debug.Log("All Parts:");
-            Debug.Log(JsonConvert.SerializeObject(DataManager.Instance.AllParts));
-
-            Debug.Log("Inventory:");
-            Debug.Log(JsonConvert.SerializeObject(DataManager.Instance.UserInventory));
-
-            Debug.Log("Teams:");
-            Debug.Log(JsonConvert.SerializeObject(DataManager.Instance.UserTeams));
-        }));
+            DataManager.Instance.EstablishAuth("DEV lucaspopp0@gmail.com");
+            StartCoroutine(DataManager.Instance.FetchInitialData());
+        }
     }
 
 }

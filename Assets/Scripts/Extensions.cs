@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace Extensions
 {
@@ -53,6 +54,21 @@ namespace Extensions
         public static TV GetOrDefault<TK, TV>(this Dictionary<TK, TV> dict, TK key, TV defaultValue)
         {
             return dict.TryGetValue(key, out var output) ? output : defaultValue;
+        }
+
+    }
+
+    public static class UnityWebExtensions
+    {
+
+        public static bool EncounteredError(this UnityWebRequest request) =>
+            request.isNetworkError || request.isHttpError;
+
+        public static string GetError(this UnityWebRequest request)
+        {
+            if (request.isNetworkError) return request.error;
+            else if (request.isHttpError) return request.downloadHandler.text;
+            else return null;
         }
 
     }
