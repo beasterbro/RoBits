@@ -7,7 +7,7 @@ using UnityEngine.Serialization;
 public class Inventory : MonoBehaviour
 {
    
-    [SerializeField] List<Item> startingitems;
+    [SerializeField]public List<Item> startingitems;
     [SerializeField] Transform itemsParent;
     [SerializeField] ItemSlot[] itemSlots;
 
@@ -25,6 +25,7 @@ public class Inventory : MonoBehaviour
     public static event Action<ItemSlot> OnEndDragEvent;
     public static event Action<ItemSlot> OnDropEvent;
 
+    //Gives each item slot in the inventory the desired actions
     private void Start()
     {
         for (int i = 0; i < itemSlots.Length; i++)
@@ -39,6 +40,7 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    //Finds all of the item slots based off of the item slots parent
     private void OnValidate()
     {
         if (itemsParent != null)
@@ -55,7 +57,7 @@ public class Inventory : MonoBehaviour
         for (; i < startingitems.Count && i < itemSlots.Length; i++)
         {
             itemSlots[i].Item = Instantiate(startingitems[i]);
-            itemSlots[i].Item.Icon = ItemImageGenrator.GenerateImage(itemSlots[i].Item.part.ResourceName);
+            itemSlots[i].Item.icon = ItemImageGenrator.GenerateImage(itemSlots[i].Item.part.ResourceName);
         }
 
         for (; i < itemSlots.Length; i++)
@@ -67,12 +69,10 @@ public class Inventory : MonoBehaviour
     //Adds an item to the inventory, returns false if the item cannot be added
     public virtual bool AddItem(Item item)
     {
-        //for (int i = 0; i < itemSlots.Length; i++)
+
         foreach (var slot in itemSlots)
         {
-           
-            // if (itemSlots[i].PartType == item.type)
-            //if (itemSlots[i].Item == null)
+
             if (slot.CanReceiveItem(item) && slot.Item == null)
             {
                 slot.Item = item;
@@ -83,7 +83,7 @@ public class Inventory : MonoBehaviour
         return false;
     }
 
-    //Removes an item from the inventory, returns falso if the item cannot be removed
+    //Removes an item from the inventory, returns false if the item cannot be removed
     public bool RemoveItem(Item item)
     {
         for (int i = 0; i < itemSlots.Length; i++)
@@ -98,6 +98,7 @@ public class Inventory : MonoBehaviour
         return false;
     }
 
+    //Removes an item from the inventory area
     public Item RemoveItem(string itemID)
     {
         for (int i = 0; i < itemSlots.Length; i++)
@@ -128,6 +129,7 @@ public class Inventory : MonoBehaviour
         return true;
     }
 
+    //Returns the count of a given item
     public int ItemCount(string itemID)
     {
         int number = 0;

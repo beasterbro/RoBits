@@ -34,7 +34,7 @@ public class InventoryController : MonoBehaviour
     [SerializeField] Image draggableItem;
  
  
-
+    //Called every time Unity compiles scripts
     private async void OnValidate()
     {
         if (itemToolTip == null)
@@ -44,15 +44,21 @@ public class InventoryController : MonoBehaviour
 
     }
 
+    //Deletes all of the children of the inputted gameObject
+    //This is to prevent duplicate parts being shown to the user when the scene is changed
     void ClearBotImage(GameObject botGenrator)
     {
        BotPreviewGenerator.ClearBotImage(botGenrator);
         }
+    
+    //Generates an image for the bot via the BotPreviewGenerator using the given bot info and the object
+    //the Image is to be generated onto
     void CreateBotImage(BotInfo botInfo, GameObject botGenerator)
     {   
        BotPreviewGenerator.CreateBotImage(botInfo,botGenerator);
     }
     
+    //Delegates the actions to an appropriate method
     private void Awake()
     {
 
@@ -83,12 +89,13 @@ public class InventoryController : MonoBehaviour
        
     }
 
+    //A method for when ItemSlots are dragged
     private void BeginDrag(ItemSlot itemSlot)
     {
         if (itemSlot.Item != null)
         {
             draggedItemSlot = itemSlot;
-            draggableItem.sprite = itemSlot.Item.Icon;
+            draggableItem.sprite = itemSlot.Item.icon;
             
            
             draggableItem.transform.position = MousePosition();
@@ -97,6 +104,7 @@ public class InventoryController : MonoBehaviour
         }
     }
 
+    //Calculates the current mouse position 
     Vector3 MousePosition()
     {
         var v3 = Input.mousePosition;
@@ -105,12 +113,15 @@ public class InventoryController : MonoBehaviour
         return v3;
     }
 
+    //Runs through the neccesary procedure when a user stops dragging an item
     private void EndDrag(ItemSlot itemSlot)
     {
         draggedItemSlot = null;
         draggableItem.gameObject.SetActive(false);
     }
 
+    //The procedure to be run when an Item is currently being dragged by the user
+    //sets the draggableItem to the current mouse position
     private void Drag(ItemSlot itemSlot)
     {
       
@@ -119,6 +130,8 @@ public class InventoryController : MonoBehaviour
         
     }
 
+    //The procedure to be run when the user drops an item
+    //The item shall be put into the slot it is dropped on if the slot can receive the item
     private void Drop(ItemSlot dropItemSlot)
     {
         if (dropItemSlot == null) return;
@@ -132,6 +145,7 @@ public class InventoryController : MonoBehaviour
 
 
 
+    //Equips the inputted itemSlot part to the current Bot
     private void Equip(ItemSlot itemSlot)
     {
         Item item = itemSlot.Item;
@@ -141,7 +155,7 @@ public class InventoryController : MonoBehaviour
         }
     }
     
-    
+    //Unequips the inputted itemSlot part from the current Bot
     private void Unequip(ItemSlot itemSlot)
     {
         Item item = itemSlot.Item;
@@ -151,6 +165,7 @@ public class InventoryController : MonoBehaviour
         }
     }
     
+    //Shows the tool tip for a given item slot if the item slot is not empty
     public void ShowTooltip(ItemSlot itemSlot)
     {
         if (itemSlot.Item != null)
@@ -159,6 +174,7 @@ public class InventoryController : MonoBehaviour
         }
     }
 
+    //Hides the tool tip from the UI
     public void HideTooltip(ItemSlot itemSlot)
     {
         
@@ -246,9 +262,6 @@ public class InventoryController : MonoBehaviour
     //Sets the currently active bot 
     public void SetActiveBot(int botValue)
     {
-        //TODO: Current Implementation bug, hard wired bot parts reset upon switch
-        //for testing purposes of setting the actively edited bot
-        // currentBot = DataManager.Instance().GetAllBots()[botValue];
         currentBot = userBots[botValue];
         botInfoText.text = currentBot.Name;
         UpdateEquipment();
@@ -274,23 +287,19 @@ public class InventoryController : MonoBehaviour
     }
 
     //Converts inputted part into an item to be put in the inventory
-    public Item PartToItem(PartInfo part)
+    public static Item PartToItem(PartInfo part)
     {
         Item item = ScriptableObject.CreateInstance<Item>();
         item.part = part;
-        item.partID = part.ID;
-        item.type = part.PartType;
-        item.price = part.Price;
-        item.description = part.Description;
-        item.attributes = part.Attributes;
-        item.ItemName = part.Name;
-        item.levelToUnlock = part.LevelToUnlock;
-        item.Icon = ItemImageGenrator.GenerateImage(part.ResourceName);
+       
+        item.icon = ItemImageGenrator.GenerateImage(part.ResourceName);
 
         return item;
     }
 
 
+    
+    //Called First when entering playmode, before the first fram
     async void Start()
     {
         
@@ -308,6 +317,7 @@ public class InventoryController : MonoBehaviour
         
     }
 
+    //Generates all of the bot images for the current user's bots
     private void CreateAllBotImages()
     {
         BotPreviewGenerator.BotGenerators = BotGenerators;
@@ -323,6 +333,7 @@ public class InventoryController : MonoBehaviour
         }
     }
 
+    //Updates the shown currency value to the actual currency value
     private void UpdateCurrency()
     {
         Currency.text = DataManager.Instance.CurrentUser.Currency.ToString();

@@ -17,6 +17,7 @@ public class EquipmentPanel : MonoBehaviour
     public static event Action<ItemSlot> OnEndDragEvent;
     public static event Action<ItemSlot> OnDropEvent;
 
+    //Assigns each equipmentSlot all of the desired actions
     private void Start()
     {
         for (int i = 0; i < equipmentSlots.Length; i++)

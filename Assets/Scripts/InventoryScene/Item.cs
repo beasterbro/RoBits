@@ -2,21 +2,22 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-//A class to represent items in an inventory
+//A class to visually represent PartInfo to the user
 [CreateAssetMenu]
 public class Item : ScriptableObject
-{//instead of this for each item you put in the string url that the item stats can be found at
-    public string ItemName;
-    public Sprite Icon;
+{
+    
+    [FormerlySerializedAs("Icon")] public Sprite icon;
     public PartInfo part;
-    [SerializeField] string id;
-    public int partID;
-    public string ID => id;
-    public String description;
-    public PartType type;
-    public int price;
-    public int levelToUnlock;
+    public int PartID => part.ID;
+    public string ID => part.ID.ToString();
+    public string ItemName => part.Name;
+    public String Description => part.Description;
+    public PartType Type => part.PartType;
+    public int Price => part.Price;
+    public int LevelToUnlock => part.LevelToUnlock;
     public Dictionary<String, float> attributes;
 
     public virtual Item GetCopy()
@@ -24,15 +25,6 @@ public class Item : ScriptableObject
         return this;
     }
 
-    public virtual void Destroy()
-    {
-        
-    }
     
-    private void OnValidate()
-    {
-//        part = new PartInfo(partID,ItemName,description,type,price,levelToUnlock,attributes);
-//        string path = AssetDatabase.GetAssetPath(this);
-//        id = AssetDatabase.AssetPathToGUID(path);
-    }
+
 }

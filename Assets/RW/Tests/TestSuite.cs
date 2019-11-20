@@ -10,15 +10,15 @@ namespace Tests
 {
     public class TestSuite
     {
-       private static Dictionary<String,double> attributes1 = new Dictionary<string, double>
+       private static Dictionary<String,float> attributes1 = new Dictionary<string, float>
         {
-            {"DMG",23.0},
+            {"DMG",230},
             {"DIST",12}
         };
        
-       private static Dictionary<String,double> attributes2 = new Dictionary<string, double>
+       private static Dictionary<String,float> attributes2 = new Dictionary<string, float>
        {
-           {"DMG",23.0},
+           {"DMG",230},
            {"DIST",12}
        };
        
@@ -28,7 +28,7 @@ namespace Tests
            {"LOUD","no"}
        };
        
-       private static Dictionary<String,double> bodySpec = new Dictionary<string, double>
+       private static Dictionary<String,float> bodySpec = new Dictionary<string, float>
        {
            {"THICC",11},
            {"SANIC",101}
@@ -54,27 +54,38 @@ namespace Tests
         /*
          * Testing for InventoryController
          */
+        
         [Test]
-        public void TestingBotInfoAssigned()
+        public void GameObject_CreatedWithGiven_WillHaveTheName()
         {
-            
+            var go = new GameObject("MyGameObject");
+            Assert.AreEqual("MyGameObject", go.name);
         }
 
-        [Test]
-        public void TestingBotInfoCorrectInfo()
-        {
-            
-        }
-
-       
-        [UnityTest]
-        public IEnumerator TestSuiteWithEnumeratorPasses()
-        {
-            InventoryController controller = new InventoryController();
   
-            // Use the Assert class to test conditions.
-            // Use yield to skip a frame.
+
+        private Inventory CreateMockInventory(GameObject gameObject)
+        {
+            var item1 = InventoryController.PartToItem(part1);
+            var item2 = InventoryController.PartToItem(part2);
+            var item3 = InventoryController.PartToItem(body);
+            var inventory = gameObject.AddComponent<Inventory>();
+           // inventory.ItemSlots = new ItemSlot[16];
+            for(int i =0; i < inventory.ItemSlots.Length; i++)
+            {
+                inventory.ItemSlots[i]= gameObject.AddComponent<ItemSlot>();
+            }
+          //  inventory.startingItems = new List<Item>(){item1,item2,item3};
+            return inventory;
+        }
+
+        [UnityTest]
+        public IEnumerator _Instantiates_Inventory_At_The_Beginning()
+        {
+            var inventory = new GameObject().AddComponent<Inventory>();
+            inventory.startingitems = new List<Item>();
             yield return null;
+            Assert.NotNull(inventory);
         }
     }
 }

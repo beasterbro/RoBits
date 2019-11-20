@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
+//A script to manage the store interface
 public class StoreController : MonoBehaviour
 {
     
@@ -21,6 +22,7 @@ public class StoreController : MonoBehaviour
     private List<PartInfo> sensor = new List<PartInfo>();
     
     
+    //Shows the tool tip for the part that was clicked on in the store
     public void ShowTooltip(PartInfo partInfo)
     {
         if (partInfo != null)
@@ -29,17 +31,20 @@ public class StoreController : MonoBehaviour
         }
     }
 
+    //Shows the buy menu for the part that was clicked
     public void ShowBuyMenu(int partID)
     {
         BuyOptionMenu.ShowBuyMenu(partID);
     }
 
+    //Called when the Cancel Button is pressed and hides the buy menu and the part info
     public void CancelBuyMenu()
     {
         BuyOptionMenu.CancelBuyMenu();
         HideTooltip();
     }
 
+    //Shorts the parts by type and displays them in the store
     void SortPartsByType()
     {
         foreach (var part in allParts)
@@ -71,6 +76,7 @@ public class StoreController : MonoBehaviour
         }
     }
 
+    //Hides the tool tip (part information)
     public void HideTooltip()
     {
         
@@ -78,46 +84,48 @@ public class StoreController : MonoBehaviour
         
     }
 
-    public void showPartSpecs(int i)
+    //Displays the the part information for the inputted partID
+    public void showPartSpecs(int partID)
     {
-        if (100 <= i && i <= 199)
+        if (100 <= partID && partID <= 199)
         {
             //Get the body parts array
-            ShowTooltip(bodytype[i - 100]);
+            ShowTooltip(bodytype[partID - 100]);
         }
         
-        if (200 <= i && i <= 299)
+        if (200 <= partID && partID <= 299)
         {
             //Get the armor parts array
-            ShowTooltip(armor[i - 200]);
+            ShowTooltip(armor[partID - 200]);
         }
         
-        if (300 <= i && i <= 399)
+        if (300 <= partID && partID <= 399)
         {
             //Get the weapon parts array
-            ShowTooltip(weapons[i - 300]);
+            ShowTooltip(weapons[partID - 300]);
         }
         
-        if (400 <= i && i <= 499)
+        if (400 <= partID && partID <= 499)
         {
             //Get the sensors parts array
-            ShowTooltip(sensor[i - 400]);
+            ShowTooltip(sensor[partID - 400]);
         }
         
-        if (500 <= i && i <= 599)
+        if (500 <= partID && partID <= 599)
         {
             //Get the transport parts array
-            ShowTooltip(transport[i - 500]);
+            ShowTooltip(transport[partID - 500]);
         }
         
-        if (600 <= i && i <= 699)
+        if (600 <= partID && partID <= 699)
         {
             //Get the CPU parts array
-            ShowTooltip(cpu[i - 600]);
+            ShowTooltip(cpu[partID - 600]);
         }
         
        }
 
+    //Instantiates they parts and adds them to the store based on type
     private async void Start()
     {
         DataManager.Instance.EstablishAuth("lucaspopp0@gmail.com");

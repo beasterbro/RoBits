@@ -16,6 +16,6 @@ public class EquipmentSlot : ItemSlot
     protected override void OnValidate()
     {
         base.OnValidate();
-        gameObject.name =  " Slot";
+        gameObject.name =  "Slot";
     }
 }

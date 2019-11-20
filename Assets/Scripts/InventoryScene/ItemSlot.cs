@@ -35,7 +35,7 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandl
                 }
                 else
                 {
-                    image.sprite = _item.Icon;
+                    image.sprite = _item.icon;
                     image.color = normalColor;
                 }
                 
@@ -53,7 +53,7 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandl
             return true;
                 
             }
-            return item != null && item.type == PartType;
+            return item != null && item.Type == PartType;
         }
        
        
