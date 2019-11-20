@@ -11,7 +11,9 @@ public class BlockSupplier : BlockTerminator
         if (DragAndDropController.IsAvailable())
         {
             Block block = Instantiate<Block>(toSupply);
-            block.transform.position = this.transform.position;
+            Vector3 pos = this.transform.position;
+            pos.z = toSupply.transform.localPosition.z;
+            block.transform.position = pos;
             DragAndDropController.Instance().Grab(block);
         }
     }

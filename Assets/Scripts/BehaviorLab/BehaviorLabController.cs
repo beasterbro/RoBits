@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class BehaviorLabController : MonoBehaviour
 {
-    [SerializeField] private TriggerBlock trigger;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -23,6 +21,6 @@ public class BehaviorLabController : MonoBehaviour
 
     private void PrintBehavior()
     {
-        Debug.Log(trigger.BehaviorState());
+        Debug.Log(TriggerSpawner.Trigger.BehaviorState());
     }
 }
