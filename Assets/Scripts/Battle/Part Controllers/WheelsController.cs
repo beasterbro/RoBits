@@ -3,9 +3,7 @@ using Extensions;
 
 public class WheelsController : MovementController
 {
-
-    public float turningSpeed = 50f;
-
+    
     private float turningValue;
     private float forwardValue;
 
@@ -23,7 +21,7 @@ public class WheelsController : MovementController
     {
         if (!bot.IsEnabled()) return;
 
-        botBody.MoveRotation(botBody.rotation - (turningValue * turningSpeed * Time.deltaTime));
+        botBody.MoveRotation(botBody.rotation - (turningValue * handling * Time.deltaTime));
 
         var dm = forwardValue * movementSpeed * Time.deltaTime;
         var angle = botBody.rotation;

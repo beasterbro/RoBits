@@ -12,12 +12,12 @@ public abstract class PartController : MonoBehaviour
     {
         try
         {
-            GameObject obj = Instantiate(Resources.Load<GameObject>("Battle/" + info.ResourceName));
-            PartController controller = obj.GetComponent<PartController>();
+            var obj = Instantiate(Resources.Load<GameObject>("Battle/" + info.ResourceName));
+            var controller = obj.GetComponent<PartController>();
             controller.info = info;
             return controller;
         }
-        catch (ArgumentException exc)
+        catch (ArgumentException)
         {
             Debug.LogWarning("Attempted to load missing asset: Battle/" + info.ResourceName);
         }
@@ -41,6 +41,7 @@ public abstract class PartController : MonoBehaviour
     public void Undim()
     {
         if (spriteRenderer == null) return;
+
         var spriteColor = spriteRenderer.color;
         spriteColor.a = 1f;
         spriteRenderer.color = spriteColor;

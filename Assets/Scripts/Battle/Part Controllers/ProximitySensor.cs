@@ -5,41 +5,25 @@ using UnityEngine;
 public class ProximitySensor : SensorPartController
 {
 
-    private struct Opponent
-    {
+    public float minRange;
 
-        public BotController bot;
-        public float dist;
-
-        public Opponent(BotController self, BotController opponent)
-        {
-            bot = opponent;
-            dist = Vector2.Distance(self.gameObject.transform.position, opponent.gameObject.transform.position);
-        }
-
-    }
-
-    public float maxRange = 6f;
-    public float minRange = 4f;
-
-    private List<BotController> opponentsByDistance = new List<BotController>();
-
+    private readonly List<BotController> opponentsByDistance = new List<BotController>();
     private BotController nearestOpponent;
+
+    public override void Setup()
+    {
+        base.Setup();
+        minRange = range / 2;
+    }
 
     public override void MakeObservations()
     {
-        var otherGuys = new List<BotController>(BattleController.GetShared().GetAllBots());
-        otherGuys.RemoveAll(other => other.isDead || !bot.OtherIsEnemey(other));
-
-        var opponents =
-            new List<Opponent>(otherGuys.Select(other => new Opponent(bot, other)));
-        opponents.RemoveAll(other => other.dist > maxRange);
+        var opponents = OpponentsWithinRange();
         opponents.Sort((a, b) => a.dist.CompareTo(b.dist));
         opponentsByDistance.Clear();
         opponentsByDistance.AddRange(opponents.Select(opponent => opponent.bot));
 
-        if (opponents.Count > 0) nearestOpponent = opponentsByDistance[0];
-        else nearestOpponent = null;
+        nearestOpponent = opponents.Count > 0 ? opponentsByDistance[0] : null;
     }
 
     public BotController GetNearestOpponent()
@@ -56,7 +40,7 @@ public class ProximitySensor : SensorPartController
     {
         if (nearestOpponent == null) return false;
 
-        float distance = Vector3.Distance(bot.gameObject.transform.position,
+        var distance = Vector3.Distance(bot.gameObject.transform.position,
             nearestOpponent.gameObject.transform.position);
 
         return distance > minRange;

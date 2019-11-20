@@ -13,11 +13,10 @@ public class PartInfo
     private readonly PartType type;
     private readonly int price;
     private readonly int levelToUnlock;
-    private readonly Dictionary<string, double> attributes;
-    private readonly Sprite sprite;
+    private readonly Dictionary<string, float> attributes;
 
     public PartInfo(int id, string name, string description, PartType type, int price, int levelToUnlock,
-        Dictionary<string, double> attributes)
+        Dictionary<string, float> attributes)
     {
         this.id = id;
         this.name = name;
@@ -35,7 +34,6 @@ public class PartInfo
     public PartType PartType => type;
     public int Price => price;
     public int LevelToUnlock => levelToUnlock;
-    public Dictionary<string, double> Attributes => attributes;
-    public Sprite Sprite => sprite;
+    public Dictionary<string, float> Attributes => attributes;
 
 }

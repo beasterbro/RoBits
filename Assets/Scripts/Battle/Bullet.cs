@@ -3,7 +3,6 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
 
-    public LayerMask botsMask;
     public float damage = 10f;
     public float maxLifetime = 2f;
 
@@ -20,17 +19,17 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        BotController bot = other.GetComponent<BotController>();
-        if (bot != null)
+        var bodyType = other.GetComponent<BodyTypeController>();
+        if (bodyType != null && bodyType.bot != null)
         {
-            if (!isRebound && bot.Equals(firedBy)) return;
+            if (!isRebound && bodyType.bot.Equals(firedBy)) return;
 
-            bot.TakeDamage(damage);
+            bodyType.bot.TakeDamage(damage);
             Destroy(gameObject);
             return;
         }
 
-        ArmorController armor = other.GetComponent<ArmorController>();
+        var armor = other.GetComponent<ArmorController>();
         if (armor != null && !ShouldIgnoreCollision(armor))
         {
             armor.CollideWith(this);
