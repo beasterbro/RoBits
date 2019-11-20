@@ -40,18 +40,30 @@ public class EquipmentPanel : MonoBehaviour
     //Adds an item to the equipment panel
     public bool AddItem(Item item,out  Item previousItem)
     {
-        for (int i = 0; i < equipmentSlots.Length; i++)
+        
+        foreach (var slot in equipmentSlots)
         {
-            if (equipmentSlots[i].Item == null)
+
+            if (slot.CanReceiveItem(item) && slot.Item == null )
             {
-                previousItem = equipmentSlots[i].Item;
-                equipmentSlots[i].Item = item;
-                return true;
+               // if ( slot.Item != null)
+                {
+                    previousItem = slot.Item;
+                    slot.Item = item;
+                    return true; 
+                }
+                /*else
+                {
+                    previousItem = null;
+                    slot.Item = item;
+                    return true; 
+                }*/
+                
             }
         }
-
         previousItem = null;
         return false;
+  
     }
 
     //removes an item from the equipment panel
