@@ -18,7 +18,7 @@ public class Item : ScriptableObject
     public PartType Type => part.PartType;
     public int Price => part.Price;
     public int LevelToUnlock => part.LevelToUnlock;
-    public Dictionary<String, float> attributes;
+    public Dictionary<String, float> attributes => part.Attributes;
 
     public virtual Item GetCopy()
     {

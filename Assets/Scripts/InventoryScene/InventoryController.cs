@@ -16,7 +16,7 @@ public class InventoryController : MonoBehaviour
 
 
     public BotInfo currentBot ;
-    //Generates Bot Images
+    //Game Objects to attatch generated bot images to
     [SerializeField] private List<GameObject> BotGenerators;
 
     //Displaying info to user
@@ -304,12 +304,12 @@ public class InventoryController : MonoBehaviour
     {
         if (!DataManager.Instance.InitialFetchPerformed)
         {
-            DataManager.Instance.EstablishAuth("lucaspopp0@gmail.com");
+            DataManager.Instance.EstablishAuth("DEV adamjoesph111@gmail.com");
             await DataManager.Instance.FetchInitialData();
         }
 
         userInventory = DataManager.Instance.UserInventory;
-
+        userBots = new List<BotInfo>(DataManager.Instance.AllBots);
         SetActiveBot(0);
         CreateAllBotImages();
 
