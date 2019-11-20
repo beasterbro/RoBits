@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -192,10 +192,22 @@ public class DataManager
         }
     }
 
-    public bool PurchasePart(PartInfo item)
+    public IEnumerator PurchasePart(PartInfo item, Action<bool> callback)
     {
-        // TODO: Implement
-        return true;
+        var request = BasicPost("/inventory/purchase/" + item.ID);
+        yield return request.SendWebRequest();
+
+        if (request.EncounteredError())
+        {
+            Debug.LogError(request.GetError());
+            callback.Invoke(false);
+        }
+        else
+        {
+            yield return runner.StartCoroutine(FetchCurrentUser());
+            yield return runner.StartCoroutine(FetchUserInventory());
+            callback.Invoke(true);
+        }
     }
 
     public PartInfo[] AllParts => allParts;
