@@ -25,13 +25,22 @@ public class DataManager
     private BotInfo[] allBots;
     private TeamInfo[] userTeams;
 
+    public static DataManager Instance => shared ?? (shared = new DataManager());
+
+    public UserInfo CurrentUser => currentUser;
+    public List<InventoryItem> UserInventory => inventory;
+    public PartInfo[] AllParts => allParts;
+    public BotInfo[] AllBots => allBots;
+    public TeamInfo[] UserTeams => userTeams;
+    public bool InitialFetchPerformed => initialDataFetched;
+
     private DataManager() { }
 
-    public void Latch(MonoBehaviour coroutineRunner)
-    {
-        runner = coroutineRunner;
-    }
+    // Should be called before using DataManager in a scene. Provides a MonoBehavior object which the
+    // DataManager can use to run coroutines
+    public void Latch(MonoBehaviour coroutineRunner) => runner = coroutineRunner;
 
+    // Adds the necessary headers to the request
     private UnityWebRequest WrapRequest(UnityWebRequest request)
     {
         request.SetRequestHeader("Authorization", "Bearer " + bearerToken);
@@ -39,25 +48,11 @@ public class DataManager
         return request;
     }
 
-    private UnityWebRequest BasicGet(string endpt)
-    {
-        return WrapRequest(UnityWebRequest.Get(baseUrl + endpt));
-    }
-
-    private UnityWebRequest BasicPost(string endpt, string content = "")
-    {
-        return WrapRequest(UnityWebRequest.Post(baseUrl + endpt, content));
-    }
-
-    private UnityWebRequest BasicPut(string endpt, string content = "")
-    {
-        return WrapRequest(UnityWebRequest.Put(baseUrl + endpt, content));
-    }
-
-    private UnityWebRequest BasicDelete(string endpt)
-    {
-        return WrapRequest(UnityWebRequest.Delete(baseUrl + endpt));
-    }
+    // Convenience methods for building requests to the API
+    private UnityWebRequest BasicGet(string endpt) => WrapRequest(UnityWebRequest.Get(baseUrl + endpt));
+    private UnityWebRequest BasicPost(string endpt, string content = "") => WrapRequest(UnityWebRequest.Post(baseUrl + endpt, content));
+    private UnityWebRequest BasicPut(string endpt, string content = "") => WrapRequest(UnityWebRequest.Put(baseUrl + endpt, content));
+    private UnityWebRequest BasicDelete(string endpt) => WrapRequest(UnityWebRequest.Delete(baseUrl + endpt));
 
     // Adds the auth header to the HTTP client
     public void EstablishAuth(string token)
@@ -65,10 +60,6 @@ public class DataManager
         bearerToken = token;
     }
 
-    // Returns a reference to the shared instance
-    public static DataManager Instance => shared ?? (shared = new DataManager());
-
-    // Fetches all necessary initial data
     public IEnumerator FetchInitialData(Action callback = null)
     {
         yield return runner.StartCoroutine(FetchCurrentUser());
@@ -111,9 +102,7 @@ public class DataManager
         yield return request.SendWebRequest();
 
         if (request.EncounteredError()) Debug.LogError(request.GetError());
-        else
-            inventory = new List<InventoryItem>(
-                JsonUtils.DeserializeArray<InventoryItem>(request.downloadHandler.text));
+        else inventory = new List<InventoryItem>(JsonUtils.DeserializeArray<InventoryItem>(request.downloadHandler.text));
 
         callback?.Invoke();
     }
@@ -161,8 +150,6 @@ public class DataManager
         }
     }
 
-    public UserInfo CurrentUser => currentUser;
-
     public IEnumerator UpdateCurrentUser(Action callback = null)
     {
         var updateBody = JsonUtils.SerializeObject(currentUser);
@@ -172,7 +159,7 @@ public class DataManager
         callback?.Invoke();
     }
 
-    public List<InventoryItem> UserInventory => inventory;
+    public PartInfo GetPart(int pid) => allParts.FirstOrDefault(part => part.ID == pid);
 
     public IEnumerator SellPart(PartInfo item, Action<bool> callback)
     {
@@ -210,19 +197,7 @@ public class DataManager
         }
     }
 
-    public PartInfo[] AllParts => allParts;
-
-    public PartInfo GetPart(int pid)
-    {
-        return allParts.First(part => part.ID == pid);
-    }
-
-    public BotInfo[] AllBots => allBots;
-
-    public BotInfo GetBot(int bid)
-    {
-        return allBots.First(bot => bot.ID == bid);
-    }
+    public BotInfo GetBot(int bid) => allBots.FirstOrDefault(bot => bot.ID == bid);
 
     public IEnumerator UpdateBot(BotInfo bot, Action callback = null)
     {
@@ -233,12 +208,7 @@ public class DataManager
         callback?.Invoke();
     }
 
-    public TeamInfo[] UserTeams => userTeams;
-
-    public TeamInfo GetTeam(int tid)
-    {
-        return userTeams.First(team => team.ID == tid);
-    }
+    public TeamInfo GetTeam(int tid) => userTeams.FirstOrDefault(team => team.ID == tid);
 
     public IEnumerator UpdateTeam(TeamInfo team, Action callback = null)
     {
@@ -274,10 +244,7 @@ public class DataManager
 
     public IEnumerator GetOtherUserTeam(string uid, int tid, Action<TeamInfo> callback)
     {
-        yield return runner.StartCoroutine(GetOtherUserTeams(uid,
-            teamInfo => { callback.Invoke(teamInfo.FirstOrDefault(team => team.ID == tid)); }));
+        yield return runner.StartCoroutine(GetOtherUserTeams(uid, teamInfo => { callback.Invoke(teamInfo.FirstOrDefault(team => team.ID == tid)); }));
     }
-
-    public bool InitialFetchPerformed => initialDataFetched;
 
 }
