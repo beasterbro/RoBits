@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// Note: This is used as the top level block in a behavior scene
 [AddComponentMenu("Interface Objects/Blocks/Trigger")]
 public class TriggerBlock : BodyBlock
 {
@@ -34,5 +33,10 @@ public class TriggerBlock : BodyBlock
     protected override string Type()
     {
         return "trigger";
+    }
+
+    protected override int[] ChunkSizes()
+    {
+        return new int[0];
     }
 }
