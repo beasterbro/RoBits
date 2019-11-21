@@ -24,6 +24,12 @@ public class BehaviorLabController : MonoBehaviour
             //currentBotId = InventoryController.CurrentBot.ID;
         }
         UpdateCurrentBot(currentBotId);
+        StartCoroutine(DelayedLoad());
+    }
+
+    private IEnumerator DelayedLoad()
+    {
+        yield return null;
         SensorBarController.Instance.Load(Sensors.SensorTypeHelper.KnownTypes);
     }
 

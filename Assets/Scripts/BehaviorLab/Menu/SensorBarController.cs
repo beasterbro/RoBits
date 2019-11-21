@@ -1,35 +1,29 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Sensors;
 
 [AddComponentMenu("Behavior Lab/Sensor/Sensor Bar")]
 public class SensorBarController : MonoBehaviour
 {
     public static SensorBarController Instance { get; private set; }
-
-    private ScalingList<InterfaceObject> sensorGroups;
-    [SerializeField] private ScaleController scaleController;
-    [SerializeField] private GameObject elementContainer;
+    
+    [SerializeField] private LayoutGroup elementContainer;
 
     [SerializeField] private SensorGroupController sensorGroupPrefab;
     
     void Start()
     {
         Instance = this;
-        sensorGroups = new ScalingList<InterfaceObject>(this.transform);
-        sensorGroups.LinkScaleController(scaleController);
     }
 
     public void Load(List<SensorType> sensors)
     {
-        sensorGroups = new ScalingList<InterfaceObject>(elementContainer.transform);
-
         SensorGroupController sensorGroup;
         foreach (SensorType sensor in sensors)
         {
             sensorGroup = Instantiate(sensorGroupPrefab, elementContainer.transform);
-            sensorGroups.Add(sensorGroup.Interface);
             sensorGroup.Load(sensor);
         }
     }
