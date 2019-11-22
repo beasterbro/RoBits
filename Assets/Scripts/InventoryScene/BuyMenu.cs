@@ -24,8 +24,9 @@ public class BuyMenu : MonoBehaviour
     //Buys the part via a backend call
     public void Buy()
     {
-        gameObject.SetActive(false);
         DataManager.Instance.PurchasePart(DataManager.Instance.GetPart(PartID));
+        gameObject.SetActive(false);
+        
 
     }
 

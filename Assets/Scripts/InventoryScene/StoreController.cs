@@ -83,25 +83,16 @@ public class StoreController : MonoBehaviour
    
         //Needed for testing
         DataManager.Instance.EstablishAuth("DEV testUser@gmail.com");
-        
+        await DataManager.Instance.FetchInitialData();
         //Acutally needed code
         await DataManager.Instance.FetchAllParts();
         allParts = DataManager.Instance.AllParts;
-        //  GatherAllButtons();
+       
+          
         
-        //Gives all buttons desired actions on given events
-        for (int i = 0; i < StoreButtons.Count; i++)
-        {
-            //On Click offer option to purchase item
-            StoreButtons[i].OnRightClickEvent+= ShowBuyMenu;
-            StoreButtons[i].OnLeftClickEvent += ShowBuyMenu;
-            
-            //For hovering over an item, shows item info
-            StoreButtons[i].OnPointerEnterEvent += ShowPartSpecs;
-            StoreButtons[i].OnPointerExitEvent += HidePartSpecs;
-        }
+        //Gives all buttons desired attributes and functionality
         InstantiateStoreButtons();
-        
+        UpdateCurrency();
 
     }
 
@@ -110,31 +101,52 @@ public class StoreController : MonoBehaviour
     //Called in editor on change, gathers all of the current buttons
     private void OnValidate()
     {
-        GatherAllButtons();
+        ClearButtons();
+     //   GatherAllButtons();
     }
 
     //Shows the buy menu to the user to allow them to purchase a part
     private void ShowBuyMenu(StoreButton storeButton)
     {
-        //  BuyOptionMenu.gameObject.SetActive(true);
-        ShowBuyMenu(storeButton.part.ID);
+        if (validUserLevel(storeButton))
+        {
+            ShowBuyMenu(storeButton.part.ID);
+        }
+        else
+        {
+            ;//The user cannot purchase the part
+        }
     }
 
-    //Used for testing
-    private void Update()
+    private bool validUserLevel(StoreButton storeButton)
     {
-        //InstantiateStoreButtons(); 
-        //     GatherAllButtons();
-        //     InstantiateStoreButtons();
+        return storeButton.Part.LevelToUnlock <= DataManager.Instance.CurrentUser.Level;
     }
 
-    //Adds parts to the StoreButtons and then adds their images
+    //Adds parts to the StoreButtons,then adds their images, then removes unavailable parts
     private void InstantiateStoreButtons()
     {
+        GatherAllButtons();
+        GiveStoreButtonsActions();
         AddPartsToButtons();
         AddImagesToButtons();
         ShowAvailableParts();
         
+
+    }
+
+    private void GiveStoreButtonsActions()
+    {
+       for (int i = 0; i < StoreButtons.Count; i++)
+               {
+                   //On Click offer option to purchase item
+                   StoreButtons[i].OnRightClickEvent+= ShowBuyMenu;
+                   StoreButtons[i].OnLeftClickEvent += ShowBuyMenu;
+                   
+                   //For hovering over an item, shows item info
+                   StoreButtons[i].OnPointerEnterEvent += ShowPartSpecs;
+                   StoreButtons[i].OnPointerExitEvent += HidePartSpecs;
+               }
     }
 
     private void AddImagesToButtons()
@@ -152,6 +164,7 @@ public class StoreController : MonoBehaviour
            
         }
     }
+    
     
     
 
@@ -187,9 +200,12 @@ public class StoreController : MonoBehaviour
             }
             else
             {
-                if (storeButton.Part.LevelToUnlock > DataManager.Instance.CurrentUser.Level)
+                if (!validUserLevel(storeButton))
                 {
-                    storeButton.gameObject.SetActive(false);
+                    var buttoncolor = storeButton.Image.color;
+                   
+                   buttoncolor = new Color(buttoncolor.r,buttoncolor.g,buttoncolor.b,0.5f);
+                   storeButton.Image.color = buttoncolor;
                 }
             }
         }
@@ -206,9 +222,24 @@ public class StoreController : MonoBehaviour
         
         }
 
+        private void ClearButtons()
+        {
+            foreach (var button in StoreButtons)
+            {
+                button.Part = null;
+                button.Image = null;
+            }
+        }
+
         private void UpdateCurrency()
         {
             UserCurrency.text = DataManager.Instance.CurrentUser.Currency.ToString();
+        }
+
+        public void Buy()
+        {
+            BuyOptionMenu.Buy();
+            UpdateCurrency();
         }
 
     }
