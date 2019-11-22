@@ -100,7 +100,7 @@ public class StoreController : MonoBehaviour
             StoreButtons[i].OnPointerEnterEvent += ShowPartSpecs;
             StoreButtons[i].OnPointerExitEvent += HidePartSpecs;
         }
-         InstantiateStoreButtons();
+        InstantiateStoreButtons();
         
 
     }
@@ -123,7 +123,7 @@ public class StoreController : MonoBehaviour
     //Used for testing
     private void Update()
     {
-       //InstantiateStoreButtons(); 
+        //InstantiateStoreButtons(); 
         //     GatherAllButtons();
         //     InstantiateStoreButtons();
     }
@@ -176,36 +176,39 @@ public class StoreController : MonoBehaviour
             }
         }
     }
-    
+
     private void ShowAvailableParts()
     {
         foreach (var storeButton in StoreButtons)
         {
-            if (storeButton.Part.LevelToUnlock > DataManager.Instance.CurrentUser.Level)
+            if (storeButton.Part == null)
             {
                 storeButton.gameObject.SetActive(false);
             }
             else
             {
-                //the user can see the part and it is available for purchase
+                if (storeButton.Part.LevelToUnlock > DataManager.Instance.CurrentUser.Level)
+                {
+                    storeButton.gameObject.SetActive(false);
+                }
             }
         }
     }
 
     //Collects all of the store buttons from their parent
-    private void GatherAllButtons()
-    {
-       
-        foreach (var storeButton in StoreButtonParent.GetComponentsInChildren<StoreButton>())
+        private void GatherAllButtons()
         {
-            StoreButtons.Add(storeButton);
-        }
+       
+            foreach (var storeButton in StoreButtonParent.GetComponentsInChildren<StoreButton>())
+            {
+                StoreButtons.Add(storeButton);
+            }
         
-    }
+        }
 
-    private void UpdateCurrency()
-    {
-        UserCurrency.text = DataManager.Instance.CurrentUser.Currency.ToString();
-    }
+        private void UpdateCurrency()
+        {
+            UserCurrency.text = DataManager.Instance.CurrentUser.Currency.ToString();
+        }
 
-}
+    }
