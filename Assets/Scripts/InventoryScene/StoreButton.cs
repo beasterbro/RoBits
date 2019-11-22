@@ -7,21 +7,33 @@ using UnityEngine.UI;
 
 public class StoreButton : MonoBehaviour , IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
+    private  Color disableColor = new Color(1,1,1,0);
+    private  Color normalColor = Color.white;
     public PartType Type;
     public PartInfo part;
     [SerializeField] private Image image;
     
     public event Action<StoreButton> OnLeftClickEvent;
     public event Action<StoreButton> OnRightClickEvent;
-    public event Action<StoreButton> OnPointerClickEvent;
     public event Action<StoreButton> OnPointerEnterEvent;
     public event Action<StoreButton> OnPointerExitEvent;
 
     public Image Image
     {
-        get => image;
+        get
+        {
+            image.color = part==null ? disableColor : normalColor;
+            return image;
+        }
 
         set => image = value;
+    }
+
+    public PartInfo Part
+    {
+        get => part;
+        set => part = value;
+
     }
     
     

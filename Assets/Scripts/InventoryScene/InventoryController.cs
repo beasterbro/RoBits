@@ -15,15 +15,14 @@ public class InventoryController : MonoBehaviour
     //For integration with BE
     private List<BotInfo> userBots;
     private  List<InventoryItem> userInventory;
-
-
+    
     public BotInfo currentBot ;
     //Game Objects to attatch generated bot images to
     [SerializeField] private List<GameObject> BotGenerators;
 
     //Displaying info to user
-    [SerializeField] private ItemToolTip itemToolTip;
-    [SerializeField] private SellMenu sellMenu;
+    [SerializeField] private PartDescHud partDesc;
+    [FormerlySerializedAs("sellMenu")] [SerializeField] private SellMenu SellOptionMenu;
     [SerializeField] Text botNameText;
     [SerializeField] private Text Currency;
     [SerializeField] private Text botInfoText;
@@ -42,9 +41,9 @@ public class InventoryController : MonoBehaviour
     //Called every time Unity compiles scripts
     private async void OnValidate()
     {
-        if (itemToolTip == null)
+        if (partDesc == null)
         {
-            itemToolTip = FindObjectOfType<ItemToolTip>();
+            partDesc = FindObjectOfType<PartDescHud>();
         }
 
     }
@@ -74,12 +73,12 @@ public class InventoryController : MonoBehaviour
         // Left Click
         Inventory.OnLeftClickEvent += ShowSellMenu;
         // Pointer Enter
-        Inventory.OnPointerEnterEvent += ShowTooltip;
-        EquipmentPanel.OnPointerEnterEvent += ShowTooltip;
+        Inventory.OnPointerEnterEvent += ShowPartDesc;
+        EquipmentPanel.OnPointerEnterEvent += ShowPartDesc;
 
         // Pointer Exit
-        Inventory.OnPointerExitEvent += HideTooltip;
-        EquipmentPanel.OnPointerExitEvent += HideTooltip;
+        Inventory.OnPointerExitEvent += HidePartDesc;
+        EquipmentPanel.OnPointerExitEvent += HidePartDesc;
 
         // Begin Drag
         Inventory.OnBeingDragEvent += BeginDrag;
@@ -98,20 +97,20 @@ public class InventoryController : MonoBehaviour
 
     void ShowSellMenu(ItemSlot itemSlot)
     {
-        sellMenu.CancelSellMenu();
+        SellOptionMenu.transform.position = MousePosition();
         
-        sellMenu.ShowSellMenu(itemSlot.Item.part);
+        SellOptionMenu.ShowSellMenu(itemSlot.Item.part);
     }
 
     public void Sell()
     {
-        sellMenu.Sell();
+        SellOptionMenu.Sell();
         UpdateCurrency();
         UpdateInventory();
     }
     public void HideSellMenu()
     {
-        sellMenu.CancelSellMenu();
+        SellOptionMenu.CancelSellMenu();
     }
 
     //A method for when ItemSlots are dragged
@@ -191,19 +190,19 @@ public class InventoryController : MonoBehaviour
     }
 
     //Shows the tool tip for a given item slot if the item slot is not empty
-    public void ShowTooltip(ItemSlot itemSlot)
+    public void ShowPartDesc(ItemSlot itemSlot)
     {
         if (itemSlot.Item != null)
         {
-            itemToolTip.ShowTooltip(itemSlot.Item);
+            partDesc.ShowItemInfo(itemSlot.Item);
         }
     }
 
     //Hides the tool tip from the UI
-    public void HideTooltip(ItemSlot itemSlot)
+    public void HidePartDesc(ItemSlot itemSlot)
     {
 
-        itemToolTip.HideToolTip();
+        partDesc.HideToolTip();
 
     }
 
@@ -264,6 +263,7 @@ public class InventoryController : MonoBehaviour
                     Unequip(previousItem);
                 }
                 currentBot.AddPart(item.part);
+                UpdateBotInfo();
                 CreateAllBotImages();
             }
             else
@@ -280,6 +280,7 @@ public class InventoryController : MonoBehaviour
         {
             inventory.AddItem(item);
             currentBot.RemovePart(item.part);
+            UpdateBotInfo();
             CreateAllBotImages();
         }
     }
@@ -313,7 +314,7 @@ public class InventoryController : MonoBehaviour
     {
         // SetEquipmentMax(currentBot);
         //Retrieves all of the items currently equipped and store them
-        List<Item> addToInventory = equipmentPanel.ClearEquipped();
+        List<Item> addToInventory = equipmentPanel.ClearEquippedItems();
 
         Item previousItem;
         foreach (PartInfo part in currentBot.Equipment)
@@ -333,7 +334,7 @@ public class InventoryController : MonoBehaviour
         Item item = ScriptableObject.CreateInstance<Item>();
         item.part = part;
 
-        item.icon = ItemImageGenrator.GenerateImage(part.ResourceName);
+        item.icon = PartImageGenrator.GenerateImage(part.ResourceName);
 
         return item;
     }

@@ -11,7 +11,6 @@ public class EquipmentPanel : MonoBehaviour
     public static event Action<ItemSlot> OnRightClickEvent;
     public static event Action<ItemSlot> OnPointerEnterEvent;
     public static event Action<ItemSlot> OnPointerExitEvent;
-    public event Action<ItemSlot> OnPointerClickEvent;
     public static event Action<ItemSlot> OnBeingDragEvent;
     public static event Action<ItemSlot> OnDragEvent;
     public static event Action<ItemSlot> OnEndDragEvent;
@@ -84,7 +83,7 @@ public class EquipmentPanel : MonoBehaviour
     }
 
     //Clears the currently equipped and return them as a list
-    public List<Item> ClearEquipped()
+    public List<Item> ClearEquippedItems()
     {
         List<Item> equippedItems = new List<Item>();
         for (int i = 0; i < equipmentSlots.Length; i++)

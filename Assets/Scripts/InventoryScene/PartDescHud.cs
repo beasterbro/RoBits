@@ -4,21 +4,22 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
-public class ItemToolTip : MonoBehaviour
+public class PartDescHud : MonoBehaviour
 {
-    [SerializeField] Text ItemNameText;
-    [SerializeField] Text ItemSlotText;
-    [SerializeField] Text ItemStatText;
+     [SerializeField] Text PartNameText;
+     [SerializeField] Text PartTypeText;
+     [SerializeField] Text PartStatText;
 
     private StringBuilder sb = new StringBuilder();
     //Displays the tooltip with all of the specified stats added
-    public void ShowTooltip(Item item)
+    public void ShowItemInfo(Item item)
     {
-        ItemNameText.text = item.ItemName;
-        ItemSlotText.text = item.Type.ToString();
+        PartNameText.text = item.ItemName;
+        PartTypeText.text = item.Type.ToString();
 
         //Add more Stats here
         sb.Length = 0;
@@ -27,15 +28,15 @@ public class ItemToolTip : MonoBehaviour
         AddStat(item.PartID.ToString(), "ID:");
         AddStat(item.Description,"Desc:");
 
-        ItemStatText.text = sb.ToString();
+        PartStatText.text = sb.ToString();
   
         gameObject.SetActive(true);
     }
 
     public void ShowPartInfo(PartInfo part)
     {
-        ItemNameText.text = part.Name;
-        ItemSlotText.text = part.PartType.ToString();
+        PartNameText.text = part.Name;
+        PartTypeText.text = part.PartType.ToString();
 
         //Add more Stats here
         sb.Length = 0;
@@ -44,7 +45,7 @@ public class ItemToolTip : MonoBehaviour
         AddStat(part.ID.ToString(), "ID:");
         AddStat(part.Description,"Desc:");
 
-        ItemStatText.text = sb.ToString();
+        PartStatText.text = sb.ToString();
   
         gameObject.SetActive(true);
     }

@@ -20,7 +20,6 @@ public class Inventory : MonoBehaviour
     public static event Action<ItemSlot> OnLeftClickEvent;
     public static event Action<ItemSlot> OnPointerEnterEvent;
     public static event Action<ItemSlot> OnPointerExitEvent;
-    public event Action<ItemSlot> OnPointerClickEvent;
     public static event Action<ItemSlot> OnBeingDragEvent;
     public static event Action<ItemSlot> OnDragEvent;
     public static event Action<ItemSlot> OnEndDragEvent;
@@ -59,7 +58,7 @@ public class Inventory : MonoBehaviour
         for (; i < startingitems.Count && i < itemSlots.Length; i++)
         {
             itemSlots[i].Item = Instantiate(startingitems[i]);
-            itemSlots[i].Item.icon = ItemImageGenrator.GenerateImage(itemSlots[i].Item.part.ResourceName);
+            itemSlots[i].Item.icon = PartImageGenrator.GenerateImage(itemSlots[i].Item.part.ResourceName);
         }
 
         for (; i < itemSlots.Length; i++)

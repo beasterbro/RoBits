@@ -7,8 +7,6 @@ using UnityEngine;
 public class BuyMenu : MonoBehaviour
 {
 
-    PartInfo[] AllParts = DataManager.Instance.AllParts;
-
     //Stores the part ID of the part that activated the buy menu
     private int PartID;
     void Start()
