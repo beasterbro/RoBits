@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -93,7 +93,13 @@ public class DataManager
         bearerToken = token;
     }
 
-    public IEnumerator FetchInitialData(Action callback = null)
+    public IEnumerator FetchInitialDataIfNecessary(Action<bool> callback = null)
+    {
+        if (initialDataFetched) callback?.Invoke(true);
+        else yield return runner.StartCoroutine(FetchInitialData(callback));
+    }
+
+    public IEnumerator FetchInitialData(Action<bool> callback = null)
     {
         bool userFetched, partsFetched, inventoryFetched, teamsFetched;
         yield return runner.StartCoroutine(FetchCurrentUser(success => userFetched = success));
