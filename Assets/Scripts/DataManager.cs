@@ -101,7 +101,7 @@ public class DataManager
 
     public IEnumerator FetchInitialData(Action<bool> callback = null)
     {
-        bool userFetched, partsFetched, inventoryFetched, teamsFetched;
+        bool userFetched = false, partsFetched = false, inventoryFetched = false, teamsFetched = false;
         yield return runner.StartCoroutine(FetchCurrentUser(success => userFetched = success));
         yield return runner.StartCoroutine(FetchAllParts(success => partsFetched = success));
         if (userFetched && partsFetched)
@@ -160,7 +160,7 @@ public class DataManager
         yield return botsRequest.SendWebRequest();
         yield return teamsRequest.SendWebRequest();
 
-        bool botsLoaded, teamsLoaded;
+        bool botsLoaded = false, teamsLoaded = false;
 
         SimpleCallback(botsRequest, () =>
         {
@@ -218,7 +218,7 @@ public class DataManager
         }
         else
         {
-            bool currentUserFetched, inventoryFetched;
+            bool currentUserFetched = false, inventoryFetched = false;
 
             yield return runner.StartCoroutine(FetchCurrentUser(success => currentUserFetched = success));
             yield return runner.StartCoroutine(FetchUserInventory(success => inventoryFetched = success));
@@ -238,7 +238,7 @@ public class DataManager
         }
         else
         {
-            bool currentUserFetched, inventoryFetched;
+            bool currentUserFetched = false, inventoryFetched = false;
 
             yield return runner.StartCoroutine(FetchCurrentUser(successs => currentUserFetched = successs));
             yield return runner.StartCoroutine(FetchUserInventory(success => inventoryFetched = success));
