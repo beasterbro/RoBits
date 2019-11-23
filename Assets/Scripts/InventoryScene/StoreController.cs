@@ -83,16 +83,25 @@ public class StoreController : MonoBehaviour
    
         //Needed for testing
         DataManager.Instance.EstablishAuth("DEV testUser@gmail.com");
-        await DataManager.Instance.FetchInitialData();
-        //Acutally needed code
-        await DataManager.Instance.FetchAllParts();
-        allParts = DataManager.Instance.AllParts;
+        StartCoroutine( DataManager.Instance.FetchInitialData(() =>
+        {
+            //Acutally needed code
+            StartCoroutine(DataManager.Instance.FetchAllParts(() =>
+            {
+                allParts = DataManager.Instance.AllParts;
+                InstantiateStoreButtons();
+                UpdateCurrency();
+            }));
+            
+        }));
+        
+        
+       
        
           
         
         //Gives all buttons desired attributes and functionality
-        InstantiateStoreButtons();
-        UpdateCurrency();
+       
 
     }
 

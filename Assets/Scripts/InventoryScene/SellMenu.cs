@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,7 +15,8 @@ public class SellMenu : MonoBehaviour
     //Buys the part via a backend call
     public void Sell()
     {
-        DataManager.Instance.SellPart(PartInfo);
+        //TODO: Fix this with proper callback
+        DataManager.Instance.SellPart(PartInfo, delegate(bool obj) { });
         gameObject.SetActive(false);
         
 
