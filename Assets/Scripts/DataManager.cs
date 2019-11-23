@@ -85,7 +85,7 @@ public class DataManager
         callback?.Invoke();
     }
 
-    private IEnumerator FetchAllParts(Action callback = null)
+    public IEnumerator FetchAllParts(Action callback = null)
     {
         var request = BasicGet("/parts");
         yield return request.SendWebRequest();

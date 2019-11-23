@@ -351,18 +351,21 @@ public class InventoryController : MonoBehaviour
         if (!DataManager.Instance.InitialFetchPerformed)
         {
             DataManager.Instance.EstablishAuth("DEV testUser@gmail.com");
-            await DataManager.Instance.FetchInitialData();
+            StartCoroutine(DataManager.Instance.FetchInitialData(() =>
+            {
+                userInventory = DataManager.Instance.UserInventory;
+                userBots = new List<BotInfo>(DataManager.Instance.AllBots);
+                SetActiveBot(0);
+                CreateAllBotImages();
+
+                UpdateCurrency();
+                UpdateInventory();
+                UpdateEquipment();
+                UpdateBotInfo();
+            }));
         }
 
-        userInventory = DataManager.Instance.UserInventory;
-        userBots = new List<BotInfo>(DataManager.Instance.AllBots);
-        SetActiveBot(0);
-        CreateAllBotImages();
-
-        UpdateCurrency();
-        UpdateInventory();
-        UpdateEquipment();
-        UpdateBotInfo();
+       
         
 
     }

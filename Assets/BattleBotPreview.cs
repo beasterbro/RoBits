@@ -9,7 +9,7 @@ public class BattleBotPreview : MonoBehaviour
   private async void Start()
   {
     DataManager.Instance.EstablishAuth("lucaspopp0@gmail.com");
-    await DataManager.Instance.FetchInitialData();
+    DataManager.Instance.FetchInitialData();
     
     BotPreviewGenerator.BotGenerators = BotPreviews;
     BotPreviewGenerator.CreateAllBotImages();
