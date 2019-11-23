@@ -10,13 +10,13 @@ namespace Tests
 {
     public class TestSuite
     {
-       private static Dictionary<string,float> attributes1 = new Dictionary<string, float>
+       private static Dictionary<String,float> attributes1 = new Dictionary<string, float>
         {
             {"DMG",23},
             {"DIST",12}
         };
 
-       private static Dictionary<string,float> attributes2 = new Dictionary<string, float>
+       private static Dictionary<String,float> attributes2 = new Dictionary<string, float>
        {
            {"DMG",23},
            {"DIST",12}
@@ -28,7 +28,7 @@ namespace Tests
            {"LOUD","no"}
        };
 
-       private static Dictionary<string,float> bodySpec = new Dictionary<string, float>
+       private static Dictionary<String,float> bodySpec = new Dictionary<string, float>
        {
            {"THICC",11},
            {"SANIC",101}

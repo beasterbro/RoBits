@@ -1,6 +1,6 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -34,31 +34,39 @@ public class BattleController : MonoBehaviour
         return currentInstance;
     }
 
-    async void Start()
+    void Start()
     {
         winner = -1;
         winnerText.text = "Loading...";
 
-        DataManager.Instance.EstablishAuth("lucaspopp0@gmail.com");
-        await DataManager.Instance.FetchInitialData();
+        DataManager.Instance.Latch(this);
+        if (!DataManager.Instance.InitialFetchPerformed)
+        {
+            DataManager.Instance.EstablishAuth("DEV lucaspopp0@gmail.com");
+            StartCoroutine(DataManager.Instance.FetchInitialData(() =>
+            {
+                huds = new[] {team1HUD, team2HUD};
+                locations = new[] {playerLocations, enemyLocations};
+                teams[0] = DataManager.Instance.GetTeam(0);
+                StartCoroutine(DataManager.Instance.GetOtherUserTeam("axs1477", 0, enemyTeam =>
+                {
+                    teams[1] = enemyTeam;
+                    LoadTeam(0);
+                    LoadTeam(1);
 
-        teams[0] = DataManager.Instance.GetTeam(0);
-        teams[1] = await DataManager.Instance.GetOtherUserTeam("axs1477", 0);
+                    SetAllBotsEnabled(false);
 
-        huds[0] = team1HUD;
-        huds[1] = team2HUD;
+                    StartCoroutine(BeginBattle());
+                }));
+            }));
+        }
+    }
 
-        locations[0] = playerLocations;
-        locations[1] = enemyLocations;
-
-        LoadTeam(0);
-        LoadTeam(1);
-
-        SetAllBotsEnabled(false);
-
+    private IEnumerator BeginBattle()
+    {
         allLoaded = true;
         winnerText.text = "START!";
-        await Task.Delay(1000);
+        yield return new WaitForSeconds(1);
         winnerText.gameObject.SetActive(false);
         SetAllBotsEnabled(true);
     }
