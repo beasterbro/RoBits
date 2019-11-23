@@ -30,7 +30,7 @@ public class BehaviorLabController : MonoBehaviour
     private IEnumerator DelayedLoad()
     {
         yield return null;
-        SensorBarController.Instance.Load(Sensors.SensorTypeHelper.KnownTypes);
+        SensorBarController.Instance.Load(SensorBarController.CurrentBotSensors());
     }
 
     // Update is called once per frame

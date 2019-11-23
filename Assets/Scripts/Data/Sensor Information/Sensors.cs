@@ -7,7 +7,7 @@ namespace Sensors
 {
     public enum SensorType
     {
-        PROXIMITY, LINE_OF_SIGHT, TARGETED, UNKNOWN
+        PROXIMITY, VISION, TARGET, UNKNOWN
     }
 
     public class SensorTypeHelper
@@ -31,17 +31,26 @@ namespace Sensors
 
             // For any string naming pairs from database that DO NOT match enum directly
             {
-                nameToType.Add("target", SensorType.TARGETED);
+                //nameToType.Add("vision", SensorType.LINE_OF_SIGHT);
             }
         }
 
         // Returns a string that has been modified to allowing comparison while ignoring the following aspects
-        //  underscores ("_") are treated like spaces (" ")
+        //  underscores ("_") and spaces (" ") are removed
         //  uppercase letters ("A-Z") are treated like lowercase letters ("a-z")
         //  null types are treated like empty strings
+        //  the word sensor is removed
         private static string PreProcessType(string initial)
         {
-            return initial != null ? initial.ToLower().Replace('_', ' ') : "";
+            string[] toRemove = new string[] { "_", " ", "sensor" };
+            string working = initial != null ? initial.ToLower() : "";
+
+            foreach (string s in toRemove)
+            {
+                working = working.Replace(s, string.Empty);
+            }
+
+            return working;
         }
 
         public static SensorType Parse(string type)
