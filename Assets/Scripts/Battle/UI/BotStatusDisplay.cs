@@ -7,8 +7,8 @@ using UnityEngine.UI;
 public class BotStatusDisplay : MonoBehaviour
 {
 
-    static Color HEALTHY_COLOR = Color.green;
-    static Color DEAD_COLOR = Color.red;
+    private static readonly Color HealthyColor = Color.green;
+    private static readonly Color DeadColor = Color.red;
 
     private BotController bot;
     public GameObject previewPanel;
@@ -19,15 +19,18 @@ public class BotStatusDisplay : MonoBehaviour
 
     void Update()
     {
-        healthBar.value = bot.currentHealth / bot.maxHealth;
-        healthImage.color = Color.Lerp(DEAD_COLOR, HEALTHY_COLOR, healthBar.value);
+        healthBar.value = bot.currentHealth;
+        healthImage.color = Color.Lerp(DeadColor, HealthyColor, healthBar.normalizedValue);
     }
 
     public void LoadBot(BotController bot)
     {
         this.bot = bot;
-        previewBot = bot.BuildPreview();
 
+        healthBar.maxValue = bot.maxHealth;
+        healthBar.value = bot.maxHealth;
+
+        previewBot = bot.BuildPreview();
         previewBot.transform.parent = previewPanel.transform;
         previewBot.transform.localPosition = Vector3.zero;
         previewBot.transform.localRotation = bot.gameObject.transform.rotation;

@@ -25,7 +25,7 @@ namespace JsonData
             var partString = helper.GetValue("type", "");
             var price = helper.GetValue("price", 100000);
             var unlockLevel = helper.GetValue("unlockLvl", 1000);
-            var stats = helper.GetValue("string", new Dictionary<string, double>());
+            var stats = helper.GetValue("stats", new Dictionary<string, float>());
 
             var partType = (PartType)Enum.Parse(typeof(PartType), partString, true);
             return new PartInfo(id, name, desc, partType, price, unlockLevel, stats);

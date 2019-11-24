@@ -3,33 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-[AddComponentMenu("Interface Objects/Blocks/Not")]
-public class NotBlock : Block
+[AddComponentMenu("Interface Objects/Blocks/Logic/Not")]
+public class NotBlock : LogicBlock
 {
-    [SerializeField] private SlotInputComponent condition;
-
-    protected override void Start()
+    protected override bool Aggregate(bool first, bool next)
     {
-        base.Start();
-        if (condition.GetExpectedOutputType() != ReturnType.LOGICAL)
-        {
-            throw new ArgumentException("Condition MUST be a logical slot component!!!");
-        }
+        return !first;
     }
 
-    public override ReturnType OutputType()
+    protected override string Type()
     {
-        return ReturnType.LOGICAL;
-    }
-
-    protected override BehaviorData InnerEvaluate()
-    {
-        return new BehaviorData(!condition.Evaluate().GetLogical());
-    }
-
-    public override bool IsValid()
-    {
-        return condition != null && condition.GetExpectedOutputType() == ReturnType.LOGICAL
-            && condition.IsValid();
+        return "not";
     }
 }

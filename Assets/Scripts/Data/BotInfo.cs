@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 
@@ -9,17 +10,18 @@ public class BotInfo
     private int id;
     private string name;
     private int tier;
-    private readonly Dictionary<string, string> behavior;
+    private readonly List<BehaviorInfo> behavior;
     private readonly List<PartInfo> equipment;
     private PartInfo bodyType;
 
-    public BotInfo(int id, string name, int tier, IEnumerable<PartInfo> equipment, PartInfo bodyType)
+    public BotInfo(int id, string name, int tier, IEnumerable<PartInfo> equipment, PartInfo bodyType, IEnumerable<BehaviorInfo> behavior)
     {
         this.id = id;
         this.name = name;
         this.tier = tier;
         this.equipment = new List<PartInfo>(equipment);
         this.bodyType = bodyType;
+        this.behavior = new List<BehaviorInfo>(behavior);
     }
 
     public int ID
@@ -58,7 +60,7 @@ public class BotInfo
         set => bodyType = value;
     }
 
-    public Dictionary<string, string> Behaviors => behavior;
+    public List<BehaviorInfo> Behaviors => behavior;
 
     // TODO: Implement
     // GetBotBehavior

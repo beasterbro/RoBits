@@ -4,16 +4,13 @@ using UnityEngine.UI;
 
 public class ReflectiveArmorController : ArmorController
 {
-
-    public float maxEnergy = 30f;
-    private float currentEnergy;
-
+    
     public float rechargeTime = 3f;
     private bool canReflect = true;
 
     public override void Setup()
     {
-        currentEnergy = maxEnergy;
+        base.Setup();
         canReflect = true;
     }
 
@@ -25,9 +22,9 @@ public class ReflectiveArmorController : ArmorController
 
     public override void TakeDamage(float amount, Bullet source)
     {
-        currentEnergy -= amount;
+        currentHealth -= amount;
 
-        if (currentEnergy <= 0 && canReflect)
+        if (currentHealth <= 0 && canReflect)
         {
             Dim();
             canReflect = false;
@@ -35,7 +32,7 @@ public class ReflectiveArmorController : ArmorController
         }
         else if (!canReflect)
         {
-            base.TakeDamage(amount, source);
+            DamageBot(amount);
         }
     }
 
@@ -44,7 +41,7 @@ public class ReflectiveArmorController : ArmorController
         yield return new WaitForSeconds(rechargeTime);
         if (!bot.isDead)
         {
-            currentEnergy = maxEnergy;
+            currentHealth = protection;
             canReflect = true;
 
             Undim();

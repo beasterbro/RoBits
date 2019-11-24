@@ -157,15 +157,15 @@ public class InventoryController : MonoBehaviour
 
 
 
-    private static Dictionary<String,double> attributes1 = new Dictionary<string, double>
+    private static Dictionary<String,float> attributes1 = new Dictionary<string, float>
     {
-        {"DMG",23.0},
+        {"DMG",23},
         {"DIST",12}
     };
        
-    private static Dictionary<String,double> attributes2 = new Dictionary<string, double>
+    private static Dictionary<String,float> attributes2 = new Dictionary<string, float>
     {
-        {"DMG",23.0},
+        {"DMG",23},
         {"DIST",12}
     };
        
@@ -175,7 +175,7 @@ public class InventoryController : MonoBehaviour
         {"LOUD","no"}
     };
        
-    private static Dictionary<String,double> bodySpec = new Dictionary<string, double>
+    private static Dictionary<String,float> bodySpec = new Dictionary<string, float>
     {
         {"THICC",11},
         {"SANIC",101}
@@ -306,7 +306,6 @@ public class InventoryController : MonoBehaviour
         item.type = part.PartType;
         item.price = part.Price;
         item.description = part.Description;
-        item.Icon = part.Sprite;
         item.attributes = part.Attributes;
         item.ItemName = part.Name;
         item.levelToUnlock = part.LevelToUnlock;
@@ -330,9 +329,9 @@ public class InventoryController : MonoBehaviour
         var allParts3 = new List<PartInfo>(new PartInfo[]{tankGun,gun});
         
         
-        var bot0 = new BotInfo(0,"OmegaBot",0,allParts,baseBody);
-        var bot1 = new BotInfo(1,"MiniBot",1,allParts2,baseBody);
-        var bot2 = new BotInfo(2,"MadBot",2,allParts3,baseBody);
+        var bot0 = new BotInfo(0,"OmegaBot",0,allParts,baseBody, new BehaviorInfo[0]);
+        var bot1 = new BotInfo(1,"MiniBot",1,allParts2,baseBody, new BehaviorInfo[0]);
+        var bot2 = new BotInfo(2,"MadBot",2,allParts3,baseBody, new BehaviorInfo[0]);
         
         
         botTeam.Add(bot0);

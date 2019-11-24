@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
-using Newtonsoft.Json;
 
 public class MainMenu : MonoBehaviour
 {
@@ -27,19 +23,11 @@ public class MainMenu : MonoBehaviour
 
 
     // Start is called before the first frame update
-    async void Start()
+    void Start()
     {
-        DataManager.Instance.EstablishAuth("lucaspopp0@gmail.com");
-        await DataManager.Instance.FetchInitialData();
-
-        Debug.Log("All Parts:");
-        Debug.Log(JsonConvert.SerializeObject(DataManager.Instance.AllParts));
-
-        Debug.Log("Inventory:");
-        Debug.Log(JsonConvert.SerializeObject(DataManager.Instance.UserInventory));
-
-        Debug.Log("Teams:");
-        Debug.Log(JsonConvert.SerializeObject(DataManager.Instance.UserTeams));
+        DataManager.Instance.Latch(this);
+        if (!DataManager.Instance.InitialFetchPerformed) DataManager.Instance.EstablishAuth("DEV lucaspopp0@gmail.com");
+        StartCoroutine(DataManager.Instance.FetchInitialDataIfNecessary());
     }
 
 }

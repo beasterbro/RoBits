@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using UnityEngine;
 
 [JsonConverter(typeof(JsonData.TeamConverter))]
 public class TeamInfo
@@ -12,7 +14,7 @@ public class TeamInfo
     private BotInfo[] bots;
     private double rank;
     private int tier;
-    private readonly string userId;
+    private string userId;
     private UserInfo user;
 
     public TeamInfo(int id, string name, DateTime lastMaintained, BotInfo[] bots, double rank, int tier, string userId)
@@ -53,17 +55,10 @@ public class TeamInfo
     public string UserID => userId;
     public UserInfo User => user;
 
-    public async Task<bool> FetchUserInfo()
+    public void SetUserInfo(UserInfo user)
     {
-        UserInfo result = await DataManager.Instance.FetchUser(userId);
-
-        if (result != null)
-        {
-            user = result;
-            return true;
-        }
-
-        return false;
+        this.user = user;
+        this.userId = user.ID;
     }
 
 }

@@ -10,15 +10,15 @@ namespace Tests
 {
     public class TestSuite
     {
-       private static Dictionary<String,double> attributes1 = new Dictionary<string, double>
+       private static Dictionary<String,float> attributes1 = new Dictionary<string, float>
         {
-            {"DMG",23.0},
+            {"DMG",23},
             {"DIST",12}
         };
        
-       private static Dictionary<String,double> attributes2 = new Dictionary<string, double>
+       private static Dictionary<String,float> attributes2 = new Dictionary<string, float>
        {
-           {"DMG",23.0},
+           {"DMG",23},
            {"DIST",12}
        };
        
@@ -28,7 +28,7 @@ namespace Tests
            {"LOUD","no"}
        };
        
-       private static Dictionary<String,double> bodySpec = new Dictionary<string, double>
+       private static Dictionary<String,float> bodySpec = new Dictionary<string, float>
        {
            {"THICC",11},
            {"SANIC",101}
@@ -44,9 +44,9 @@ namespace Tests
 
         private UserInfo _userInfo = new UserInfo("testUser","ass@ass.com","tester101",100,200,true,settings);
        
-        private static BotInfo bot0 = new BotInfo(0,"bot0",0,allParts,body);
-        private static BotInfo bot1 = new BotInfo(1,"bot1",1,allParts,body);
-        private static BotInfo bot2 = new BotInfo(2,"bot2",2,allParts,body);
+        private static BotInfo bot0 = new BotInfo(0,"bot0",0,allParts,body,new BehaviorInfo[0]);
+        private static BotInfo bot1 = new BotInfo(1,"bot1",1,allParts,body,new BehaviorInfo[0]);
+        private static BotInfo bot2 = new BotInfo(2,"bot2",2,allParts,body,new BehaviorInfo[0]);
 
         private static BotInfo[] botTeam = new[] {bot0, bot1, bot2};
         
