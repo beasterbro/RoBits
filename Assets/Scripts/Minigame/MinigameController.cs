@@ -1,29 +1,33 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class MinigameController : MonoBehaviour
 {
+
     [SerializeField] private GameObject loadingPanel;
     [SerializeField] private Text remainingText;
     [SerializeField] private int actionsNeeded = 5;
     [SerializeField] private string[] actionIds;
     private int actions = 0;
 
-    private async void Start()
+    private void Start()
     {
         loadingPanel.SetActive(true);
 
-        DataManager.Instance.EstablishAuth("lucaspopp0@gmail.com");
-        Debug.Log("Auth established.");
-        await DataManager.Instance.FetchInitialData();
-        Debug.Log("Data loaded.");
-        UpdateRemaining();
+        DataManager.Instance.Latch(this);
+        if (!DataManager.Instance.InitialFetchPerformed) DataManager.Instance.EstablishAuth("DEV lucaspopp0@gmail.com");
+        StartCoroutine(DataManager.Instance.FetchInitialDataIfNecessary(success =>
+        {
+            loadingPanel.SetActive(false);
 
-        Debug.Log(DataManager.Instance.UserTeams[0].Name);
-
-        loadingPanel.SetActive(false);
+            if (!success) Debug.Log("Failed to load data.");
+            else
+            {
+                Debug.Log("Data loaded.");
+                UpdateRemaining();
+            }
+        }));
     }
 
     private void UpdateRemaining()
@@ -45,17 +49,40 @@ public class MinigameController : MonoBehaviour
         }
     }
 
-    private async void OnActionsCompleted()
+    private void OnActionsCompleted()
     {
-        foreach (TeamInfo team in DataManager.Instance.UserTeams)
+        var updateStatuses = new Dictionary<TeamInfo, bool>();
+        var anyFailed = false;
+
+        foreach (var team in DataManager.Instance.UserTeams)
         {
-            Debug.Log(team.DateLastMaintained);
             team.SetMaintained();
-            await DataManager.Instance.UpdateTeam(team);
+            updateStatuses[team] = false;
+
+            StartCoroutine(DataManager.Instance.UpdateTeam(team, updateSucceeded =>
+            {
+                updateStatuses[team] = updateSucceeded;
+
+                if (anyFailed) return;
+
+                if (!updateSucceeded)
+                {
+                    updateStatuses[team] = false;
+                    anyFailed = true;
+                    Debug.LogWarning("Failed to update team: " + team.Name);
+                    actions = 0;
+                    UpdateRemaining();
+                    loadingPanel.SetActive(false);
+                }
+                else if (!updateStatuses.ContainsValue(false))
+                {
+                    Debug.Log("Updated teams.");
+                    actions = 0;
+                    UpdateRemaining();
+                    loadingPanel.SetActive(false);
+                }
+            }));
         }
-        Debug.Log("Updated teams.");
-        actions = 0;
-        UpdateRemaining();
-        loadingPanel.SetActive(false);
     }
+
 }
