@@ -26,11 +26,8 @@ public class MainMenu : MonoBehaviour
     void Start()
     {
         DataManager.Instance.Latch(this);
-        if (!DataManager.Instance.InitialFetchPerformed)
-        {
-            DataManager.Instance.EstablishAuth("DEV lucaspopp0@gmail.com");
-            StartCoroutine(DataManager.Instance.FetchInitialData());
-        }
+        if (!DataManager.Instance.InitialFetchPerformed) DataManager.Instance.EstablishAuth("DEV lucaspopp0@gmail.com");
+        StartCoroutine(DataManager.Instance.FetchInitialDataIfNecessary());
     }
 
 }

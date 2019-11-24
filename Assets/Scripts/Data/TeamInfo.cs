@@ -14,7 +14,7 @@ public class TeamInfo
     private BotInfo[] bots;
     private double rank;
     private int tier;
-    private readonly string userId;
+    private string userId;
     private UserInfo user;
 
     public TeamInfo(int id, string name, DateTime lastMaintained, BotInfo[] bots, double rank, int tier, string userId)
@@ -55,10 +55,10 @@ public class TeamInfo
     public string UserID => userId;
     public UserInfo User => user;
 
-    public IEnumerator FetchUserInfo(MonoBehaviour coroutineRunner, Action callback = null)
+    public void SetUserInfo(UserInfo user)
     {
-        yield return coroutineRunner.StartCoroutine(DataManager.Instance.FetchUser(userId,
-            userInfo => { user = userInfo; }));
+        this.user = user;
+        this.userId = user.ID;
     }
 
 }

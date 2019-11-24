@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,61 +54,105 @@ public class DataManager
     private UnityWebRequest BasicPut(string endpt, string content = "") => WrapRequest(UnityWebRequest.Put(baseUrl + endpt, content));
     private UnityWebRequest BasicDelete(string endpt) => WrapRequest(UnityWebRequest.Delete(baseUrl + endpt));
 
+    // Provides a simple callback handler, passing a boolean representing success/failure
+    private static void SimpleCallback(UnityWebRequest request, Action action, Action<bool> callback = null)
+    {
+        if (request.EncounteredError())
+        {
+            Debug.LogError(request.GetError());
+            callback?.Invoke(false);
+        }
+        else
+        {
+            try
+            {
+                action?.Invoke();
+                callback?.Invoke(true);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+                callback?.Invoke(false);
+            }
+        }
+    }
+
+    // Provides a simple callback handler, allowing for separate success/failure responses
+    private static void SimpleCallback(UnityWebRequest request, Action action, Action success, Action failure)
+    {
+        SimpleCallback(request, action, result =>
+        {
+            if (result) success.Invoke();
+            else failure.Invoke();
+        });
+    }
+
     // Adds the auth header to the HTTP client
     public void EstablishAuth(string token)
     {
         bearerToken = token;
     }
 
-    public IEnumerator FetchInitialData(Action callback = null)
+    public IEnumerator FetchInitialDataIfNecessary(Action<bool> callback = null)
     {
-        yield return runner.StartCoroutine(FetchCurrentUser());
-        yield return runner.StartCoroutine(FetchAllParts());
-        if (currentUser != null && allParts != null)
-        {
-            yield return runner.StartCoroutine(FetchUserInventory());
-            yield return runner.StartCoroutine(FetchUserTeams());
-        }
-
-        initialDataFetched = true;
-        callback?.Invoke();
+        if (initialDataFetched) callback?.Invoke(true);
+        else yield return runner.StartCoroutine(FetchInitialData(callback));
     }
 
-    private IEnumerator FetchCurrentUser(Action callback = null)
+    public IEnumerator FetchInitialData(Action<bool> callback = null)
+    {
+        bool userFetched = false, partsFetched = false, inventoryFetched = false, teamsFetched = false;
+        yield return runner.StartCoroutine(FetchCurrentUser(success => userFetched = success));
+        yield return runner.StartCoroutine(FetchAllParts(success => partsFetched = success));
+        if (userFetched && partsFetched)
+        {
+            yield return runner.StartCoroutine(FetchUserInventory(success => inventoryFetched = success));
+            yield return runner.StartCoroutine(FetchUserTeams(success => teamsFetched = success));
+        }
+
+        if (userFetched && partsFetched && inventoryFetched && teamsFetched)
+        {
+            initialDataFetched = true;
+            callback?.Invoke(true);
+        }
+        else callback?.Invoke(false);
+    }
+
+    private IEnumerator FetchCurrentUser(Action<bool> callback = null)
     {
         var request = BasicGet("/user");
         yield return request.SendWebRequest();
 
-        if (request.EncounteredError()) Debug.LogError(request.GetError());
-        else currentUser = JsonUtils.DeserializeObject<UserInfo>(request.downloadHandler.text);
-
-        callback?.Invoke();
+        SimpleCallback(request, () =>
+        {
+            currentUser = JsonUtils.DeserializeObject<UserInfo>(request.downloadHandler.text);
+        }, callback);
     }
 
-    public IEnumerator FetchAllParts(Action callback = null)
+    private IEnumerator FetchAllParts(Action<bool> callback = null)
     {
         var request = BasicGet("/parts");
         yield return request.SendWebRequest();
 
-        if (request.EncounteredError()) Debug.LogError(request.GetError());
-        else allParts = JsonUtils.DeserializeArray<PartInfo>(request.downloadHandler.text);
-
-        callback?.Invoke();
+        SimpleCallback(request, () =>
+        {
+            allParts = JsonUtils.DeserializeArray<PartInfo>(request.downloadHandler.text);
+        }, callback);
     }
 
-    private IEnumerator FetchUserInventory(Action callback = null)
+    private IEnumerator FetchUserInventory(Action<bool> callback = null)
     {
         var request = BasicGet("/inventory");
         yield return request.SendWebRequest();
 
-        if (request.EncounteredError()) Debug.LogError(request.GetError());
-        else inventory = new List<InventoryItem>(JsonUtils.DeserializeArray<InventoryItem>(request.downloadHandler.text));
-
-        callback?.Invoke();
+        SimpleCallback(request, () =>
+        {
+            inventory = new List<InventoryItem>(JsonUtils.DeserializeArray<InventoryItem>(request.downloadHandler.text));
+        }, callback);
     }
 
     // Must be called after calling FetchAllParts
-    private IEnumerator FetchUserTeams(Action callback = null)
+    private IEnumerator FetchUserTeams(Action<bool> callback = null)
     {
         var botsRequest = BasicGet("/bots");
         var teamsRequest = BasicGet("/teams");
@@ -116,47 +160,48 @@ public class DataManager
         yield return botsRequest.SendWebRequest();
         yield return teamsRequest.SendWebRequest();
 
-        if (botsRequest.EncounteredError()) Debug.LogError(botsRequest.GetError());
-        if (teamsRequest.EncounteredError()) Debug.LogError(teamsRequest.GetError());
+        bool botsLoaded = false, teamsLoaded = false;
 
-        if (!botsRequest.EncounteredError() && !teamsRequest.EncounteredError())
+        SimpleCallback(botsRequest, () =>
         {
             allBots = JsonUtils.DeserializeArray<BotInfo>(botsRequest.downloadHandler.text);
-            userTeams = JsonUtils.DeserializeArray<TeamInfo>(teamsRequest.downloadHandler.text);
+        }, success => botsLoaded = success);
 
-            foreach (var team in userTeams)
+        if (botsLoaded)
+        {
+            SimpleCallback(teamsRequest, () =>
             {
-                yield return team.FetchUserInfo(runner);
-            }
+                userTeams = JsonUtils.DeserializeArray<TeamInfo>(teamsRequest.downloadHandler.text);
+                foreach (var team in userTeams) team.SetUserInfo(currentUser);
+            }, success => teamsLoaded = success);
         }
 
-        callback?.Invoke();
+        callback?.Invoke(teamsLoaded);
     }
 
-    public IEnumerator FetchUser(string uid, Action<UserInfo> callback)
+    public IEnumerator FetchUser(string uid, Action<bool, UserInfo> callback)
     {
-        if (uid == currentUser.ID) callback.Invoke(currentUser);
+        if (uid == currentUser.ID) callback.Invoke(true, currentUser);
         else
         {
             var request = BasicGet("/user/" + uid);
             yield return request.SendWebRequest();
 
-            if (request.EncounteredError())
+            UserInfo userResponse = null;
+
+            SimpleCallback(request, () =>
             {
-                Debug.LogError(request.GetError());
-                callback.Invoke(null);
-            }
-            else callback.Invoke(JsonUtils.DeserializeObject<UserInfo>(request.downloadHandler.text));
+                userResponse = JsonUtils.DeserializeObject<UserInfo>(request.downloadHandler.text);
+            }, success => callback.Invoke(success, userResponse));
         }
     }
 
-    public IEnumerator UpdateCurrentUser(Action callback = null)
+    public IEnumerator UpdateCurrentUser(Action<bool> callback = null)
     {
         var updateBody = JsonUtils.SerializeObject(currentUser);
         var request = BasicPut("/user", updateBody);
         yield return request.SendWebRequest();
-        if (request.EncounteredError()) Debug.LogError(request.GetError());
-        callback?.Invoke();
+        SimpleCallback(request, null, callback);
     }
 
     public PartInfo GetPart(int pid) => allParts.FirstOrDefault(part => part.ID == pid);
@@ -173,9 +218,11 @@ public class DataManager
         }
         else
         {
-            yield return runner.StartCoroutine(FetchCurrentUser());
-            yield return runner.StartCoroutine(FetchUserInventory());
-            callback.Invoke(true);
+            bool currentUserFetched = false, inventoryFetched = false;
+
+            yield return runner.StartCoroutine(FetchCurrentUser(success => currentUserFetched = success));
+            yield return runner.StartCoroutine(FetchUserInventory(success => inventoryFetched = success));
+            callback.Invoke(currentUserFetched && inventoryFetched);
         }
     }
 
@@ -191,60 +238,83 @@ public class DataManager
         }
         else
         {
-            yield return runner.StartCoroutine(FetchCurrentUser());
-            yield return runner.StartCoroutine(FetchUserInventory());
-            callback.Invoke(true);
+            bool currentUserFetched = false, inventoryFetched = false;
+
+            yield return runner.StartCoroutine(FetchCurrentUser(successs => currentUserFetched = successs));
+            yield return runner.StartCoroutine(FetchUserInventory(success => inventoryFetched = success));
+            callback.Invoke(currentUserFetched && inventoryFetched);
         }
     }
 
     public BotInfo GetBot(int bid) => allBots.FirstOrDefault(bot => bot.ID == bid);
 
-    public IEnumerator UpdateBot(BotInfo bot, Action callback = null)
+    public IEnumerator UpdateBot(BotInfo bot, Action<bool> callback = null)
     {
         var updateBody = JsonUtils.SerializeObject(bot);
-        var request = BasicPut("/bots" + bot.ID, updateBody);
+        var request = BasicPut("/bots/" + bot.ID, updateBody);
         yield return request.SendWebRequest();
-        if (request.EncounteredError()) Debug.LogError(request.GetError());
-        callback?.Invoke();
+
+        SimpleCallback(request, null, callback);
     }
 
     public TeamInfo GetTeam(int tid) => userTeams.FirstOrDefault(team => team.ID == tid);
 
-    public IEnumerator UpdateTeam(TeamInfo team, Action callback = null)
+    public IEnumerator UpdateTeam(TeamInfo team, Action<bool> callback = null)
     {
         var updateBody = JsonUtils.SerializeObject(team);
-        var request = BasicPut("/teams" + team.ID, updateBody);
+        var request = BasicPut("/teams/" + team.ID, updateBody);
         yield return request.SendWebRequest();
-        if (request.EncounteredError()) Debug.LogError(request.GetError());
-        callback?.Invoke();
+
+        SimpleCallback(request, null, callback);
     }
 
-    public IEnumerator GetOtherUserTeams(string uid, Action<TeamInfo[]> callback)
+    public IEnumerator GetOtherUserTeams(string uid, Action<bool, TeamInfo[]> callback)
     {
-        var request = BasicGet("/users/" + uid + "/teams?expandBots=true");
-        yield return request.SendWebRequest();
+        UserInfo otherUser = null;
 
-        if (request.EncounteredError())
+        yield return FetchUser(uid, (success, otherInfo) =>
         {
-            Debug.LogError(request.GetError());
-            callback.Invoke(null);
-        }
+            if (success) otherUser = otherInfo;
+        });
+
+        if (otherUser == null) callback.Invoke(false, null);
         else
         {
-            var teams = JsonUtils.DeserializeArray<TeamInfo>(request.downloadHandler.text);
+            var teamsRequest = BasicGet("/users/" + uid + "/teams?expandBots=true");
+            yield return teamsRequest.SendWebRequest();
 
-            foreach (var team in teams)
+            TeamInfo[] otherTeams = null;
+
+            SimpleCallback(teamsRequest, () =>
             {
-                yield return team.FetchUserInfo(runner);
-            }
-
-            callback.Invoke(teams);
+                otherTeams = JsonUtils.DeserializeArray<TeamInfo>(teamsRequest.downloadHandler.text);
+            }, () =>
+            {
+                foreach (var team in otherTeams) team.SetUserInfo(otherUser);
+                callback.Invoke(true, otherTeams);
+            }, () => callback.Invoke(false, null));
         }
     }
 
-    public IEnumerator GetOtherUserTeam(string uid, int tid, Action<TeamInfo> callback)
+    public IEnumerator GetOtherUserTeam(string uid, int tid, Action<bool, TeamInfo> callback)
     {
-        yield return runner.StartCoroutine(GetOtherUserTeams(uid, teamInfo => { callback.Invoke(teamInfo.FirstOrDefault(team => team.ID == tid)); }));
+        yield return runner.StartCoroutine(GetOtherUserTeams(uid, (success, teams) =>
+        {
+            if (success)
+            {
+                var team = teams.FirstOrDefault(t => t.ID == tid);
+                if (team == null)
+                {
+                    Debug.LogError("Unable to find team with ID " + tid);
+                    callback.Invoke(false, null);
+                }
+                else
+                {
+                    callback.Invoke(true, team);
+                }
+            }
+            else callback.Invoke(false, null);
+        }));
     }
 
 }
