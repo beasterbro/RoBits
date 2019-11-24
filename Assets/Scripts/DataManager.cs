@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -251,7 +251,7 @@ public class DataManager
     public IEnumerator UpdateBot(BotInfo bot, Action<bool> callback = null)
     {
         var updateBody = JsonUtils.SerializeObject(bot);
-        var request = BasicPut("/bots" + bot.ID, updateBody);
+        var request = BasicPut("/bots/" + bot.ID, updateBody);
         yield return request.SendWebRequest();
 
         SimpleCallback(request, null, callback);
@@ -262,7 +262,7 @@ public class DataManager
     public IEnumerator UpdateTeam(TeamInfo team, Action<bool> callback = null)
     {
         var updateBody = JsonUtils.SerializeObject(team);
-        var request = BasicPut("/teams" + team.ID, updateBody);
+        var request = BasicPut("/teams/" + team.ID, updateBody);
         yield return request.SendWebRequest();
 
         SimpleCallback(request, null, callback);
