@@ -49,7 +49,7 @@ public class BotController : MonoBehaviour
 
         switch (team.UserID)
         {
-            case "lmp122":
+            case "lp0":
 
                 switch (info.ID)
                 {

@@ -9,22 +9,17 @@ public class BehaviorLabController : MonoBehaviour
     public static TriggerBlock Trigger => TriggerSpawner.Trigger;
 
     // Start is called before the first frame update
-    async void Start()
+    void Start()
     {
-        int currentBotId;
-        if (DataManager.Instance.CurrentUser == null)
+        DataManager.Instance.Latch(this);
+        if (!DataManager.Instance.InitialFetchPerformed) DataManager.Instance.EstablishAuth("DEV lucaspopp0@gmail.com");
+        StartCoroutine(DataManager.Instance.FetchInitialDataIfNecessary(success =>
         {
-            DataManager.Instance.EstablishAuth("DEV lucaspopp0@gmail.com");
-            await DataManager.Instance.FetchInitialData();
-            currentBotId = DataManager.Instance.AllBots[0].ID;
-        }
-        else
-        {
-            currentBotId = 0;
-            //currentBotId = InventoryController.CurrentBot.ID;
-        }
-        UpdateCurrentBot(currentBotId);
-        StartCoroutine(DelayedLoad());
+            if (!success) return;
+
+            currentBot = DataManager.Instance.AllBots[0];
+            StartCoroutine(DelayedLoad());
+        }));
     }
 
     private IEnumerator DelayedLoad()
@@ -45,11 +40,6 @@ public class BehaviorLabController : MonoBehaviour
     private void PrintBehavior()
     {
         Debug.Log(Trigger.BehaviorState());
-    }
-
-    public static void UpdateCurrentBot(int bid)
-    {
-        currentBot = DataManager.Instance.GetBot(bid);
     }
 
     public static void UpdateTrigger(int id)
