@@ -367,29 +367,22 @@ public class InventoryController : MonoBehaviour
     //Called First when entering playmode, before the first frame
     void Start()
     {
-      //  DataManager.Instance.Latch(this);
-        if (!DataManager.Instance.InitialFetchPerformed)
+        DataManager.Instance.Latch(this);
+        if (!DataManager.Instance.InitialFetchPerformed) DataManager.Instance.EstablishAuth("DEV testUser@gmail.com");
+        StartCoroutine(DataManager.Instance.FetchInitialDataIfNecessary(success =>
         {
-            DataManager.Instance.EstablishAuth("DEV testUser@gmail.com");
-            StartCoroutine(DataManager.Instance.FetchInitialData(delegate(bool obj)
-            {
-                userInventory = DataManager.Instance.UserInventory;
-                userBots = new List<BotInfo>(DataManager.Instance.AllBots);
-                SetActiveBot(0);
-                CreateAllBotImages();
+            if (!success) return;
 
-                RefreshCurrency();
-                RefreshInventory();
-                RefreshEquipment();
-                RefreshBotInfo();
-            }));
-            
-            StopCoroutine(DataManager.Instance.FetchInitialData());
-        }
+            userInventory = DataManager.Instance.UserInventory;
+            userBots = new List<BotInfo>(DataManager.Instance.AllBots);
+            SetActiveBot(0);
+            CreateAllBotImages();
 
-       
-        
-
+            RefreshCurrency();
+            RefreshInventory();
+            RefreshEquipment();
+            RefreshBotInfo();
+        }));
     }
 
     //Generates all of the bot images for the current user's bots
@@ -421,11 +414,10 @@ public class InventoryController : MonoBehaviour
     //Updates the shown currency value to the actual currency value
     private void RefreshCurrency()
     {
-        StartCoroutine(DataManager.Instance.FetchInitialData(delegate(bool obj)
+        StartCoroutine(DataManager.Instance.FetchInitialDataIfNecessary(success =>
         {
             Currency.text = DataManager.Instance.CurrentUser.Currency.ToString();
         }));
-       
     }
 
     public void ChangeBotName()
@@ -441,7 +433,8 @@ public class InventoryController : MonoBehaviour
     {
         foreach (var bot in userBots)
         {
-            StartCoroutine(DataManager.Instance.UpdateBot(bot, delegate(bool obj) { }));
+            DataManager.Instance.Latch(this);
+            StartCoroutine(DataManager.Instance.UpdateBot(bot));
         }
        
 
