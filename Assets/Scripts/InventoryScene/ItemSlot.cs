@@ -7,6 +7,7 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandl
     {
         [SerializeField] Image image;
         [SerializeField] public PartType PartType;
+        [SerializeField] private Text amountText;
        
         public event Action<ItemSlot> OnRightClickEvent;
         public event Action<ItemSlot> OnLeftClickEvent;
@@ -22,7 +23,22 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandl
         private  Color disableColor = new Color(1,1,1,0);
         
         [SerializeField] private Vector2 originalPosition;
-        
+
+        private int amount;
+
+        public int Amount
+        {
+            get => amount;
+            set
+            {
+                amount = value;
+                amountText.enabled = _item != null && _item.MaximumStacks > 1 && amount > 1;
+                if (amountText.enabled)
+                {
+                    amountText.text = amount.ToString();
+                }
+            }
+        }
         private Item _item;
         public Item Item
         {
@@ -64,6 +80,11 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandl
             if (image == null)
             {
                 image =  GetComponent<Image>();
+            }
+
+            if (amountText == null)
+            {
+                amountText = GetComponentInChildren<Text>();
             }
 
         }

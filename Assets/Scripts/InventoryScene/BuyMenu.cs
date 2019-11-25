@@ -25,10 +25,9 @@ public class BuyMenu : MonoBehaviour
     public void Buy()
     {
         //TODO: Fix this callback
-        DataManager.Instance.PurchasePart(DataManager.Instance.GetPart(PartID), delegate(bool obj) { });
+        StartCoroutine(DataManager.Instance.PurchasePart(DataManager.Instance.GetPart(PartID), delegate(bool obj) { }));
         gameObject.SetActive(false);
-        
-
+      
     }
 
     //Hides the buy menu when the cancel button is clicked

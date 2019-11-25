@@ -21,21 +21,36 @@ public class TeamEditorController : MonoBehaviour
     public event Action<TeamBot> OnRightClickEvent;
     
     // Start is called before the first frame update
-    async void Start()
+    void Start()
     {
-        if (!DataManager.Instance.InitialFetchPerformed)
+      //  if (!DataManager.Instance.InitialFetchPerformed)
         {
             DataManager.Instance.EstablishAuth("DEV testUser@gmail.com");
-            DataManager.Instance.FetchInitialData(() =>
+            StartCoroutine(DataManager.Instance.FetchInitialData(delegate(bool obj)
             {
                 userBots = new List<BotInfo>(DataManager.Instance.AllBots);
 
                 BotPreviewGenerator.BotGenerators = botPreviews;
                 BotPreviewGenerator.CreateAllBotImages();
                 InstantiateTeams();
-            });
+            }));
+            StopCoroutine(DataManager.Instance.FetchInitialData());
+        }
+
+     //   else
+        {
+            userBots = new List<BotInfo>(DataManager.Instance.AllBots);
+
+            BotPreviewGenerator.BotGenerators = botPreviews;
+            BotPreviewGenerator.CreateAllBotImages();
+            InstantiateTeams();
         }
         
+    }
+
+    private void Update()
+    {
+
     }
 
     void InstantiateTeams()

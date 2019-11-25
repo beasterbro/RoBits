@@ -78,22 +78,23 @@ public class StoreController : MonoBehaviour
     }
 
     //Instantiates they parts and adds them to the store based on type
-    private async void Start()
+    private void Start()
     {
    
         //Needed for testing
         DataManager.Instance.EstablishAuth("DEV testUser@gmail.com");
-        StartCoroutine( DataManager.Instance.FetchInitialData(() =>
+        StartCoroutine( DataManager.Instance.FetchInitialData(delegate(bool obj1)
         {
             //Acutally needed code
-            StartCoroutine(DataManager.Instance.FetchAllParts(() =>
+            StartCoroutine(DataManager.Instance.FetchAllParts(delegate(bool obj)
             {
                 allParts = DataManager.Instance.AllParts;
                 InstantiateStoreButtons();
                 UpdateCurrency();
             }));
-            
+            StopCoroutine(DataManager.Instance.FetchAllParts());
         }));
+        StopCoroutine(DataManager.Instance.FetchInitialData());
         
         
        

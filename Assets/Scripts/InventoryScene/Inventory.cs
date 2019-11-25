@@ -57,7 +57,7 @@ public class Inventory : MonoBehaviour
         int i = 0;
         for (; i < startingitems.Count && i < itemSlots.Length; i++)
         {
-            itemSlots[i].Item = Instantiate(startingitems[i]);
+            itemSlots[i].Item = startingitems[i].GetCopy();
             itemSlots[i].Item.icon = PartImageGenrator.GenerateImage(itemSlots[i].Item.part.ResourceName);
         }
 

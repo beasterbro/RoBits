@@ -129,7 +129,7 @@ public class DataManager
         }, callback);
     }
 
-    private IEnumerator FetchAllParts(Action<bool> callback = null)
+    public IEnumerator FetchAllParts(Action<bool> callback = null)
     {
         var request = BasicGet("/parts");
         yield return request.SendWebRequest();
@@ -140,7 +140,7 @@ public class DataManager
         }, callback);
     }
 
-    private IEnumerator FetchUserInventory(Action<bool> callback = null)
+    public IEnumerator FetchUserInventory(Action<bool> callback = null)
     {
         var request = BasicGet("/inventory");
         yield return request.SendWebRequest();

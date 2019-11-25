@@ -39,7 +39,7 @@ public class InventoryController : MonoBehaviour
 
 
     //Called every time Unity compiles scripts
-    private async void OnValidate()
+    private void OnValidate()
     {
         if (partDesc == null)
         {
@@ -341,17 +341,17 @@ public class InventoryController : MonoBehaviour
 
     private void Update()
     {
-        //UpdateCurrency();
+        UpdateCurrency();
     }
 
 
     //Called First when entering playmode, before the first frame
-    async void Start()
+    void Start()
     {
         if (!DataManager.Instance.InitialFetchPerformed)
         {
             DataManager.Instance.EstablishAuth("DEV testUser@gmail.com");
-            StartCoroutine(DataManager.Instance.FetchInitialData(() =>
+            StartCoroutine(DataManager.Instance.FetchInitialData(delegate(bool obj)
             {
                 userInventory = DataManager.Instance.UserInventory;
                 userBots = new List<BotInfo>(DataManager.Instance.AllBots);
@@ -363,6 +363,8 @@ public class InventoryController : MonoBehaviour
                 UpdateEquipment();
                 UpdateBotInfo();
             }));
+            
+            StopCoroutine(DataManager.Instance.FetchInitialData());
         }
 
        
@@ -378,13 +380,17 @@ public class InventoryController : MonoBehaviour
     }
 
     //Called on start to add all of the items in the user's inventory to the inventory panel
-    private void UpdateInventory()
+    public void UpdateInventory()
     {
         ClearInventory();
-        foreach (var inventoryItem in userInventory)
+        StartCoroutine(DataManager.Instance.FetchUserInventory(delegate(bool obj)
         {
-            inventory.AddItem(PartToItem(inventoryItem.Part));
-        }
+            foreach (var inventoryItem in userInventory)
+            {
+                inventory.AddItem((PartToItem(inventoryItem.Part).GetCopy()));
+            }
+        }));
+        
     }
 
     private void ClearInventory()
@@ -394,10 +400,12 @@ public class InventoryController : MonoBehaviour
 
     //Updates the shown currency value to the actual currency value
     private void UpdateCurrency()
-    {//TODO: Breaks if the user does not have a full roster of 9 bots,
-        //this seems to happen because DataManager/LoadInfo errors out if the user has less than 9 bots and so
-        //the instance for DataManager is never finalized or something
-        Currency.text = DataManager.Instance.CurrentUser.Currency.ToString();
+    {
+        StartCoroutine(DataManager.Instance.FetchInitialData(delegate(bool obj)
+        {
+            Currency.text = DataManager.Instance.CurrentUser.Currency.ToString();
+        }));
+       
     }
 
     public void ChangeBotName()
@@ -406,6 +414,18 @@ public class InventoryController : MonoBehaviour
         botNameText.text = currentBot.Name;
     }
 
+    
+
+    public void UpdateUserBots()
+    {
+        foreach (var bot in userBots)
+        {
+            StartCoroutine(DataManager.Instance.UpdateBot(bot));
+        }
+       
+
+    }
+    private void UpdateUserInformation(){}
 
 
 }

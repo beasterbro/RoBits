@@ -8,7 +8,8 @@ using UnityEngine.Serialization;
 [CreateAssetMenu]
 public class Item : ScriptableObject
 {
-    
+    [Range(1,1000)]
+    public int MaximumStacks = 1;
     public Sprite icon;
     public PartInfo part;
     public int PartID => part.ID;
@@ -25,6 +26,8 @@ public class Item : ScriptableObject
         return this;
     }
 
-    
-
+    public virtual void Destroy()
+    {
+        ;
+    }
 }
