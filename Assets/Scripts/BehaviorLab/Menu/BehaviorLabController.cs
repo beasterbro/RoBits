@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using JsonData;
 using UnityEngine;
@@ -177,7 +179,7 @@ public class BehaviorLabController : MonoBehaviour
             if (currentTriggerBlock != null)
             {
                 currentTriggerBlock.gameObject.transform.SetPositionAndRotation(new Vector2(-6.3f, 4f), Quaternion.Euler(0, 0, 0));
-                currentTriggerBlock.PositionConnections();
+                StartCoroutine(LetStartThen(currentTriggerBlock.PositionConnections));
             }
         }
     }
@@ -206,6 +208,12 @@ public class BehaviorLabController : MonoBehaviour
     public void BackToCustomizeMenu()
     {
         SceneManager.LoadScene(0);
+    }
+
+    private IEnumerator LetStartThen(Action takeAction)
+    {
+        yield return null;
+        takeAction.Invoke();
     }
 
 }
