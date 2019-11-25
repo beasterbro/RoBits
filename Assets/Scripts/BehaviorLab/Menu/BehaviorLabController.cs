@@ -3,6 +3,7 @@ using System.Linq;
 using JsonData;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 [AddComponentMenu("Behavior Lab/Behavior Lab Controller")]
@@ -200,6 +201,11 @@ public class BehaviorLabController : MonoBehaviour
     {
         SaveCurrentBehavior();
         StartCoroutine(DataManager.Instance.UpdateBot(currentBot));
+    }
+
+    public void BackToCustomizeMenu()
+    {
+        SceneManager.LoadScene(0);
     }
 
 }
