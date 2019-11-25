@@ -37,16 +37,16 @@ namespace Tests
         };
 
 
+
         private static PartInfo part1 = new PartInfo(0, "0", "first part", PartType.Weapon, 1, 1, attributes1);
         private static PartInfo part2 = new PartInfo(1, "1", "second part", PartType.Weapon, 2, 2, attributes2 );
-
         private static List<PartInfo> allParts = new List<PartInfo>(new PartInfo[]{part1,part2});
-
         private static PartInfo body = new PartInfo(2, "body", "thrid part", PartType.BodyType, 2, 2, bodySpec);
+        private static BotInfo bot0 = new BotInfo(0,"bot0",0,allParts,body, new BehaviorInfo[0]);
+
 
         private UserInfo _userInfo = new UserInfo("testUser","ass@ass.com","tester101",100,200,true,settings);
 
-        private static BotInfo bot0 = new BotInfo(0,"bot0",0,allParts,body, new BehaviorInfo[0]);
         private static BotInfo bot1 = new BotInfo(1,"bot1",1,allParts,body, new BehaviorInfo[0]);
         private static BotInfo bot2 = new BotInfo(2,"bot2",2,allParts,body, new BehaviorInfo[0]);
 
