@@ -104,6 +104,9 @@ public class DataManager
         bool userFetched = false, partsFetched = false, inventoryFetched = false, teamsFetched = false;
         yield return runner.StartCoroutine(FetchCurrentUser(success => userFetched = success));
         yield return runner.StartCoroutine(FetchAllParts(success => partsFetched = success));
+
+        if (partsFetched) TriggerInfo.LoadTriggers();
+
         if (userFetched && partsFetched)
         {
             yield return runner.StartCoroutine(FetchUserInventory(success => inventoryFetched = success));

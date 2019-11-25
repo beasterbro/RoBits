@@ -18,9 +18,12 @@ public class TriggerBlock : BodyBlock
 
     public void UpdateTrigger(int id)
     {
-        this.id = id;
-        this.info = TriggerManager.GetTrigger(id);
-        this.name.text = this.info.Name;
+        if (TriggerInfo.triggers.ContainsKey(id))
+        {
+            this.id = id;
+            this.info = TriggerInfo.triggers[id];
+            this.name.text = this.info.Name;
+        }
     }
 
     public BehaviorInfo BehaviorState()
