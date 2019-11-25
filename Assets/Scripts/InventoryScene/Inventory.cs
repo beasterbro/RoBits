@@ -5,21 +5,27 @@ using UnityEngine;
 using UnityEngine.Serialization;
 
 public class Inventory : MonoBehaviour
-{//TODO: Implement Specified Item Categories
+{
    
-    [SerializeField] List<Item> startingitems;
+    [SerializeField]public List<Item> startingitems;
     [SerializeField] Transform itemsParent;
     [SerializeField] ItemSlot[] itemSlots;
+
+    public ItemSlot[] ItemSlots
+    {
+        get => itemSlots;
+    }
     
     public static event Action<ItemSlot> OnRightClickEvent;
+    public static event Action<ItemSlot> OnLeftClickEvent;
     public static event Action<ItemSlot> OnPointerEnterEvent;
     public static event Action<ItemSlot> OnPointerExitEvent;
-    public event Action<ItemSlot> OnPointerClickEvent;
     public static event Action<ItemSlot> OnBeingDragEvent;
     public static event Action<ItemSlot> OnDragEvent;
     public static event Action<ItemSlot> OnEndDragEvent;
     public static event Action<ItemSlot> OnDropEvent;
 
+    //Gives each item slot in the inventory the desired actions
     private void Start()
     {
         for (int i = 0; i < itemSlots.Length; i++)
@@ -27,6 +33,7 @@ public class Inventory : MonoBehaviour
             itemSlots[i].OnPointerEnterEvent += OnPointerEnterEvent;
             itemSlots[i].OnPointerExitEvent += OnPointerExitEvent;
             itemSlots[i].OnRightClickEvent += OnRightClickEvent;
+            itemSlots[i].OnLeftClickEvent += OnLeftClickEvent;
             itemSlots[i].OnBeingDragEvent += OnBeingDragEvent;
             itemSlots[i].OnDragEvent += OnDragEvent;
             itemSlots[i].OnEndDragEvent += OnEndDragEvent;
@@ -34,6 +41,7 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    //Finds all of the item slots based off of the item slots parent
     private void OnValidate()
     {
         if (itemsParent != null)
@@ -49,28 +57,43 @@ public class Inventory : MonoBehaviour
         int i = 0;
         for (; i < startingitems.Count && i < itemSlots.Length; i++)
         {
-            itemSlots[i].Item = Instantiate(startingitems[i]);
-            itemSlots[i].Item.Icon = FindObjectOfType<ItemImageGenrator>().generateImage(itemSlots[i].Item.partID);
+            itemSlots[i].Item = startingitems[i].GetCopy();
+            itemSlots[i].Item.icon = PartImageGenrator.GenerateImage(itemSlots[i].Item.Part.ResourceName);
         }
 
         for (; i < itemSlots.Length; i++)
         {
             itemSlots[i].Item = null;
+            itemSlots[i].Amount = 0;
         }
     }
 
     //Adds an item to the inventory, returns false if the item cannot be added
-    public bool AddItem(Item item)
+    public virtual bool AddItem(Item item)
     {
-        //for (int i = 0; i < itemSlots.Length; i++)
+        if (item == null)
+            return true;
+
         foreach (var slot in itemSlots)
         {
-           
-            // if (itemSlots[i].PartType == item.type)
-            //if (itemSlots[i].Item == null)
-            if (slot.CanReceiveItem(item) && slot.Item == null)
+
+            if (slot.CanReceiveItem(item) && (slot.Item == null || slot.Item.ID == item.ID))
             {
-                slot.Item = item;
+                if (slot.Item == null)
+                {
+                    slot.Item = item;
+                    if (item != null)
+                    {
+                    slot.Amount = item.Amount;
+                        
+                    }
+                }
+                else
+                {
+                slot.Item.InventoryItem.IncreaseCount();
+                slot.Amount++;
+                    
+                }
                 return true;
             }
         }
@@ -78,14 +101,19 @@ public class Inventory : MonoBehaviour
         return false;
     }
 
-    //Removes an item from the inventory, returns falso if the item cannot be removed
+    //Removes an item from the inventory, returns false if the item cannot be removed
     public bool RemoveItem(Item item)
     {
         for (int i = 0; i < itemSlots.Length; i++)
         {
             if (itemSlots[i].Item == item)
             {
+                itemSlots[i].Amount--;
+                if (itemSlots[i].Amount==0)
+                {
                 itemSlots[i].Item = null;
+                   
+                }
                 return true;
             }
         }
@@ -93,6 +121,7 @@ public class Inventory : MonoBehaviour
         return false;
     }
 
+    //Removes an item from the inventory area
     public Item RemoveItem(string itemID)
     {
         for (int i = 0; i < itemSlots.Length; i++)
@@ -100,7 +129,12 @@ public class Inventory : MonoBehaviour
             Item item = itemSlots[i].Item;
             if (item != null && item.ID == itemID)
             {
-                itemSlots[i].Item = null;
+                itemSlots[i].Amount--;
+                if (itemSlots[i].Amount==0)
+                {
+                    itemSlots[i].Item = null;
+                   
+                }
                 return item;
             }
         }
@@ -123,6 +157,7 @@ public class Inventory : MonoBehaviour
         return true;
     }
 
+    //Returns the count of a given item
     public int ItemCount(string itemID)
     {
         int number = 0;
@@ -138,4 +173,11 @@ public class Inventory : MonoBehaviour
         return number;
     }
 
+    public void Clear()
+    {
+        foreach (var slot in itemSlots)
+        {
+            slot.Item = null;
+        }
+    }
 }

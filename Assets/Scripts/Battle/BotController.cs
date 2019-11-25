@@ -23,6 +23,12 @@ public class BotController : MonoBehaviour
     private readonly List<Behavior> behaviors = new List<Behavior>();
     private Behavior activeBehavior;
 
+    public void LoadInfoForPreview(BotInfo botInfo)
+    {
+        info = botInfo;
+        LoadParts();
+    }
+
     public void LoadInfo(BotInfo botInfo, TeamInfo teamInfo)
     {
         team = teamInfo;
