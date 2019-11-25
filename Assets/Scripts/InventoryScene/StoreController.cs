@@ -81,7 +81,7 @@ public class StoreController : MonoBehaviour
     private void Start()
     {
    
-        //Needed for testing
+       //Needed for testing
         DataManager.Instance.EstablishAuth("DEV testUser@gmail.com");
         StartCoroutine( DataManager.Instance.FetchInitialData(delegate(bool obj1)
         {
@@ -241,7 +241,7 @@ public class StoreController : MonoBehaviour
             }
         }
 
-        private void UpdateCurrency()
+        public void UpdateCurrency()
         {
             UserCurrency.text = DataManager.Instance.CurrentUser.Currency.ToString();
         }

@@ -367,6 +367,7 @@ public class InventoryController : MonoBehaviour
     //Called First when entering playmode, before the first frame
     void Start()
     {
+      //  DataManager.Instance.Latch(this);
         if (!DataManager.Instance.InitialFetchPerformed)
         {
             DataManager.Instance.EstablishAuth("DEV testUser@gmail.com");

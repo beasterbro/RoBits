@@ -9,6 +9,7 @@ public class BuyMenu : MonoBehaviour
 
     //Stores the part ID of the part that activated the buy menu
     private int PartID;
+    [SerializeField] private StoreController storeController;
     void Start()
     {
 
@@ -25,7 +26,10 @@ public class BuyMenu : MonoBehaviour
     public void Buy()
     {
         //TODO: Fix this callback
-        StartCoroutine(DataManager.Instance.PurchasePart(DataManager.Instance.GetPart(PartID), delegate(bool obj) { }));
+        StartCoroutine(DataManager.Instance.PurchasePart(DataManager.Instance.GetPart(PartID), delegate(bool obj)
+        {
+            storeController.UpdateCurrency();
+        }));
         gameObject.SetActive(false);
       
     }
