@@ -58,25 +58,42 @@ public class Inventory : MonoBehaviour
         for (; i < startingitems.Count && i < itemSlots.Length; i++)
         {
             itemSlots[i].Item = startingitems[i].GetCopy();
-            itemSlots[i].Item.icon = PartImageGenrator.GenerateImage(itemSlots[i].Item.part.ResourceName);
+            itemSlots[i].Item.icon = PartImageGenrator.GenerateImage(itemSlots[i].Item.Part.ResourceName);
         }
 
         for (; i < itemSlots.Length; i++)
         {
             itemSlots[i].Item = null;
+            itemSlots[i].Amount = 0;
         }
     }
 
     //Adds an item to the inventory, returns false if the item cannot be added
     public virtual bool AddItem(Item item)
     {
+        if (item == null)
+            return true;
 
         foreach (var slot in itemSlots)
         {
 
-            if (slot.CanReceiveItem(item) && slot.Item == null)
+            if (slot.CanReceiveItem(item) && (slot.Item == null || slot.Item.ID == item.ID))
             {
-                slot.Item = item;
+                if (slot.Item == null)
+                {
+                    slot.Item = item;
+                    if (item != null)
+                    {
+                    slot.Amount = item.Amount;
+                        
+                    }
+                }
+                else
+                {
+                slot.Item.InventoryItem.IncreaseCount();
+                slot.Amount++;
+                    
+                }
                 return true;
             }
         }
@@ -91,7 +108,12 @@ public class Inventory : MonoBehaviour
         {
             if (itemSlots[i].Item == item)
             {
+                itemSlots[i].Amount--;
+                if (itemSlots[i].Amount==0)
+                {
                 itemSlots[i].Item = null;
+                   
+                }
                 return true;
             }
         }
@@ -107,7 +129,12 @@ public class Inventory : MonoBehaviour
             Item item = itemSlots[i].Item;
             if (item != null && item.ID == itemID)
             {
-                itemSlots[i].Item = null;
+                itemSlots[i].Amount--;
+                if (itemSlots[i].Amount==0)
+                {
+                    itemSlots[i].Item = null;
+                   
+                }
                 return item;
             }
         }

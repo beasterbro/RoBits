@@ -99,14 +99,14 @@ public class InventoryController : MonoBehaviour
     {
         SellOptionMenu.transform.position = MousePosition();
         
-        SellOptionMenu.ShowSellMenu(itemSlot.Item.part);
+        SellOptionMenu.ShowSellMenu(itemSlot.Item.Part);
     }
 
     public void Sell()
     {
         SellOptionMenu.Sell();
-        UpdateCurrency();
-        UpdateInventory();
+        RefreshCurrency();
+        RefreshInventory();
     }
     public void HideSellMenu()
     {
@@ -162,7 +162,9 @@ public class InventoryController : MonoBehaviour
         //TODO: Fix Dupe with dropping item out and then swapping bots and getting new item
         if (dropItemSlot.CanReceiveItem(draggedItemSlot.Item) && draggedItemSlot.CanReceiveItem(dropItemSlot.Item))
         {
-            SwapItems(dropItemSlot);
+            Item dragItem = draggedItemSlot.Item;
+            Item dropItem = dropItemSlot.Item;
+            SwapItems(dropItem,dragItem,dropItemSlot);
         }
 
     }
@@ -215,8 +217,9 @@ public class InventoryController : MonoBehaviour
 
 
     //Swaps the inputted item with the currently stored draggedItemSlot item
-    private void SwapItems(ItemSlot dropItemSlot)
+    private void SwapItems(Item dropItem, Item dragItem,ItemSlot dropItemSlot)
     {
+
         Item dragEquipItem = draggedItemSlot.Item;
         Item dropEquipItem = dropItemSlot.Item;
 
@@ -240,9 +243,12 @@ public class InventoryController : MonoBehaviour
             Unequip(dropEquipItem);
 
         }
+
         Item draggedItem = draggedItemSlot.Item;
+        int draggedItemAmount = draggedItemSlot.Amount;
+
         draggedItemSlot.Item = dropItemSlot.Item;
-        dropItemSlot.Item = draggedItem;
+        draggedItemSlot.Amount = draggedItemAmount;
 
     }
 
@@ -250,7 +256,7 @@ public class InventoryController : MonoBehaviour
     public void Equip(Item item)
     {
         //If you can remove the part
-        if (inventory.RemoveItem(item))
+        if (inventory.RemoveItem(item) && item != null)
         {
             //If you can add it to the equipped
             if (equipmentPanel.AddItem(item,out var previousItem))
@@ -262,8 +268,8 @@ public class InventoryController : MonoBehaviour
                     inventory.AddItem(previousItem);
                     Unequip(previousItem);
                 }
-                currentBot.AddPart(item.part);
-                UpdateBotInfo();
+                currentBot.AddPart(item.Part);
+                RefreshBotInfo();
                 CreateAllBotImages();
             }
             else
@@ -279,8 +285,8 @@ public class InventoryController : MonoBehaviour
         if (equipmentPanel.RemoveItem(item))
         {
             inventory.AddItem(item);
-            currentBot.RemovePart(item.part);
-            UpdateBotInfo();
+            currentBot.RemovePart(item.Part);
+            RefreshBotInfo();
             CreateAllBotImages();
         }
     }
@@ -291,12 +297,12 @@ public class InventoryController : MonoBehaviour
 
         currentBot = userBots[botValue];
         botNameText.text = currentBot.Name;
-        UpdateBotInfo();
-        UpdateEquipment();
+        RefreshBotInfo();
+        RefreshEquipment();
         //   UpdateInventory();
     }
 
-    private void UpdateBotInfo()
+    private void RefreshBotInfo()
     {
         StringBuilder sb = new StringBuilder();
         foreach (var part in currentBot.Equipment)
@@ -310,7 +316,7 @@ public class InventoryController : MonoBehaviour
     }
 
     //Refreshes the displayed Equipment from the current Bot's parts
-    public void UpdateEquipment()
+    public void RefreshEquipment()
     {
         // SetEquipmentMax(currentBot);
         //Retrieves all of the items currently equipped and store them
@@ -329,19 +335,32 @@ public class InventoryController : MonoBehaviour
     }
 
     //Converts inputted part into an item to be put in the inventory
-    public static Item PartToItem(PartInfo part)
+    public static Item UserItemToItem(InventoryItem inventoryItem)
     {
         Item item = ScriptableObject.CreateInstance<Item>();
-        item.part = part;
+        item.InventoryItem = inventoryItem;
 
-        item.icon = PartImageGenrator.GenerateImage(part.ResourceName);
+        item.icon = PartImageGenrator.GenerateImage(item.Part.ResourceName);
+        item.MaximumStacks = 999;
+        
 
         return item;
     }
+    
+    public static Item PartToItem(PartInfo part)
+    {
+        Item item = ScriptableObject.CreateInstance<Item>();
+        item.Part = part;
+
+        item.icon = PartImageGenrator.GenerateImage(item.Part.ResourceName);
+
+        return item;
+    }
+    
 
     private void Update()
     {
-        UpdateCurrency();
+        RefreshCurrency();
     }
 
 
@@ -358,10 +377,10 @@ public class InventoryController : MonoBehaviour
                 SetActiveBot(0);
                 CreateAllBotImages();
 
-                UpdateCurrency();
-                UpdateInventory();
-                UpdateEquipment();
-                UpdateBotInfo();
+                RefreshCurrency();
+                RefreshInventory();
+                RefreshEquipment();
+                RefreshBotInfo();
             }));
             
             StopCoroutine(DataManager.Instance.FetchInitialData());
@@ -380,14 +399,14 @@ public class InventoryController : MonoBehaviour
     }
 
     //Called on start to add all of the items in the user's inventory to the inventory panel
-    public void UpdateInventory()
+    public void RefreshInventory()
     {
         ClearInventory();
         StartCoroutine(DataManager.Instance.FetchUserInventory(delegate(bool obj)
         {
             foreach (var inventoryItem in userInventory)
             {
-                inventory.AddItem((PartToItem(inventoryItem.Part).GetCopy()));
+                inventory.AddItem((UserItemToItem(inventoryItem).GetCopy()));
             }
         }));
         
@@ -399,7 +418,7 @@ public class InventoryController : MonoBehaviour
     }
 
     //Updates the shown currency value to the actual currency value
-    private void UpdateCurrency()
+    private void RefreshCurrency()
     {
         StartCoroutine(DataManager.Instance.FetchInitialData(delegate(bool obj)
         {
@@ -425,7 +444,11 @@ public class InventoryController : MonoBehaviour
        
 
     }
-    private void UpdateUserInformation(){}
+
+    private void UpdateUserInformation()
+    {
+        
+    }
 
 
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -54,6 +55,7 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandl
                 {
                     image.sprite = _item.icon;
                     image.color = normalColor;
+                    amount = _item.Amount;
                 }
                 
                     
@@ -67,7 +69,7 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandl
         
             if (item == null)
             {
-            return true;
+            return true; 
                 
             }
             return item != null && item.Type == PartType;
