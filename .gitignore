@@ -38,5 +38,6 @@ sysinfo.txt
 
 # Ignore GitHub plugin
 Assets/Plugins/GitHub/*
+Assets/Plugins/Editor/*
 /ProjectSettings/ProjectVersion.txt
 .idea
