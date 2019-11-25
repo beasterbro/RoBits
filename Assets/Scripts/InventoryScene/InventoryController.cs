@@ -435,14 +435,20 @@ public class InventoryController : MonoBehaviour
 
     
 
+    //TODO: Must Call This Before Disabling Inventory
     public void UpdateUserBots()
     {
         foreach (var bot in userBots)
         {
-            StartCoroutine(DataManager.Instance.UpdateBot(bot));
+            StartCoroutine(DataManager.Instance.UpdateBot(bot, delegate(bool obj) { }));
         }
        
 
+    }
+
+    private void OnApplicationQuit()
+    {
+        UpdateUserBots();
     }
 
     private void UpdateUserInformation()
