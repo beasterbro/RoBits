@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using JsonData;
 using UnityEngine;
 
 [AddComponentMenu("Behavior Lab/Behavior Lab Controller")]
@@ -33,13 +34,8 @@ public class BehaviorLabController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.P))
         {
-            PrintBehavior();
+            Debug.Log(JsonUtils.SerializeObject(Trigger.BehaviorState()));
         }
-    }
-
-    private void PrintBehavior()
-    {
-        Debug.Log(Trigger.BehaviorState());
     }
 
     public static void UpdateTrigger(int id)
