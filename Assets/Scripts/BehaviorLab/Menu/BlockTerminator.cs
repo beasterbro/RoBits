@@ -8,7 +8,9 @@ public class BlockTerminator : InterfaceObject
     {
         if (DragAndDropController.IsOccupied())
         {
-            Destroy(DragAndDropController.Instance().Drop().gameObject);
+            var dropped = DragAndDropController.Instance().Drop();
+            BehaviorLabController.GetShared().RemoveBlock(dropped);
+            Destroy(dropped.gameObject);
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
 
 [AddComponentMenu("Interface Objects/Blocks/If")]
 public class IfBlock : BodyBlock
@@ -40,8 +41,13 @@ public class IfBlock : BodyBlock
         return children;
     }
 
-    protected override string Type()
+    protected override string Type() => "If";
+
+    protected override int[] InputIDs()
     {
-        return "if";
+        var ids = new List<int>(base.InputIDs());
+        ids.Insert(0, condition.IsFull() ? condition.Peek().info.ID : -1);
+        return ids.ToArray();
     }
+
 }

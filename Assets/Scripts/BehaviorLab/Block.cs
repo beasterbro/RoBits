@@ -2,15 +2,52 @@
 using UnityEngine;
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 [AddComponentMenu("Interface Objects/Block")]
 public abstract class Block : InterfaceObject
 {
+
+    public BlockInfo info;
     [SerializeField] private bool isMovable = false;
     [SerializeField] private bool isDeletable = false;
     [SerializeField] private Block prev; // Block that precedes, if any
     [SerializeField] private Block next; // Block that follows, if any
     [SerializeField] private Block containing; // Block to return an output to
+
+    public static Block FromType(string type)
+    {
+        try
+        {
+            var prefab = Instantiate(Resources.Load<GameObject>("Behavior Lab/" + type + "Block"));
+            var block = prefab.GetComponent<Block>();
+            block.GenerateInfo();
+            return block;
+        }
+        catch (ArgumentException)
+        {
+            Debug.Log("Unable to load block of type " + type);
+            return null;
+        }
+    }
+
+    public static Block FromInfo(BlockInfo info)
+    {
+        var block = Block.FromType(info.Type);
+        if (block != null) block.info = info;
+        block.ApplyTypeAttributes();
+
+        return block;
+    }
+
+    private void GenerateInfo() => info = MakeNewInfo();
+
+    protected virtual BlockInfo MakeNewInfo()
+    {
+        return new BlockInfo(0, Type(), TypeAttributes(), InputIDs(), ChunkSizes());
+    }
+
+    protected virtual void ApplyTypeAttributes() { }
 
     public abstract ReturnType OutputType();
 
@@ -23,6 +60,7 @@ public abstract class Block : InterfaceObject
         {
             throw new SystemException("Unexpected return type.");
         }
+
         next.Evaluate();
         return result;
     }
@@ -67,6 +105,7 @@ public abstract class Block : InterfaceObject
                 Debug.Log("Found a null within " + Type() + " statement! - Block");
             }
         }
+
         working_states.Add(State(startingId, startingId + working_states.Count));
         return working_states;
     }
@@ -76,7 +115,7 @@ public abstract class Block : InterfaceObject
     public BlockInfo State(int id, int maxChildId)
     {
         //Debug.Log("id: " + id + ", maxChild: " + maxChildId);
-        return new BlockInfo(id, Type(), new Dictionary<string, string>(), IDs(id + 1, maxChildId), ChunkSizes());
+        return new BlockInfo(id, Type(), TypeAttributes(), IDs(id + 1, maxChildId), ChunkSizes());
     }
 
     private int[] IDs(int first, int last)
@@ -85,11 +124,11 @@ public abstract class Block : InterfaceObject
         return Enumerable.Range(first, last - first + 1).ToArray();
     }
 
-    protected abstract List<Block> Children();
-
+    protected virtual List<Block> Children() => new List<Block>();
+    protected virtual Dictionary<string, string> TypeAttributes() => new Dictionary<string, string>();
     protected abstract string Type();
-
-    protected abstract int[] ChunkSizes();
+    protected virtual int[] InputIDs() => new int[0];
+    protected virtual int[] ChunkSizes() => new int[0];
 
     // Move the block to a specific point in the view
     public void Move(Vector3 pos)
@@ -131,4 +170,5 @@ public abstract class Block : InterfaceObject
         this.next = null;
         return result;
     }
+
 }

@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using JsonData;
 using UnityEngine;
@@ -10,15 +9,24 @@ using UnityEngine.UI;
 public class BehaviorLabController : MonoBehaviour
 {
 
+    private static BehaviorLabController currentInstance;
+
     public Text sidebarTitle;
     public ListController existingTriggersList;
     public ListController newTriggersList;
     public Button addCancelButton;
 
     public BotInfo currentBot;
-    public TriggerInfo currentTrigger;
+    public BehaviorInfo currentBehavior;
 
-    public static TriggerBlock Trigger => TriggerSpawner.Trigger;
+    public List<Block> existingBlocks = new List<Block>();
+    public TriggerBlock currentTriggerBlock;
+
+    public static BehaviorLabController GetShared()
+    {
+        if (currentInstance == null) currentInstance = FindObjectOfType<BehaviorLabController>();
+        return currentInstance;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -79,7 +87,6 @@ public class BehaviorLabController : MonoBehaviour
     private Dictionary<object, IEnumerable<object>> GenerateNewTriggersData()
     {
         var triggersData = new Dictionary<string, List<TriggerInfo>>();
-
         foreach (var trigger in TriggerInfo.triggers.Values)
         {
             if (currentBot.Behaviors.Exists(behavior => behavior.Trigger.Equals(trigger))) continue;
@@ -104,7 +111,15 @@ public class BehaviorLabController : MonoBehaviour
 
         if (selectedItem != null && selectedItem.data is TriggerInfo trigger)
         {
-            currentBot.Behaviors.Add(new BehaviorInfo(trigger.ID, 0, new BlockInfo[0]));
+            currentBot.Behaviors.Add(new BehaviorInfo(trigger.ID, 0, new[]
+            {
+                new BlockInfo(0, "Trigger", new Dictionary<string, string> {{"triggerId", trigger.ID.ToString()}}, new[] {-1}, new int[1])
+            }));
+
+            ToggleBehaviors();
+            UpdateTriggerLists();
+
+            DisplayBehaviorForTrigger(trigger);
         }
     }
 
@@ -118,9 +133,48 @@ public class BehaviorLabController : MonoBehaviour
         }
     }
 
+    public void AddBlock(Block block)
+    {
+        existingBlocks.Add(block);
+    }
+
+    public void RemoveBlock(Block block)
+    {
+        existingBlocks.Remove(block);
+    }
+
+    public Block GetBlockById(int id) => existingBlocks.FirstOrDefault(block => block.info.ID == id);
+
+    private void ClearExistingBlocks()
+    {
+        existingBlocks.ForEach(block => Destroy(block.gameObject));
+        existingBlocks.Clear();
+    }
+
+    private void SaveCurrentBehavior()
+    {
+        if (currentBehavior == null) return;
+
+        var currentIndex = currentBot.Behaviors.FindIndex(behavior => behavior.TriggerId == currentBehavior.TriggerId);
+        currentBot.Behaviors[currentIndex] = currentTriggerBlock.BehaviorState();
+    }
+
     private void DisplayBehaviorForTrigger(TriggerInfo trigger)
     {
-        currentTrigger = trigger;
+        SaveCurrentBehavior();
+        ClearExistingBlocks();
+        currentBehavior = currentBot.Behaviors.FirstOrDefault(behaviorInfo => behaviorInfo.TriggerId == trigger.ID);
+
+        if (currentBehavior != null)
+        {
+            var behaviorBlocks = currentBehavior.Blocks.Select(block => block != null ? Block.FromInfo(block) : null);
+
+            foreach (var block in behaviorBlocks.Where(block => block != null)) AddBlock(block);
+
+            currentTriggerBlock = GetBlockById(currentBehavior.EntryBlockId) as TriggerBlock;
+            if (currentTriggerBlock != null)
+                currentTriggerBlock.gameObject.transform.SetPositionAndRotation(new Vector2(-6.3f, 4f), Quaternion.Euler(0, 0, 0));
+        }
     }
 
     // Update is called once per frame
@@ -128,18 +182,8 @@ public class BehaviorLabController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.P))
         {
-            Debug.Log(JsonUtils.SerializeObject(Trigger.BehaviorState()));
+            Debug.Log(JsonUtils.SerializeObject(currentTriggerBlock.BehaviorState()));
         }
-    }
-
-    public static void UpdateTrigger(int id)
-    {
-        // TODO: Update displayed trigger as follows:
-        // Do something with current trigger/behavior info
-        // Remove all (connected) blocks from trigger block
-        // Update id of trigger block
-        Trigger.UpdateTrigger(id);
-        // Load in existing behavior from user's bot
     }
 
 }

@@ -11,8 +11,6 @@ public class NotBlock : LogicBlock
         return !first;
     }
 
-    protected override string Type()
-    {
-        return "not";
-    }
+    protected override string Type() => "Not";
+
 }

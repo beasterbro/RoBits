@@ -1009,7 +1009,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   container: {fileID: 0}
-  toSupply: {fileID: 1455836352}
+  type: Not
 --- !u!1 &376565243
 GameObject:
   m_ObjectHideFlags: 0
@@ -1192,18 +1192,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &427220741 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6774647695841339331, guid: 994f8db03f5bef84ab20d6c2fa021163,
-    type: 3}
-  m_PrefabInstance: {fileID: 1608177108}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50759e4f6041ca146b13953815fa966e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &427220742 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1661533222765257553, guid: 994f8db03f5bef84ab20d6c2fa021163,
@@ -2399,6 +2387,8 @@ MonoBehaviour:
   existingTriggersList: {fileID: 1687570095}
   newTriggersList: {fileID: 700137515}
   addCancelButton: {fileID: 86898394}
+  existingBlocks: []
+  currentTriggerBlock: {fileID: 0}
 --- !u!1 &953877040
 GameObject:
   m_ObjectHideFlags: 0
@@ -2435,18 +2425,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0.05, y: -0.05}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0, y: 1}
---- !u!114 &976445868 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7632182399473827592, guid: 800d679fe436ec34abbb7cd0a90bb3f5,
-    type: 3}
-  m_PrefabInstance: {fileID: 276281840879372550}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f90f7affd3900cb4d95d667a932717b0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &976445869 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1661533222765257553, guid: 800d679fe436ec34abbb7cd0a90bb3f5,
@@ -2753,7 +2731,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   container: {fileID: 0}
-  toSupply: {fileID: 427220741}
+  type: Action
 --- !u!114 &1057266001
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3503,18 +3481,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &1455836352 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1995492730227896905, guid: e15fb086b9f8407498d642f8d571123c,
-    type: 3}
-  m_PrefabInstance: {fileID: 2018257005}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9347582b32c1b9f45b18cb620bffad47, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &1455836353 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1661533222765257553, guid: e15fb086b9f8407498d642f8d571123c,
@@ -3608,7 +3574,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   container: {fileID: 0}
-  toSupply: {fileID: 976445868}
+  type: If
 --- !u!114 &1601633310
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,45 +1,40 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 [AddComponentMenu("Interface Objects/Blocks/Trigger")]
 public class TriggerBlock : BodyBlock
 {
+
     [SerializeField] private int id;
-    private TriggerInfo info;
+    private TriggerInfo triggerInfo;
 
     [SerializeField] private TextMesh name;
 
-    protected override void Start()
+    public BehaviorInfo BehaviorState()
     {
-        base.Start();
-        UpdateTrigger(this.id);
+        var initial = 0;
+        var blockStates = States(initial);
+        return new BehaviorInfo(triggerInfo.ID, initial, blockStates.ToArray());
     }
 
-    public void UpdateTrigger(int id)
+    protected override string Type() => "Trigger";
+
+    protected override Dictionary<string, string> TypeAttributes()
     {
-        if (TriggerInfo.triggers.ContainsKey(id))
+        var attrs = base.TypeAttributes();
+        if (triggerInfo != null) attrs["triggerId"] = triggerInfo.ID.ToString();
+        return attrs;
+    }
+
+    protected override void ApplyTypeAttributes()
+    {
+        base.ApplyTypeAttributes();
+        if (info != null && info.TypeAttrs != null && info.TypeAttrs.ContainsKey("triggerId"))
         {
-            this.id = id;
-            this.info = TriggerInfo.triggers[id];
-            this.name.text = this.info.Name;
+            triggerInfo = TriggerInfo.triggers[int.TryParse(info.TypeAttrs["triggerId"], out var ind) ? ind : 0];
+            id = triggerInfo.ID;
+            name.text = triggerInfo.Name;
         }
     }
 
-    public BehaviorInfo BehaviorState()
-    {
-        int initial = 0;
-        List<BlockInfo> blockStates = States(initial);
-        return new BehaviorInfo(info.ID, initial, blockStates.ToArray());
-    }
-
-    protected override string Type()
-    {
-        return "trigger";
-    }
-
-    protected override int[] ChunkSizes()
-    {
-        return new int[0];
-    }
 }
