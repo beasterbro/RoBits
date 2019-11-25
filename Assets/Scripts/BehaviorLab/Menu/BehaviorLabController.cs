@@ -38,6 +38,7 @@ public class BehaviorLabController : MonoBehaviour
             if (!success) return;
 
             currentBot = DataManager.Instance.AllBots[0];
+            if (currentBot.Behaviors.Count > 0) DisplayBehaviorForTrigger(currentBot.Behaviors[0].Trigger);
 
             UpdateTriggerLists();
             existingTriggersList.gameObject.SetActive(true);
@@ -105,7 +106,7 @@ public class BehaviorLabController : MonoBehaviour
         return finalData;
     }
 
-    public void AddTrigger()
+    private void AddTrigger()
     {
         var selectedItem = EventSystem.current.currentSelectedGameObject.GetComponent<TriggerListItem>();
 
@@ -123,7 +124,7 @@ public class BehaviorLabController : MonoBehaviour
         }
     }
 
-    public void UpdateActiveBehavior()
+    private void UpdateActiveBehavior()
     {
         var selectedItem = EventSystem.current.currentSelectedGameObject.GetComponent<TriggerListItem>();
 
@@ -173,7 +174,10 @@ public class BehaviorLabController : MonoBehaviour
 
             currentTriggerBlock = GetBlockById(currentBehavior.EntryBlockId) as TriggerBlock;
             if (currentTriggerBlock != null)
+            {
                 currentTriggerBlock.gameObject.transform.SetPositionAndRotation(new Vector2(-6.3f, 4f), Quaternion.Euler(0, 0, 0));
+                currentTriggerBlock.PositionConnections();
+            }
         }
     }
 
@@ -184,6 +188,18 @@ public class BehaviorLabController : MonoBehaviour
         {
             Debug.Log(JsonUtils.SerializeObject(currentTriggerBlock.BehaviorState()));
         }
+    }
+
+    public int NextBlockID()
+    {
+        if (existingBlocks.Count == 0) return 0;
+        return existingBlocks.Max(block => block.info.ID) + 1;
+    }
+
+    public void SaveBehaviors()
+    {
+        SaveCurrentBehavior();
+        StartCoroutine(DataManager.Instance.UpdateBot(currentBot));
     }
 
 }

@@ -11,7 +11,7 @@ namespace JsonData
             serializer.WriteKeyValue("id", obj.ID);
             serializer.WriteKeyValue("type", obj.Type);
             serializer.SerializeKeyValue("typeAttrs", obj.TypeAttrs);
-            serializer.SerializeKeyValue("inputIds", obj.InputIds);
+            serializer.SerializeKeyValue("inputIds", obj.InputIDs);
             serializer.SerializeKeyValue("chunkSizes", obj.ChunkSizes);
         }
 

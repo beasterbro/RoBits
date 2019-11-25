@@ -13,4 +13,9 @@ public class NotBlock : LogicBlock
 
     protected override string Type() => "Not";
 
+    public override void PositionConnections()
+    {
+        base.PositionConnections();
+    }
+
 }

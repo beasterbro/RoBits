@@ -90,14 +90,14 @@ public abstract class Block : InterfaceObject
 
     // Generates and lists out all BlockInfo states below this and including this
     // If a state is null it is because there was no block in the defined space involved
-    public List<BlockInfo> States(int startingId)
+    public List<BlockInfo> States()
     {
         List<BlockInfo> working_states = new List<BlockInfo>();
         foreach (Block child in Children())
         {
             if (child != null)
             {
-                working_states.AddRange(child.States(startingId + 1 + working_states.Count));
+                working_states.AddRange(child.States());
             }
             else
             {
@@ -106,22 +106,15 @@ public abstract class Block : InterfaceObject
             }
         }
 
-        working_states.Add(State(startingId, startingId + working_states.Count));
+        working_states.Add(State());
         return working_states;
     }
 
     // Generates the BlockInfo state for this object given a unique id and the highest id of their children.
     // This assumes that all ids falling between id (non-inclusive) and maxChildId (inclusive) are children to this Block.
-    public BlockInfo State(int id, int maxChildId)
+    public BlockInfo State()
     {
-        //Debug.Log("id: " + id + ", maxChild: " + maxChildId);
-        return new BlockInfo(id, Type(), TypeAttributes(), IDs(id + 1, maxChildId), ChunkSizes());
-    }
-
-    private int[] IDs(int first, int last)
-    {
-        //Debug.Log("1st: " + first + ", Last: " + last);
-        return Enumerable.Range(first, last - first + 1).ToArray();
+        return new BlockInfo(info.ID, Type(), TypeAttributes(), InputIDs(), ChunkSizes());
     }
 
     protected virtual List<Block> Children() => new List<Block>();
@@ -136,11 +129,13 @@ public abstract class Block : InterfaceObject
         this.transform.position = pos;
     }
 
-    // Position any blocks connected to this block appropriately
-    public void PositionConnections()
+    protected virtual void SetupScaleControllers()
     {
-        // TODO: this sounds super complicated
+        if (scaleController == null) scaleController = GetComponent<ScaleController>();
     }
+
+    // Position any blocks connected to this block appropriately
+    public virtual void PositionConnections() { }
 
     // Connects the block to a new predecessor in the behavior
     public void FormUpperConnection(Block predecessor)

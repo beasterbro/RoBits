@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -7,11 +8,17 @@ using UnityEngine;
 public class BodyBlock : Block
 {
 
-    [SerializeField] private ChunkInputComponent bodyChunk;
+    [SerializeField] protected ChunkInputComponent bodyChunk;
 
     protected override void Start()
     {
         base.Start();
+        SetupScaleControllers();
+    }
+
+    protected override void SetupScaleControllers()
+    {
+        base.SetupScaleControllers();
         bodyChunk.LinkScaleController(this.scaleController);
     }
 

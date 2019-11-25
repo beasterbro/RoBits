@@ -44,6 +44,7 @@ public class DataManager
     private UnityWebRequest WrapRequest(UnityWebRequest request)
     {
         request.SetRequestHeader("Authorization", "Bearer " + bearerToken);
+        request.SetRequestHeader("Content-Type", "application/json");
         request.SetRequestHeader("Accept", "application/json");
         return request;
     }

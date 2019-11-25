@@ -5,16 +5,15 @@ using UnityEngine;
 public class TriggerBlock : BodyBlock
 {
 
-    [SerializeField] private int id;
     private TriggerInfo triggerInfo;
 
     [SerializeField] private TextMesh name;
 
     public BehaviorInfo BehaviorState()
     {
-        var initial = 0;
-        var blockStates = States(initial);
-        return new BehaviorInfo(triggerInfo.ID, initial, blockStates.ToArray());
+        var blockStates = States();
+        blockStates.RemoveAll(state => state == null);
+        return new BehaviorInfo(triggerInfo.ID, info.ID, blockStates.ToArray());
     }
 
     protected override string Type() => "Trigger";
@@ -32,9 +31,25 @@ public class TriggerBlock : BodyBlock
         if (info != null && info.TypeAttrs != null && info.TypeAttrs.ContainsKey("triggerId"))
         {
             triggerInfo = TriggerInfo.triggers[int.TryParse(info.TypeAttrs["triggerId"], out var ind) ? ind : 0];
-            id = triggerInfo.ID;
             name.text = triggerInfo.Name;
         }
+    }
+
+    public override void PositionConnections()
+    {
+        SetupScaleControllers();
+        
+        foreach (var blockId in info.InputIDs)
+        {
+            var block = BehaviorLabController.GetShared().GetBlockById(blockId);
+            if (block != null)
+            {
+                bodyChunk.Add(block);
+                block.PositionConnections();
+            }
+        }
+        
+        Redraw();
     }
 
 }

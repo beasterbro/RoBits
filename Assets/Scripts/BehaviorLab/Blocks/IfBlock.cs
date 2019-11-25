@@ -50,4 +50,32 @@ public class IfBlock : BodyBlock
         return ids.ToArray();
     }
 
+    public override void PositionConnections()
+    {
+        SetupScaleControllers();
+        
+        if (info.InputIDs.Length > 0)
+        {
+            if (info.InputIDs[0] != -1)
+            {
+                var conditionBlock = BehaviorLabController.GetShared().GetBlockById(info.InputIDs[0]);
+                if (conditionBlock != null)
+                {
+                    condition.Push(conditionBlock);
+                    conditionBlock.PositionConnections();
+                }
+            }
+
+            for (var i = 1; i < info.InputIDs.Length; i++)
+            {
+                var block = BehaviorLabController.GetShared().GetBlockById(info.InputIDs[i]);
+                if (block != null)
+                {
+                    bodyChunk.Add(block);
+                    block.PositionConnections();
+                }
+            }
+        }
+    }
+
 }

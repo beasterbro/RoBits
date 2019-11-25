@@ -10,7 +10,7 @@ public class BotInfo
     private int id;
     private string name;
     private int tier;
-    private readonly List<BehaviorInfo> behavior;
+    private List<BehaviorInfo> behavior;
     private readonly List<PartInfo> equipment;
     private PartInfo bodyType;
 
@@ -60,7 +60,11 @@ public class BotInfo
         set => bodyType = value;
     }
 
-    public List<BehaviorInfo> Behaviors => behavior;
+    public List<BehaviorInfo> Behaviors
+    {
+        get => behavior;
+        set => behavior = value;
+    }
 
     // TODO: Implement
     // GetBotBehavior

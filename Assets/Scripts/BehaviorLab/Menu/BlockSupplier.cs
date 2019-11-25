@@ -12,6 +12,7 @@ public class BlockSupplier : BlockTerminator
         if (DragAndDropController.IsAvailable())
         {
             var block = Block.FromType(type);
+            block.info.ID = BehaviorLabController.GetShared().NextBlockID();
             block.transform.SetPositionAndRotation(gameObject.transform.position, gameObject.transform.rotation);
             DragAndDropController.Instance().Grab(block);
             BehaviorLabController.GetShared().AddBlock(block);
@@ -26,4 +27,5 @@ public class BlockSupplier : BlockTerminator
             this.OnGrab();
         }
     }
+
 }
