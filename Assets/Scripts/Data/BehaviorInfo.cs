@@ -1,9 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using JsonData;
 using Newtonsoft.Json;
-using UnityEngine;
 
-[JsonConverter(typeof(JsonData.BehaviorConverter))]
+[JsonConverter(typeof(BehaviorConverter))]
 public class BehaviorInfo
 {
 
@@ -29,4 +28,12 @@ public class BehaviorInfo
         get => blocks;
         set => blocks = value;
     }
+
+    public override string ToString()
+    {
+        return string.Format("ID = {0} (EntryID = {1}): [{2}]({3})", TriggerId, EntryBlockId, string.Join(",", (IEnumerable<BlockInfo>)Blocks), Blocks.Length);
+    }
+
+    public TriggerInfo Trigger => TriggerInfo.triggers[triggerId];
+
 }

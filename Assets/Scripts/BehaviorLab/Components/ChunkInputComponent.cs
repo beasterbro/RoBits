@@ -12,7 +12,7 @@ public class ChunkInputComponent : BlockComponent
 
     public List<Block> Elements()
     {
-        return _blocks.elements;
+        return blocks.elements;
     }
 
     private ScalingList<Block> blocks
@@ -21,7 +21,7 @@ public class ChunkInputComponent : BlockComponent
         {
             if (_blocks == null)
             {
-                _blocks = new ScalingList<Block>(this.transform);
+                _blocks = new ScalingList<Block>(transform);
             }
             return _blocks;
         }

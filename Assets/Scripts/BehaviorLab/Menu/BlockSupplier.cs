@@ -4,15 +4,18 @@ using UnityEngine;
 
 public class BlockSupplier : BlockTerminator
 {
-    [SerializeField] private Block toSupply;
+
+    [SerializeField] private string type;
 
     protected override void OnGrab()
     {
         if (DragAndDropController.IsAvailable())
         {
-            Block block = Instantiate<Block>(toSupply);
-            block.transform.position = this.transform.position;
+            var block = Block.FromType(type);
+            block.info.ID = BehaviorLabController.GetShared().NextBlockID();
+            block.transform.SetPositionAndRotation(gameObject.transform.position, gameObject.transform.rotation);
             DragAndDropController.Instance().Grab(block);
+            BehaviorLabController.GetShared().AddBlock(block);
         }
     }
 
@@ -24,4 +27,5 @@ public class BlockSupplier : BlockTerminator
             this.OnGrab();
         }
     }
+
 }

@@ -11,8 +11,11 @@ public class NotBlock : LogicBlock
         return !first;
     }
 
-    protected override string Type()
+    protected override string Type() => "Not";
+
+    public override void PositionConnections()
     {
-        return "not";
+        base.PositionConnections();
     }
+
 }

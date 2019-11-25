@@ -1,39 +1,55 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 [AddComponentMenu("Interface Objects/Blocks/Trigger")]
-public class TriggerBlock : Block
+public class TriggerBlock : BodyBlock
 {
-    [SerializeField] private ReturnType outputType = ReturnType.LOGICAL;
 
-    public override ReturnType OutputType()
+    private TriggerInfo triggerInfo;
+
+    [SerializeField] private TextMesh name;
+
+    public BehaviorInfo BehaviorState()
     {
-        return outputType;
+        var blockStates = States();
+        blockStates.RemoveAll(state => state == null);
+        return new BehaviorInfo(triggerInfo.ID, info.ID, blockStates.ToArray());
     }
 
-    public override bool IsValid()
+    protected override string Type() => "Trigger";
+
+    protected override Dictionary<string, string> TypeAttributes()
     {
-        return false;
+        var attrs = base.TypeAttributes();
+        if (triggerInfo != null) attrs["triggerId"] = triggerInfo.ID.ToString();
+        return attrs;
     }
 
-    protected override BehaviorData InnerEvaluate()
+    protected override void ApplyTypeAttributes()
     {
-        return BehaviorData.EMPTY;
+        base.ApplyTypeAttributes();
+        if (info != null && info.TypeAttrs != null && info.TypeAttrs.ContainsKey("triggerId"))
+        {
+            triggerInfo = TriggerInfo.triggers[int.TryParse(info.TypeAttrs["triggerId"], out var ind) ? ind : 0];
+            name.text = triggerInfo.Name;
+        }
     }
 
-    protected override List<Block> Children()
+    public override void PositionConnections()
     {
-        return new List<Block>();
+        SetupScaleControllers();
+        
+        foreach (var blockId in info.InputIDs)
+        {
+            var block = BehaviorLabController.GetShared().GetBlockById(blockId);
+            if (block != null)
+            {
+                bodyChunk.Add(block);
+                block.PositionConnections();
+            }
+        }
+        
+        Redraw();
     }
 
-    protected override string Type()
-    {
-        return "trigger";
-    }
-
-    protected override int[] ChunkSizes()
-    {
-        return new int[0];
-    }
 }

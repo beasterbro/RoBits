@@ -70,8 +70,16 @@ public abstract class LogicBlock : Block
         return children;
     }
 
-    protected override int[] ChunkSizes()
+    protected override int[] InputIDs()
     {
-        return new int[0];
+        var ids = new int[conditions.Count];
+        for (var i = 0; i < conditions.Count; i++)
+        {
+            if (conditions[i].IsFull()) ids[i] = conditions[i].Peek().info.ID;
+            else ids[i] = -1;
+        }
+
+        return ids;
     }
+
 }

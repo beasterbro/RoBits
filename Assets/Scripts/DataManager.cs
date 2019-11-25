@@ -44,6 +44,7 @@ public class DataManager
     private UnityWebRequest WrapRequest(UnityWebRequest request)
     {
         request.SetRequestHeader("Authorization", "Bearer " + bearerToken);
+        request.SetRequestHeader("Content-Type", "application/json");
         request.SetRequestHeader("Accept", "application/json");
         return request;
     }
@@ -104,6 +105,9 @@ public class DataManager
         bool userFetched = false, partsFetched = false, inventoryFetched = false, teamsFetched = false;
         yield return runner.StartCoroutine(FetchCurrentUser(success => userFetched = success));
         yield return runner.StartCoroutine(FetchAllParts(success => partsFetched = success));
+
+        if (partsFetched) TriggerInfo.LoadTriggers();
+
         if (userFetched && partsFetched)
         {
             yield return runner.StartCoroutine(FetchUserInventory(success => inventoryFetched = success));
