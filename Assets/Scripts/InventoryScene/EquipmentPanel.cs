@@ -11,12 +11,12 @@ public class EquipmentPanel : MonoBehaviour
     public static event Action<ItemSlot> OnRightClickEvent;
     public static event Action<ItemSlot> OnPointerEnterEvent;
     public static event Action<ItemSlot> OnPointerExitEvent;
-    public event Action<ItemSlot> OnPointerClickEvent;
     public static event Action<ItemSlot> OnBeingDragEvent;
     public static event Action<ItemSlot> OnDragEvent;
     public static event Action<ItemSlot> OnEndDragEvent;
     public static event Action<ItemSlot> OnDropEvent;
 
+    //Assigns each equipmentSlot all of the desired actions
     private void Start()
     {
         for (int i = 0; i < equipmentSlots.Length; i++)
@@ -39,18 +39,30 @@ public class EquipmentPanel : MonoBehaviour
     //Adds an item to the equipment panel
     public bool AddItem(Item item,out  Item previousItem)
     {
-        for (int i = 0; i < equipmentSlots.Length; i++)
+        
+        foreach (var slot in equipmentSlots)
         {
-            if (equipmentSlots[i].Item == null)
+
+            if (slot.CanReceiveItem(item) && slot.Item == null )
             {
-                previousItem = equipmentSlots[i].Item;
-                equipmentSlots[i].Item = item;
-                return true;
+               // if ( slot.Item != null)
+                {
+                    previousItem = slot.Item;
+                    slot.Item = item;
+                    return true; 
+                }
+                /*else
+                {
+                    previousItem = null;
+                    slot.Item = item;
+                    return true; 
+                }*/
+                
             }
         }
-
         previousItem = null;
         return false;
+  
     }
 
     //removes an item from the equipment panel
@@ -71,7 +83,7 @@ public class EquipmentPanel : MonoBehaviour
     }
 
     //Clears the currently equipped and return them as a list
-    public List<Item> ClearEquipped()
+    public List<Item> ClearEquippedItems()
     {
         List<Item> equippedItems = new List<Item>();
         for (int i = 0; i < equipmentSlots.Length; i++)

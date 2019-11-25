@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -7,8 +8,10 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandl
     {
         [SerializeField] Image image;
         [SerializeField] public PartType PartType;
+        [SerializeField] private Text amountText;
        
         public event Action<ItemSlot> OnRightClickEvent;
+        public event Action<ItemSlot> OnLeftClickEvent;
         public event Action<ItemSlot> OnPointerEnterEvent;
         public event Action<ItemSlot> OnPointerExitEvent;
         public event Action<ItemSlot> OnPointerClickEvent;
@@ -21,7 +24,22 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandl
         private  Color disableColor = new Color(1,1,1,0);
         
         [SerializeField] private Vector2 originalPosition;
-        
+
+        private int amount;
+
+        public int Amount
+        {
+            get => amount;
+            set
+            {
+                amount = value;
+                amountText.enabled = _item != null && _item.MaximumStacks > 1 && amount > 1;
+                if (amountText.enabled)
+                {
+                    amountText.text = amount.ToString();
+                }
+            }
+        }
         private Item _item;
         public Item Item
         {
@@ -35,8 +53,9 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandl
                 }
                 else
                 {
-                    image.sprite = _item.Icon;
+                    image.sprite = _item.icon;
                     image.color = normalColor;
+                    amount = _item.Amount;
                 }
                 
                     
@@ -47,13 +66,13 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandl
         //Checks whether this can receive an item
         public virtual bool CanReceiveItem(Item item)
         {
-            //TODO: Implement
+        
             if (item == null)
             {
-            return true;
+            return true; 
                 
             }
-            return item != null && item.type == PartType;
+            return item != null && item.Type == PartType;
         }
        
        
@@ -65,6 +84,11 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandl
                 image =  GetComponent<Image>();
             }
 
+            if (amountText == null)
+            {
+                amountText = GetComponentInChildren<Text>();
+            }
+
         }
 
         public void OnPointerClick(PointerEventData eventData)
@@ -74,6 +98,13 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandl
                 if ( OnRightClickEvent != null)
                 {
                     OnRightClickEvent(this);
+                }
+            }
+            if (eventData != null && eventData.button == PointerEventData.InputButton.Left)
+            {
+                if ( OnLeftClickEvent != null)
+                {
+                    OnLeftClickEvent(this);
                 }
             }
         }
@@ -125,4 +156,5 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandl
                 OnDropEvent(this);
             }
         }
+
     }

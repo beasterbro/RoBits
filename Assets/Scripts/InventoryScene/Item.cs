@@ -2,30 +2,64 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-//A class to represent items in an inventory
+//A class to visually represent PartInfo to the user
 [CreateAssetMenu]
 public class Item : ScriptableObject
-{//instead of this for each item you put in the string url that the item stats can be found at
-    public string ItemName;
-    public Sprite Icon;
-    public PartInfo part;
-    [SerializeField] string id;
-    public int partID;
-    public string ID
-    {
-        get { return id; }
-    }
-    public String description;
-    public PartType type;
-    public int price;
-    public int levelToUnlock;
-    public Dictionary<String, float> attributes;
+{
+    [Range(1,1000)]
+    public int MaximumStacks = 1;
+    public Sprite icon;
 
-    private void OnValidate()
+    private PartInfo _partInfo;
+    public PartInfo Part
     {
-//        part = new PartInfo(partID,ItemName,description,type,price,levelToUnlock,attributes);
-//        string path = AssetDatabase.GetAssetPath(this);
-//        id = AssetDatabase.AssetPathToGUID(path);
+        get
+        {
+            if (InventoryItem == null)
+            {
+                return _partInfo;
+            }
+            else
+            {
+                return InventoryItem.Part;
+            }
+        }
+        set => _partInfo = value;
+    }
+
+    public int PartID => Part.ID;
+    public string ID => Part.ID.ToString();
+    public string ItemName => Part.Name;
+    public String Description => Part.Description;
+    public PartType Type => Part.PartType;
+    public int Price => Part.Price;
+    public int LevelToUnlock => Part.LevelToUnlock;
+    public Dictionary<String, float> Attributes => Part.Attributes;
+
+    private InventoryItem _inventoryItem;
+    public InventoryItem InventoryItem
+    {
+        get
+        {
+            if (_inventoryItem == null)
+            {
+                _inventoryItem = new InventoryItem(_partInfo,1);
+                return _inventoryItem;
+            }
+            else
+            {
+                return _inventoryItem;
+            }
+        }
+        set =>_inventoryItem = value;
+    }
+
+    public int Amount => InventoryItem.Count ;
+
+    public virtual Item GetCopy()
+    {
+        return this;
     }
 }
