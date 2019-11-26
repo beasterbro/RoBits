@@ -15,7 +15,8 @@ public class InventoryController : MonoBehaviour
     //For integration with BE
     private List<BotInfo> userBots;
     private  List<InventoryItem> userInventory;
-    
+    [SerializeField] private MonoBehaviour latch;
+
     public BotInfo currentBot ;
     //Game Objects to attatch generated bot images to
     [SerializeField] private List<GameObject> BotGenerators;
@@ -98,7 +99,7 @@ public class InventoryController : MonoBehaviour
     void ShowSellMenu(ItemSlot itemSlot)
     {
         SellOptionMenu.transform.position = MousePosition();
-        
+
         SellOptionMenu.ShowSellMenu(itemSlot.Item.Part);
     }
 
@@ -342,11 +343,11 @@ public class InventoryController : MonoBehaviour
 
         item.icon = PartImageGenrator.GenerateImage(item.Part.ResourceName);
         item.MaximumStacks = 999;
-        
+
 
         return item;
     }
-    
+
     public static Item PartToItem(PartInfo part)
     {
         Item item = ScriptableObject.CreateInstance<Item>();
@@ -356,7 +357,7 @@ public class InventoryController : MonoBehaviour
 
         return item;
     }
-    
+
 
     private void Update()
     {
@@ -367,7 +368,7 @@ public class InventoryController : MonoBehaviour
     //Called First when entering playmode, before the first frame
     void Start()
     {
-        DataManager.Instance.Latch(this);
+        DataManager.Instance.Latch(latch);
         if (!DataManager.Instance.InitialFetchPerformed) DataManager.Instance.EstablishAuth("DEV testUser@gmail.com");
         StartCoroutine(DataManager.Instance.FetchInitialDataIfNecessary(success =>
         {
@@ -403,7 +404,7 @@ public class InventoryController : MonoBehaviour
                 inventory.AddItem((UserItemToItem(inventoryItem).GetCopy()));
             }
         }));
-        
+
     }
 
     private void ClearInventory()
@@ -426,17 +427,17 @@ public class InventoryController : MonoBehaviour
         botNameText.text = currentBot.Name;
     }
 
-    
+
 
     //TODO: Must Call This Before Disabling Inventory
     public void UpdateUserBots()
     {
         foreach (var bot in userBots)
         {
-            DataManager.Instance.Latch(this);
+            DataManager.Instance.Latch(latch);
             StartCoroutine(DataManager.Instance.UpdateBot(bot));
         }
-       
+
 
     }
 
@@ -447,8 +448,14 @@ public class InventoryController : MonoBehaviour
 
     private void UpdateUserInformation()
     {
-        
+        UpdateUserBots();
+        UpdateUserInventory();
     }
 
-
+    private void UpdateUserInventory()
+    {
+        //TODO: Have user inventory update after all parts have been equipped
+        var updatedUserInventory = inventory.ItemSlots.ToList().ConvertAll(input => input.Item.InventoryItem);
+        //DataManager.Instance.UserInventory;
+    }
 }

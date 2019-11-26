@@ -12,9 +12,9 @@ public class TeamEditorController : MonoBehaviour
     [SerializeField] private GameObject team2parent;
     [SerializeField] private GameObject team3parent;
 
-    private List<TeamBot> team1;
-    private List<TeamBot> team2;
-    private List<TeamBot> team3;
+    private List<TeamBot> team1 = new List<TeamBot>();
+    private List<TeamBot> team2 = new List<TeamBot>();
+    private List<TeamBot> team3 = new List<TeamBot>();
     private List<BotInfo> userBots;
 
     public event Action<TeamBot> OnLeftClickEvent;

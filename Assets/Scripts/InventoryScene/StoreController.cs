@@ -81,32 +81,32 @@ public class StoreController : MonoBehaviour
     private void Start()
     {
    
-       //Needed for testing
-        DataManager.Instance.EstablishAuth("DEV testUser@gmail.com");
-        StartCoroutine( DataManager.Instance.FetchInitialData(delegate(bool obj1)
-        {
+       
+       if (!DataManager.Instance.InitialFetchPerformed) DataManager.Instance.EstablishAuth("DEV testUser@gmail.com");
+       StartCoroutine(DataManager.Instance.FetchInitialDataIfNecessary(success =>
+       {
+           if (!success) return;
             //Acutally needed code
             StartCoroutine(DataManager.Instance.FetchAllParts(delegate(bool obj)
             {
                 allParts = DataManager.Instance.AllParts;
                 InstantiateStoreButtons();
-                UpdateCurrency();
+                RefreshCurrency();
             }));
-            StopCoroutine(DataManager.Instance.FetchAllParts());
+       
         }));
-        StopCoroutine(DataManager.Instance.FetchInitialData());
-        
-        
        
-       
-          
-        
+      
         //Gives all buttons desired attributes and functionality
        
 
     }
 
-    
+    private void Update()
+    {
+        RefreshCurrency();
+    }
+
 
     //Called in editor on change, gathers all of the current buttons
     private void OnValidate()
@@ -241,7 +241,7 @@ public class StoreController : MonoBehaviour
             }
         }
 
-        public void UpdateCurrency()
+        public void RefreshCurrency()
         {
             UserCurrency.text = DataManager.Instance.CurrentUser.Currency.ToString();
         }
@@ -249,7 +249,7 @@ public class StoreController : MonoBehaviour
         public void Buy()
         {
             BuyOptionMenu.Buy();
-            UpdateCurrency();
+            RefreshCurrency();
         }
 
     }
