@@ -5,14 +5,30 @@ using System.Linq;
 public class BehaviorExecutor
 {
 
-    private static Dictionary<string, Func<BehaviorExecutor, BlockInfo, object>> executionFunctions;
+    private readonly BehaviorInfo behavior;
 
-    // TODO: Is this the best way to do this?
-    public static void LoadExecutionFunctions()
+    public BehaviorExecutor(BehaviorInfo behavior)
     {
-        executionFunctions = new Dictionary<string, Func<BehaviorExecutor, BlockInfo, object>>();
+        this.behavior = behavior;
+    }
 
-        executionFunctions["if"] = (executor, info) =>
+    // Execute a block in the behavior by ID, if it exists
+    private object ExecuteBlock(int id)
+    {
+        var block = behavior.Blocks.FirstOrDefault(bi => bi.ID == id);
+
+        if (block != null && executionFunctions.ContainsKey(block.Type))
+            return executionFunctions[block.Type].Invoke(this, block);
+
+        return null;
+    }
+
+    public void Execute() => ExecuteBlock(behavior.EntryBlockId);
+
+    // Static reference for all execution functions
+    private static Dictionary<string, Func<BehaviorExecutor, BlockInfo, object>> executionFunctions = new Dictionary<string, Func<BehaviorExecutor, BlockInfo, object>>
+    {
+        ["if"] = (executor, info) =>
         {
             if (info.InputIDs.Length > 0)
             {
@@ -30,9 +46,8 @@ public class BehaviorExecutor
             }
 
             return null;
-        };
-
-        executionFunctions["not"] = (executor, info) =>
+        },
+        ["not"] = (executor, info) =>
         {
             if (info.InputIDs.Length > 0 && executor.ExecuteBlock(info.InputIDs[0]) is bool logicalInput)
             {
@@ -40,25 +55,7 @@ public class BehaviorExecutor
             }
 
             return null;
-        };
-    }
-
-    private readonly BehaviorInfo behavior;
-
-    public BehaviorExecutor(BehaviorInfo behavior)
-    {
-        this.behavior = behavior;
-    }
-
-    private object ExecuteBlock(int id)
-    {
-        var block = behavior.Blocks.FirstOrDefault(bi => bi.ID == id);
-        if (block != null && executionFunctions.ContainsKey(block.Type))
-            return executionFunctions[block.Type].Invoke(this, block);
-
-        return null;
-    }
-
-    public void Execute() => ExecuteBlock(behavior.EntryBlockId);
+        }
+    };
 
 }
