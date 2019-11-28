@@ -24,8 +24,15 @@ public class LoginController : MonoBehaviour
         {
             StartCoroutine(DataManager.Instance.EstablishAuth(googleToken, success =>
             {
-                if (!success) return;
-                SceneManager.LoadScene(0);
+                if (success)
+                {
+                    SceneManager.LoadScene("Main");
+                }
+                else
+                {
+                    userLoggedIn = false;
+                    googleToken = null;
+                };
             }));
         }
     }
