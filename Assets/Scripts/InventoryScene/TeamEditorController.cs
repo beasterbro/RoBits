@@ -25,7 +25,7 @@ public class TeamEditorController : MonoBehaviour
     {
       //  if (!DataManager.Instance.InitialFetchPerformed)
         {
-            DataManager.Instance.EstablishAuth("DEV testUser@gmail.com");
+            DataManager.Instance.BypassAuth("DEV testUser@gmail.com");
             StartCoroutine(DataManager.Instance.FetchInitialData(delegate(bool obj)
             {
                 userBots = new List<BotInfo>(DataManager.Instance.AllBots);

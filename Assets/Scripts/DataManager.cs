@@ -10,6 +10,13 @@ using UnityEngine.Networking;
 // Collects and manages necessary information that needs to be taken from the backend to the frontend and vice versa.
 public class DataManager
 {
+    
+    private struct AuthResponse
+    {
+
+        public string name, email, token;
+
+    }
 
     private static string baseUrl = "http://robits.us-east-2.elasticbeanstalk.com/api";
     private static DataManager shared;
@@ -88,8 +95,21 @@ public class DataManager
         });
     }
 
+    // Exchange a Google ID token for a bearer token
+    public IEnumerator EstablishAuth(string googleToken, Action<bool> callback = null)
+    {
+        var request = BasicGet("/verify?id_token=" + googleToken);
+        yield return request.SendWebRequest();
+
+        SimpleCallback(request, () =>
+        {
+            var response = JsonUtils.DeserializeObject<AuthResponse>(request.downloadHandler.text);
+            bearerToken = response.token;
+        }, callback);
+    }
+
     // Adds the auth header to the HTTP client
-    public void EstablishAuth(string token)
+    public void BypassAuth(string token)
     {
         bearerToken = token;
     }

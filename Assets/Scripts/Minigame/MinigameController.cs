@@ -16,7 +16,7 @@ public class MinigameController : MonoBehaviour
         loadingPanel.SetActive(true);
 
         DataManager.Instance.Latch(this);
-        if (!DataManager.Instance.InitialFetchPerformed) DataManager.Instance.EstablishAuth("DEV lucaspopp0@gmail.com");
+        if (!DataManager.Instance.InitialFetchPerformed) DataManager.Instance.BypassAuth("DEV lucaspopp0@gmail.com");
         StartCoroutine(DataManager.Instance.FetchInitialDataIfNecessary(success =>
         {
             loadingPanel.SetActive(false);

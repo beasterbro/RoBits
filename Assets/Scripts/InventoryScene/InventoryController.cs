@@ -368,7 +368,7 @@ public class InventoryController : MonoBehaviour
     void Start()
     {
         DataManager.Instance.Latch(this);
-        if (!DataManager.Instance.InitialFetchPerformed) DataManager.Instance.EstablishAuth("DEV testUser@gmail.com");
+        if (!DataManager.Instance.InitialFetchPerformed) DataManager.Instance.BypassAuth("DEV testUser@gmail.com");
         StartCoroutine(DataManager.Instance.FetchInitialDataIfNecessary(success =>
         {
             if (!success) return;

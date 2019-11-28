@@ -82,7 +82,7 @@ public class StoreController : MonoBehaviour
     {
    
        //Needed for testing
-        DataManager.Instance.EstablishAuth("DEV testUser@gmail.com");
+        DataManager.Instance.BypassAuth("DEV testUser@gmail.com");
         StartCoroutine( DataManager.Instance.FetchInitialData(delegate(bool obj1)
         {
             //Acutally needed code
