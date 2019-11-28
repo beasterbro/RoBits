@@ -35,7 +35,7 @@ public class BehaviorLabController : MonoBehaviour
     void Start()
     {
         DataManager.Instance.Latch(this);
-        if (!DataManager.Instance.InitialFetchPerformed) DataManager.Instance.BypassAuth("DEV lucaspopp0@gmail.com");
+        if (!DataManager.Instance.AuthEstablished) DataManager.Instance.BypassAuth("DEV lucaspopp0@gmail.com");
         StartCoroutine(DataManager.Instance.FetchInitialDataIfNecessary(success =>
         {
             if (!success) return;
@@ -207,7 +207,7 @@ public class BehaviorLabController : MonoBehaviour
 
     public void BackToCustomizeMenu()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("Menu");
     }
 
     private IEnumerator LetStartThen(Action takeAction)

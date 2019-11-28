@@ -40,7 +40,7 @@ public class BattleController : MonoBehaviour
         winnerText.text = "Loading...";
 
         DataManager.Instance.Latch(this);
-        if (!DataManager.Instance.InitialFetchPerformed) DataManager.Instance.BypassAuth("DEV lucaspopp0@gmail.com");
+        if (!DataManager.Instance.AuthEstablished) DataManager.Instance.BypassAuth("DEV lucaspopp0@gmail.com");
 
         StartCoroutine(DataManager.Instance.FetchInitialDataIfNecessary(success =>
         {

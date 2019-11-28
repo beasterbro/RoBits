@@ -10,7 +10,7 @@ using UnityEngine.Networking;
 // Collects and manages necessary information that needs to be taken from the backend to the frontend and vice versa.
 public class DataManager
 {
-    
+
     private struct AuthResponse
     {
 
@@ -21,6 +21,7 @@ public class DataManager
     private static string baseUrl = "http://robits.us-east-2.elasticbeanstalk.com/api";
     private static DataManager shared;
 
+    private bool authEstablished;
     private bool initialDataFetched;
     private string bearerToken;
     private MonoBehaviour runner;
@@ -39,7 +40,7 @@ public class DataManager
     public PartInfo[] AllParts => allParts;
     public BotInfo[] AllBots => allBots;
     public TeamInfo[] UserTeams => userTeams;
-    public bool InitialFetchPerformed => initialDataFetched;
+    public bool AuthEstablished => authEstablished;
 
     private DataManager() { }
 
@@ -50,7 +51,7 @@ public class DataManager
     // Adds the necessary headers to the request
     private UnityWebRequest WrapRequest(UnityWebRequest request)
     {
-        request.SetRequestHeader("Authorization", "Bearer " + bearerToken);
+        if (authEstablished && bearerToken != null) request.SetRequestHeader("Authorization", "Bearer " + bearerToken);
         request.SetRequestHeader("Content-Type", "application/json");
         request.SetRequestHeader("Accept", "application/json");
         return request;
@@ -98,6 +99,8 @@ public class DataManager
     // Exchange a Google ID token for a bearer token
     public IEnumerator EstablishAuth(string googleToken, Action<bool> callback = null)
     {
+        authEstablished = false;
+        
         var request = BasicGet("/verify?id_token=" + googleToken);
         yield return request.SendWebRequest();
 
@@ -105,6 +108,7 @@ public class DataManager
         {
             var response = JsonUtils.DeserializeObject<AuthResponse>(request.downloadHandler.text);
             bearerToken = response.token;
+            authEstablished = true;
         }, callback);
     }
 
@@ -112,6 +116,7 @@ public class DataManager
     public void BypassAuth(string token)
     {
         bearerToken = token;
+        authEstablished = true;
     }
 
     public IEnumerator FetchInitialDataIfNecessary(Action<bool> callback = null)
