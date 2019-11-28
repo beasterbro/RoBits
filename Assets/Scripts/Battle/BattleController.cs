@@ -36,6 +36,8 @@ public class BattleController : MonoBehaviour
 
     void Start()
     {
+        BehaviorExecutor.LoadExecutionFunctions();
+        
         winner = -1;
         winnerText.text = "Loading...";
 
