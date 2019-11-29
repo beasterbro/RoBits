@@ -24,7 +24,7 @@ public class ShootAtBlock : DropdownBlock
 
     protected override List<string> Supplier()
     {
-        List<string> weapons = new List<string>();
+        HashSet<string> weapons = new HashSet<string>();
         if (BehaviorLabController.GetShared().currentBot != null)
         {
             foreach (PartInfo part in BehaviorLabController.GetShared().currentBot.Equipment)
@@ -32,7 +32,7 @@ public class ShootAtBlock : DropdownBlock
                 if (PartType.Weapon == part.PartType) weapons.Add(part.ResourceName);
             }
         }
-        return weapons;
+        return new List<string>(weapons);
     }
 
     protected override string Type() => "ShootAt";
