@@ -7,12 +7,12 @@ public class MainMenu : MonoBehaviour
     //Changes the scene to the battle scene
     public void PlayGame()
     {
-        SceneManager.LoadScene("Simulation");
+        SceneManager.LoadScene(Scenes.Simulation);
     }
 
     public void LoadBehaviorLab()
     {
-        SceneManager.LoadScene("BehaviorLab");
+        SceneManager.LoadScene(Scenes.BehaviorLab);
     }
 
     public void QuitGame()

@@ -207,7 +207,7 @@ public class BehaviorLabController : MonoBehaviour
 
     public void BackToCustomizeMenu()
     {
-        SceneManager.LoadScene("Menu");
+        SceneManager.LoadScene(Scenes.Menu);
     }
 
     private IEnumerator LetStartThen(Action takeAction)

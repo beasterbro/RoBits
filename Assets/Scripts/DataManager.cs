@@ -101,7 +101,7 @@ public class DataManager
     {
         authEstablished = false;
         
-        var request = BasicGet("/verify?id_token=" + googleToken);
+        var request = BasicPost("/verify?id_token=" + googleToken);
         yield return request.SendWebRequest();
 
         SimpleCallback(request, () =>
