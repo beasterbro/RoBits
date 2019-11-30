@@ -210,10 +210,27 @@ public class DataManager
 
     public IEnumerator FetchUser(string uid, Action<bool, UserInfo> callback)
     {
-        if (uid == currentUser.ID) callback.Invoke(true, currentUser);
+        if (currentUser != null && uid == currentUser.ID) callback.Invoke(true, currentUser);
         else
         {
             var request = BasicGet("/user/" + uid);
+            yield return request.SendWebRequest();
+
+            UserInfo userResponse = null;
+
+            SimpleCallback(request, () =>
+            {
+                userResponse = JsonUtils.DeserializeObject<UserInfo>(request.downloadHandler.text);
+            }, success => callback.Invoke(success, userResponse));
+        }
+    }
+
+    public IEnumerator SearchUser(string username, Action<bool, UserInfo> callback)
+    {
+        if (currentUser != null && username == currentUser.Username) callback.Invoke(true, currentUser);
+        else
+        {
+            var request = BasicGet("/user/search/" + username);
             yield return request.SendWebRequest();
 
             UserInfo userResponse = null;
