@@ -11,9 +11,17 @@ using UnityEngine.Networking;
 public class DataManager
 {
 
+    private struct AuthResponse
+    {
+
+        public string name, email, token;
+
+    }
+
     private static string baseUrl = "http://robits.us-east-2.elasticbeanstalk.com/api";
     private static DataManager shared;
 
+    private bool authEstablished;
     private bool initialDataFetched;
     private string bearerToken;
     private MonoBehaviour runner;
@@ -32,7 +40,7 @@ public class DataManager
     public PartInfo[] AllParts => allParts;
     public BotInfo[] AllBots => allBots;
     public TeamInfo[] UserTeams => userTeams;
-    public bool InitialFetchPerformed => initialDataFetched;
+    public bool AuthEstablished => authEstablished;
 
     private DataManager() { }
 
@@ -43,7 +51,7 @@ public class DataManager
     // Adds the necessary headers to the request
     private UnityWebRequest WrapRequest(UnityWebRequest request)
     {
-        request.SetRequestHeader("Authorization", "Bearer " + bearerToken);
+        if (authEstablished && bearerToken != null) request.SetRequestHeader("Authorization", "Bearer " + bearerToken);
         request.SetRequestHeader("Content-Type", "application/json");
         request.SetRequestHeader("Accept", "application/json");
         return request;
@@ -88,10 +96,27 @@ public class DataManager
         });
     }
 
+    // Exchange a Google ID token for a bearer token
+    public IEnumerator EstablishAuth(string googleToken, Action<bool> callback = null)
+    {
+        authEstablished = false;
+        
+        var request = BasicPost("/verify?id_token=" + googleToken);
+        yield return request.SendWebRequest();
+
+        SimpleCallback(request, () =>
+        {
+            var response = JsonUtils.DeserializeObject<AuthResponse>(request.downloadHandler.text);
+            bearerToken = response.token;
+            authEstablished = true;
+        }, callback);
+    }
+
     // Adds the auth header to the HTTP client
-    public void EstablishAuth(string token)
+    public void BypassAuth(string token)
     {
         bearerToken = token;
+        authEstablished = true;
     }
 
     public IEnumerator FetchInitialDataIfNecessary(Action<bool> callback = null)
