@@ -82,7 +82,7 @@ public class StoreController : MonoBehaviour
     {
    
        
-       if (!DataManager.Instance.InitialFetchPerformed) DataManager.Instance.EstablishAuth("DEV testUser@gmail.com");
+       if (!DataManager.Instance.AuthEstablished) DataManager.Instance.EstablishAuth("DEV testUser@gmail.com");
        StartCoroutine(DataManager.Instance.FetchInitialDataIfNecessary(success =>
        {
            if (!success) return;

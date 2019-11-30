@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Login.unity
+    guid: 3c1cbeecc02204ffbb88faaceaa867f9
+  - enabled: 1
     path: Assets/Scenes/Menu.unity
     guid: cb01d9d3e70ac8a44942830b87479531
   - enabled: 1
@@ -14,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/BehaviorLab.unity
     guid: cbc39ce154faa11418a5548365c94145
+  - enabled: 1
+    path: Assets/Scenes/Minigame.unity
+    guid: 3e2300ec63e132841aacebd76d6cab56
   m_configObjects: {}

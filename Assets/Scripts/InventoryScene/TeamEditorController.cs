@@ -34,7 +34,7 @@ public class TeamEditorController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (!DataManager.Instance.InitialFetchPerformed) DataManager.Instance.EstablishAuth("DEV testUser@gmail.com");
+        if (!DataManager.Instance.AuthEstablished) DataManager.Instance.EstablishAuth("DEV testUser@gmail.com");
         
            
         StartCoroutine(DataManager.Instance.FetchInitialData(success =>
@@ -115,7 +115,7 @@ public class TeamEditorController : MonoBehaviour
     public void AddToTeam(int teamSlot)
     {
         //TODO: Make method to update backend info with frontend info
-       // DataManager.Instance.UserTeams[team].Bots[teamSlot] = AddMenu.BotInfo;
+        // DataManager.Instance.UserTeams[team].Bots[teamSlot] = AddMenu.BotInfo;
         if (AddSubMenu.Team == 1)
         {
             team1[teamSlot].BotInfo = AddMenu.BotInfo;
@@ -234,9 +234,14 @@ public class TeamEditorController : MonoBehaviour
 
     public void UpdateUserTeams()
     {
-           // DataManager.Instance.UserTeams[0].Bots = team1.ToArray();
-            //DataManager.Instance.UserTeams[1].Bots = team2.ToArray();
-            //DataManager.Instance.UserTeams[2].Bots = team3.ToArray();
-        
+        TeamInfo[] userTeams = DataManager.Instance.UserTeams;
+        TeamInfo currentTeam = userTeams[0];
+        TeamInfo teamInfo = new TeamInfo(currentTeam.ID,currentTeam.Name,currentTeam.DateLastMaintained,
+            team1.ConvertAll(teamBot => teamBot.BotInfo).ToArray(),currentTeam.Rank,currentTeam.Tier,currentTeam.UserID);
+        DataManager.Instance.UpdateTeam(teamInfo, success =>
+        {
+            if (!success) return;
+            
+        });
     }
 }
