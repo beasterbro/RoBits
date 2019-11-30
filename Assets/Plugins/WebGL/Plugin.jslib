@@ -2,12 +2,13 @@ var plugin = {
 
     ShowLoginButton: function()
     {
-        console.log(window);
-        window.document.getElementsByClassName('g-signin2')[0].style.display = 'auto';
+        if (window.document.getElementsByClassName('g-signin2').length > 0)
+            window.document.getElementsByClassName('g-signin2')[0].style.display = 'block';
     },
 
     HideLoginButton: function() {
-        window.document.getElementsByClassName('g-signin2')[0].style.display = 'none';
+        if (window.document.getElementsByClassName('g-signin2').length > 0)
+            window.document.getElementsByClassName('g-signin2')[0].style.display = 'none';
     }
 
 };
