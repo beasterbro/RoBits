@@ -432,10 +432,16 @@ public class InventoryController : MonoBehaviour
     //TODO: Must Call This Before Disabling Inventory
     public void UpdateUserBots()
     {
+        DataManager.Instance.Latch(latch);
         foreach (var bot in userBots)
         {
-            DataManager.Instance.Latch(latch);
-            StartCoroutine(DataManager.Instance.UpdateBot(bot));
+            StartCoroutine(DataManager.Instance.UpdateBot(bot, success =>
+            {
+                if (!success) return;
+                Console.WriteLine("success");
+                    
+                
+            }));
         }
 
 
@@ -446,16 +452,17 @@ public class InventoryController : MonoBehaviour
         UpdateUserBots();
     }
 
+    private void OnDisable()
+    {
+       // UpdateUserBots();
+        StopAllCoroutines();
+    }
+
     private void UpdateUserInformation()
     {
         UpdateUserBots();
-        UpdateUserInventory();
+       
     }
 
-    private void UpdateUserInventory()
-    {
-        //TODO: Have user inventory update after all parts have been equipped
-        var updatedUserInventory = inventory.ItemSlots.ToList().ConvertAll(input => input.Item.InventoryItem);
-        //DataManager.Instance.UserInventory;
-    }
+   
 }

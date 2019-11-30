@@ -7,67 +7,80 @@ using UnityEngine.Serialization;
 
 public class TeamEditorController : MonoBehaviour
 {
-    [SerializeField] private List<GameObject> botPreviews;
+    
+    [SerializeField] private List<TeamEditorUserBot> userBotArray;
     [SerializeField] private GameObject team1parent;
     [SerializeField] private GameObject team2parent;
     [SerializeField] private GameObject team3parent;
 
+    [SerializeField] private RemoveMenu removeMenu;
+    [SerializeField] private AddToTeamMenu AddMenu;
+    [SerializeField] private AddToTeamSubMenu AddSubMenu;
+
     private List<TeamBot> team1 = new List<TeamBot>();
     private List<TeamBot> team2 = new List<TeamBot>();
     private List<TeamBot> team3 = new List<TeamBot>();
+    
+    private List<GameObject> botPreviews = new List<GameObject>();
     private List<BotInfo> userBots;
+    private TeamInfo[] userTeams;
 
+
+    private PartInfo defaultBody ;
+    private BotInfo defaultBotInfo  ;
     public event Action<TeamBot> OnLeftClickEvent;
     public event Action<TeamBot> OnRightClickEvent;
     
     // Start is called before the first frame update
     void Start()
     {
-      //  if (!DataManager.Instance.InitialFetchPerformed)
+        if (!DataManager.Instance.InitialFetchPerformed) DataManager.Instance.EstablishAuth("DEV testUser@gmail.com");
+        
+           
+        StartCoroutine(DataManager.Instance.FetchInitialData(success =>
         {
-            DataManager.Instance.EstablishAuth("DEV testUser@gmail.com");
-            StartCoroutine(DataManager.Instance.FetchInitialData(delegate(bool obj)
-            {
-                userBots = new List<BotInfo>(DataManager.Instance.AllBots);
-
-                BotPreviewGenerator.BotGenerators = botPreviews;
-                BotPreviewGenerator.CreateAllBotImages();
-                InstantiateTeams();
-            }));
-            StopCoroutine(DataManager.Instance.FetchInitialData());
-        }
-
-     //   else
-        {
+            if (!success) return;
+                
             userBots = new List<BotInfo>(DataManager.Instance.AllBots);
 
+
+            IEnumerator<BotInfo> userBotEnum = userBots.GetEnumerator();
+            userBotEnum.MoveNext();
+            foreach (var bot in userBotArray)
+            {
+                bot.BotInfo = userBotEnum.Current;
+                botPreviews.Add(bot.gameObject);
+                userBotEnum.MoveNext();
+            }
+            userBotEnum.Dispose();
+            
+            userTeams = DataManager.Instance.UserTeams;
             BotPreviewGenerator.BotGenerators = botPreviews;
             BotPreviewGenerator.CreateAllBotImages();
+            defaultBody  = DataManager.Instance.GetPart(100);
+            defaultBotInfo = new BotInfo(0,"default",0,new List<PartInfo>(),defaultBody,new List<BehaviorInfo>() );
             InstantiateTeams();
-        }
-        
+        }));
+        StopCoroutine(DataManager.Instance.FetchInitialData());     
+   
     }
 
-    private void Update()
-    {
-
-    }
 
     void InstantiateTeams()
     {
         AddTeamBotsToTeams();
-        AddUserBotsToTeamBots();
-        AddImagesToTeamBots();
+        AddUserTeamBotsToTeamBots();
+        RefreshTeamBotPreviews();
         AddActionsToBots();
     }
 
-    private void AddImagesToTeamBots()
+    private void RefreshTeamBotPreviews()
     {
-         var teamBots = team1.Concat(team2).Concat(team3).ToList();
-                foreach (var teamBot in teamBots)
-                {
-                    BotPreviewGenerator.CreateBotImage(teamBot.BotInfo,teamBot.gameObject);
-                }
+        var teamBots = team1.Concat(team2).Concat(team3).ToList();
+        foreach (var teamBot in teamBots)
+        {
+            BotPreviewGenerator.CreateBotImage(teamBot.BotInfo,teamBot.gameObject);
+        }
     }
 
     private void AddActionsToBots()
@@ -75,48 +88,155 @@ public class TeamEditorController : MonoBehaviour
         var teamBots = team1.Concat(team2).Concat(team3).ToList();
         foreach (var teamBot in teamBots)
         {//TODO: Removes bots from a given team, and updates previews, and updates user teams
-          //  teamBot.OnRightClickEvent += RemoveFromTeam;
+            teamBot.OnRightClickEvent += ShowRemoveMenu;
+            teamBot.OnLeftClickEvent += ShowRemoveMenu;
+        }
+
+        foreach (var userBot in userBotArray)
+        {
+            userBot.OnRightClickEvent += ShowAddMenu;
+            userBot.OnLeftClickEvent += ShowAddMenu;
         }
         
     }
 
-    private void AddUserBotsToTeamBots()
+    private void ShowAddMenu(TeamEditorUserBot userBot)
     {
-        for (int i = 0; i < userBots.Count; i++)
+        AddMenu.transform.position = MousePosition();
+        AddMenu.ShowAddToTeamMenu(userBot.BotInfo);
+    }
+
+    public void ShowAddSubMenu(int team)
+    {
+        AddSubMenu.transform.position = MousePosition();
+        AddSubMenu.ShowAddToTeamSubMenu(team);
+    }
+
+    public void AddToTeam(int teamSlot)
+    {
+        //TODO: Make method to update backend info with frontend info
+       // DataManager.Instance.UserTeams[team].Bots[teamSlot] = AddMenu.BotInfo;
+        if (AddSubMenu.Team == 1)
         {
-            if (0 <= i && i <= 2)
-            {
-                team1[i].BotInfo = userBots[i];
-                BotPreviewGenerator.CreateBotImage(team1[i].BotInfo,team1[i].gameObject);
-            }
-            if (3 <= i && i <= 5)
-            {
-                team2[i-3].BotInfo = userBots[i];
-                BotPreviewGenerator.CreateBotImage(team2[i-3].BotInfo,team2[i-3].gameObject);
-            }
-            if (6 <= i && i <= 8)
-            {
-                team1[i-6].BotInfo = userBots[i];
-                BotPreviewGenerator.CreateBotImage(team3[i-6].BotInfo,team3[i-6].gameObject);
-            }
+            team1[teamSlot].BotInfo = AddMenu.BotInfo;
         }
+        
+        if (AddSubMenu.Team  == 2)
+        {
+            team2[teamSlot].BotInfo = AddMenu.BotInfo;
+        }
+        
+        if (AddSubMenu.Team  == 3)
+        {
+            team3[teamSlot].BotInfo = AddMenu.BotInfo;
+        }
+        CancelAddSubMenu();
+        RefreshTeamBotPreviews();
+    }
+
+    public void CancelAddMenu()
+    {
+        AddMenu.CancelAddToTeamMenu();
+    }
+
+    public void CancelAddSubMenu()
+    {
+        AddSubMenu.CancelAddToTeamSubMenu();
+        AddMenu.CancelAddToTeamMenu();
+    }
+
+    private void ShowRemoveMenu(TeamBot teamBot)
+    {
+        removeMenu.transform.position = MousePosition();
+        removeMenu.ShowRemoveMenu(teamBot);
+    }
+    
+    public void CancelRemoveMenu()
+    {
+        removeMenu.CancelRemoveMenu();
+    }
+
+    public  void Remove()
+    {
+        RemoveBotFromTeam(removeMenu.TeamBot);
+        RefreshTeamBotPreviews();
+    }
+    void RemoveBotFromTeam(TeamBot teamBot)
+    {
+        if (userTeams[0]==teamBot.CurrentTeam)
+        {
+            int i = team1.FindIndex( bot => bot.BotInfo == teamBot.BotInfo);
+            team1[i].BotInfo = defaultBotInfo;
+        }
+        
+        if (teamBot.CurrentTeam == userTeams[1])
+        {
+            int i = team2.FindIndex( bot => bot.BotInfo == teamBot.BotInfo);
+            team2[i].BotInfo = defaultBotInfo;
+        }
+        
+        if (teamBot.CurrentTeam == userTeams[2])
+        {
+            int i = team3.FindIndex( bot => bot.BotInfo == teamBot.BotInfo);
+            team3[i].BotInfo = defaultBotInfo;
+        }
+        removeMenu.gameObject.SetActive(false);
+    }
+    
+    Vector3 MousePosition()
+    {
+        var v3 = Input.mousePosition;
+        v3.z = 1;
+        v3 = Camera.main.ScreenToWorldPoint(v3);
+        return v3;
+    }
+
+    private void AddUserTeamBotsToTeamBots()
+    {
+        var allTeams = new List<List<TeamBot>>(){team1,team2,team3};
+        List<List<TeamBot>>.Enumerator allTeamsEnum = allTeams.GetEnumerator();
+        allTeamsEnum.MoveNext();
+        
+        foreach (var teamInfo in userTeams)
+        {
+            var currTeamEnum = allTeamsEnum.Current.GetEnumerator();
+            currTeamEnum.MoveNext();
+            foreach (var bot in teamInfo.Bots)
+            {
+                currTeamEnum.Current.BotInfo = bot;
+                currTeamEnum.Current.CurrentTeam = teamInfo;
+                currTeamEnum.MoveNext();
+            }
+
+            allTeamsEnum.MoveNext();
+        }
+        
+        allTeamsEnum.Dispose();
     }
 
     private void AddTeamBotsToTeams()
     {
-       foreach (var teamBot in team1parent.GetComponentsInChildren<TeamBot>())
-               {
-                   team1.Add(teamBot);
-               }
+        foreach (var teamBot in team1parent.GetComponentsInChildren<TeamBot>())
+        {
+            team1.Add(teamBot);
+        }
                
-               foreach (var teamBot in team2parent.GetComponentsInChildren<TeamBot>())
-               {
-                   team2.Add(teamBot);
-               }
+        foreach (var teamBot in team2parent.GetComponentsInChildren<TeamBot>())
+        {
+            team2.Add(teamBot);
+        }
                
-               foreach (var teamBot in team3parent.GetComponentsInChildren<TeamBot>())
-               {
-                   team3.Add(teamBot);
-               }
+        foreach (var teamBot in team3parent.GetComponentsInChildren<TeamBot>())
+        {
+            team3.Add(teamBot);
+        }
+    }
+
+    public void UpdateUserTeams()
+    {
+           // DataManager.Instance.UserTeams[0].Bots = team1.ToArray();
+            //DataManager.Instance.UserTeams[1].Bots = team2.ToArray();
+            //DataManager.Instance.UserTeams[2].Bots = team3.ToArray();
+        
     }
 }

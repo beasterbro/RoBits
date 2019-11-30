@@ -252,4 +252,8 @@ public class StoreController : MonoBehaviour
             RefreshCurrency();
         }
 
-    }
+        private void OnDisable()
+        {
+            StopAllCoroutines();
+        }
+}
