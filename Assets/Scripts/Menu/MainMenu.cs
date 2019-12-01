@@ -15,6 +15,11 @@ public class MainMenu : MonoBehaviour
         SceneManager.LoadScene(Scenes.BehaviorLab);
     }
 
+    public void LoadMainMenu()
+    {
+        SceneManager.LoadScene(0);
+    }
+
     public void QuitGame()
     {
         Application.Quit();

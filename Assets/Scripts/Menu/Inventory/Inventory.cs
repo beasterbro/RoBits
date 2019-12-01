@@ -177,7 +177,9 @@ public class Inventory : MonoBehaviour
     {
         foreach (var slot in itemSlots)
         {
+           
             slot.Item = null;
+           // slot.Amount = 0;
         }
     }
 }

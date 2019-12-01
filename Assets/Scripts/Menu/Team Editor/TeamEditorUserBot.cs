@@ -3,25 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-
-public class TeamBot : MonoBehaviour , IPointerClickHandler
+public class TeamEditorUserBot : MonoBehaviour , IPointerClickHandler
 {
-    private BotInfo botInfo;
-    private int currentTeam;
 
-    public int CurrentTeam
-    {
-        get => currentTeam;
-        set => currentTeam = value;
-    }
+    private BotInfo botInfo;
+
 
     public BotInfo BotInfo
     {
         get => botInfo;
         set => botInfo = value;
     }
-    public event Action<TeamBot> OnLeftClickEvent;
-    public event Action<TeamBot> OnRightClickEvent;
+    public event Action<TeamEditorUserBot> OnLeftClickEvent;
+    public event Action<TeamEditorUserBot> OnRightClickEvent;
     
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -41,4 +35,6 @@ public class TeamBot : MonoBehaviour , IPointerClickHandler
             }
         }
     }
+
+
 }
