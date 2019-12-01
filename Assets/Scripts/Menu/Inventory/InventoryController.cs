@@ -368,8 +368,8 @@ public class InventoryController : MonoBehaviour
     //Called First when entering playmode, before the first frame
     void Start()
     {
-        DataManager.Instance.Latch(latch);
-        if (!DataManager.Instance.AuthEstablished) DataManager.Instance.EstablishAuth("DEV testUser@gmail.com");
+        DataManager.Instance.Latch(this);
+        if (!DataManager.Instance.AuthEstablished) DataManager.Instance.BypassAuth("DEV testUser@gmail.com");
         StartCoroutine(DataManager.Instance.FetchInitialDataIfNecessary(success =>
         {
             if (!success) return;
@@ -439,8 +439,8 @@ public class InventoryController : MonoBehaviour
             {
                 if (!success) return;
                 Console.WriteLine("success");
-                    
-                
+
+
             }));
         }
 
