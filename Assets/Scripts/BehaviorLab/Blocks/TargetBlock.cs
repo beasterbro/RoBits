@@ -1,25 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 [AddComponentMenu("Interface Objects/Blocks/Target")]
 public class TargetBlock : DropdownBlock
 {
     [Tooltip("The sensor that provides this block with targets.")]
     [SerializeField] private string sensor;
-    private int n = 1;
+    [Tooltip("The input field that specifies the n for the nth target.")]
+    [SerializeField] private InputField nthPlaceInput;
 
     protected override Dictionary<string, string> TypeAttributes()
     {
         Dictionary<string, string> attr = base.TypeAttributes();
-        attr.Add("n", n.ToString());
+        attr.Add("n", nthPlaceInput.text);
         return attr;
     }
 
     protected override void ApplyTypeAttributes()
     {
         base.ApplyTypeAttributes();
-        n = int.Parse(info.TypeAttrs["n"] ?? "1");
+        nthPlaceInput.text = info.TypeAttrs["n"] ?? "1";
     }
 
     public override bool IsValid()
@@ -32,9 +34,10 @@ public class TargetBlock : DropdownBlock
         return ReturnType.BOT;
     }
 
+    // TODO: this function will be separated from Block to be used independently in Battle
     public BehaviorData GetTargetedBot(BotController myself)
     {
-        return new BehaviorData(TargetingManager.NthTarget(n, CurrentValue, myself));
+        return new BehaviorData(TargetingManager.NthTarget(int.Parse(info.TypeAttrs["n"]), CurrentValue, myself));
     }
 
     protected override List<string> Supplier()
