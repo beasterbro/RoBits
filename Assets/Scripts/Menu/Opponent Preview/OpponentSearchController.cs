@@ -10,6 +10,7 @@ public class OpponentSearchController : MonoBehaviour
     [SerializeField] private Button searchButton;
     [SerializeField] private Text resultText;
     [SerializeField] private Button previewTeamsButton;
+    [SerializeField] private SelectOpposingMenu _selectOpposingMenu;
 
     private UserInfo opponent;
     private void Start()
@@ -74,6 +75,11 @@ public class OpponentSearchController : MonoBehaviour
             
             searchButton.gameObject.SetActive(true);
         }));
+    }
+
+    public void SendOpposingTeamInfo()
+    {
+        _selectOpposingMenu.enemy = opponent;
     }
 
 }

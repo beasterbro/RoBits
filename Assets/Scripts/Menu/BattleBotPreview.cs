@@ -6,15 +6,20 @@ public class BattleBotPreview : MonoBehaviour
 {
     [SerializeField] private List<GameObject> BotPreviews;
 
-    private TeamInfo[] userTeams;
+    public TeamInfo[] userTeams;
 
     private void Start()
     {
         StartCoroutine(DataManager.Instance.UpdateCurrentUser(success =>
         {
             if (!success) return;
-            
-            userTeams = DataManager.Instance.UserTeams;
+
+            if (userTeams==null)
+            {
+                userTeams = DataManager.Instance.UserTeams;
+            }
+
+           
 
             IEnumerator<GameObject> BotPreviewEnum = BotPreviews.GetEnumerator();
             BotPreviewEnum.MoveNext();
@@ -39,7 +44,10 @@ public class BattleBotPreview : MonoBehaviour
         {
             if (!success) return;
             
-            userTeams = DataManager.Instance.UserTeams;
+            if (userTeams==null)
+            {
+                userTeams = DataManager.Instance.UserTeams;
+            }
 
             IEnumerator<GameObject> BotPreviewEnum = BotPreviews.GetEnumerator();
             BotPreviewEnum.MoveNext();
