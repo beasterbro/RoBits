@@ -43,7 +43,11 @@ public class TeamInfo
         lastMaintained = DateTime.Now;
     }
 
-    public BotInfo[] Bots => bots;
+    public BotInfo[] Bots
+    {
+        get => bots;
+        set => bots = value;
+    }
 
     public double Rank
     {
