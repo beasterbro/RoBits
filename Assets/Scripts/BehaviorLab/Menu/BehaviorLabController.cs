@@ -41,12 +41,22 @@ public class BehaviorLabController : MonoBehaviour
             if (!success) return;
 
             currentBot = DataManager.Instance.AllBots[0];
+            UpdateBotSpecificBlocks();
+
             if (currentBot.Behaviors.Count > 0) DisplayBehaviorForTrigger(currentBot.Behaviors[0].Trigger);
 
             UpdateTriggerLists();
             existingTriggersList.gameObject.SetActive(true);
             newTriggersList.gameObject.SetActive(false);
         }));
+    }
+
+    private void UpdateBotSpecificBlocks()
+    {
+        // Update which blocks are active based on what parts the current bot has
+        BlockSupplier.UpdateActivity();
+        // Update shootAt dropdown items
+        ShootAtBlock.UpdateDropdownItems();
     }
 
     public void ToggleBehaviors()
