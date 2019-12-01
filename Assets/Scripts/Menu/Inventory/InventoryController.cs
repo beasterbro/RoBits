@@ -461,8 +461,12 @@ public class InventoryController : MonoBehaviour
     private void UpdateUserInformation()
     {
         UpdateUserBots();
-       
+        UpdateUserInventory();
+
     }
 
-   
+    private void UpdateUserInventory()
+    {
+       //TODO:Finish this last method
+    }
 }
