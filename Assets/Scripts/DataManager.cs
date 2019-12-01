@@ -180,6 +180,18 @@ public class DataManager
         }, callback);
     }
 
+    public IEnumerator UpdateUserInventory(InventoryItem[] updatedInventory, Action<bool> callback = null)
+    {
+        var updateBody = JsonUtils.SerializeObject(updatedInventory);
+        var request = BasicPut("/inventory", updateBody);
+        yield return request.SendWebRequest();
+        
+        SimpleCallback(request, () =>
+        {
+            inventory = new List<InventoryItem>(updatedInventory);
+        }, callback);
+    }
+
     // Must be called after calling FetchAllParts
     private IEnumerator FetchUserTeams(Action<bool> callback = null)
     {
