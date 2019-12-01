@@ -7,6 +7,9 @@ using UnityEngine.UI;
 public class BattleController : MonoBehaviour
 {
 
+    public static TeamInfo playerTeam;
+    public static TeamInfo opponentTeam;
+
     private static BattleController currentInstance;
 
     public GameObject team1HUD;
@@ -41,28 +44,19 @@ public class BattleController : MonoBehaviour
 
         DataManager.Instance.Latch(this);
         if (!DataManager.Instance.AuthEstablished) DataManager.Instance.BypassAuth("DEV lucaspopp0@gmail.com");
+        
+        huds = new[] { team1HUD, team2HUD };
+        locations = new[] {playerLocations, enemyLocations};
 
-        StartCoroutine(DataManager.Instance.FetchInitialDataIfNecessary(success =>
+        if (playerTeam != null && opponentTeam != null)
         {
-            if (!success) return;
-
-            huds = new[] {team1HUD, team2HUD};
-            locations = new[] {playerLocations, enemyLocations};
-            teams[0] = DataManager.Instance.GetTeam(0);
-
-            StartCoroutine(DataManager.Instance.GetOtherUserTeam("axs1477", 0, (success2, enemyTeam) =>
-            {
-                if (!success2) return;
-
-                teams[1] = enemyTeam;
-                LoadTeam(0);
-                LoadTeam(1);
-
-                SetAllBotsEnabled(false);
-
-                StartCoroutine(BeginBattle());
-            }));
-        }));
+            teams = new[] {playerTeam, opponentTeam};
+            LoadTeam(0);
+            LoadTeam(1);
+            SetAllBotsEnabled(false);
+            StartCoroutine(BeginBattle());
+        }
+        else LoadDefaultTeams();
     }
 
     private IEnumerator BeginBattle()
@@ -133,4 +127,27 @@ public class BattleController : MonoBehaviour
         return bots[0].Concat(bots[1]);
     }
 
+    private void LoadDefaultTeams()
+    {
+        StartCoroutine(DataManager.Instance.FetchInitialDataIfNecessary(success =>
+        {
+            if (!success) return;
+                
+            teams[0] = DataManager.Instance.GetTeam(0);
+
+            StartCoroutine(DataManager.Instance.GetOtherUserTeam("axs1477", 0, (success2, enemyTeam) =>
+            {
+                if (!success2) return;
+
+                teams[1] = enemyTeam;
+                LoadTeam(0);
+                LoadTeam(1);
+
+                SetAllBotsEnabled(false);
+
+                StartCoroutine(BeginBattle());
+            }));
+        }));
+    }
+    
 }
