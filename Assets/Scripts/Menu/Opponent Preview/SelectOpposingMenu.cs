@@ -7,9 +7,8 @@ public class SelectOpposingMenu : MonoBehaviour
     [SerializeField] private List<GameObject> BotPreviews;
 
     public TeamInfo[] enemyTeams;
-
     public UserInfo enemy;
-    // Start is called before the first frame update
+    
     void Start()
     {
         StartCoroutine(DataManager.Instance.GetOtherUserTeams(enemy.ID, ( success, opponentTeams ) =>
@@ -38,8 +37,7 @@ public class SelectOpposingMenu : MonoBehaviour
 
     public void SelectOpposingTeam(int team)
     {
-        //TODO: have this call battle with team's info
+        BattleController.opponentTeam = enemyTeams[team];
     }
-
 
 }
