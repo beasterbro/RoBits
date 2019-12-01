@@ -359,14 +359,30 @@ public class InventoryController : MonoBehaviour
     }
 
 
-    private void Update()
-    {
-        RefreshCurrency();
-    }
 
 
     //Called First when entering playmode, before the first frame
     void Start()
+    {
+        DataManager.Instance.Latch(this);
+        if (!DataManager.Instance.AuthEstablished) DataManager.Instance.BypassAuth("DEV testUser@gmail.com");
+        StartCoroutine(DataManager.Instance.FetchInitialDataIfNecessary(success =>
+        {
+            if (!success) return;
+
+            userInventory = DataManager.Instance.UserInventory;
+            userBots = new List<BotInfo>(DataManager.Instance.AllBots);
+            SetActiveBot(0);
+            CreateAllBotImages();
+
+            RefreshCurrency();
+            RefreshInventory();
+            RefreshEquipment();
+            RefreshBotInfo();
+        }));
+    }
+    
+    private void OnEnable()
     {
         DataManager.Instance.Latch(this);
         if (!DataManager.Instance.AuthEstablished) DataManager.Instance.BypassAuth("DEV testUser@gmail.com");
@@ -396,9 +412,15 @@ public class InventoryController : MonoBehaviour
     //Called on start to add all of the items in the user's inventory to the inventory panel
     public void RefreshInventory()
     {
-        ClearInventory();
-        StartCoroutine(DataManager.Instance.FetchUserInventory(delegate(bool obj)
+        UpdateUserInventory();
+        StartCoroutine(DataManager.Instance.FetchUserInventory(success =>
         {
+            if (!success)
+            {
+                Debug.Log("Inventory Update Failed");
+                return;
+            }
+            ClearInventory();
             foreach (var inventoryItem in userInventory)
             {
                 inventory.AddItem((UserItemToItem(inventoryItem).GetCopy()));
@@ -413,12 +435,18 @@ public class InventoryController : MonoBehaviour
     }
 
     //Updates the shown currency value to the actual currency value
-    private void RefreshCurrency()
+    public void RefreshCurrency()
     {
-        StartCoroutine(DataManager.Instance.FetchInitialDataIfNecessary(success =>
+        StartCoroutine(DataManager.Instance.UpdateCurrentUser(success =>
         {
+            if (!success)
+            {
+                Debug.Log("No Currency");
+                return;
+            }
             Currency.text = DataManager.Instance.CurrentUser.Currency.ToString();
         }));
+
     }
 
     public void ChangeBotName()
@@ -449,16 +477,18 @@ public class InventoryController : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        UpdateUserBots();
+      UpdateUserInformation();
     }
 
     private void OnDisable()
     {
-       // UpdateUserBots();
-        StopAllCoroutines();
+       UpdateUserInformation();
+       
     }
 
-    private void UpdateUserInformation()
+   
+
+    public void UpdateUserInformation()
     {
         UpdateUserBots();
         UpdateUserInventory();
@@ -467,6 +497,28 @@ public class InventoryController : MonoBehaviour
 
     private void UpdateUserInventory()
     {
+        List<InventoryItem> currentUserInventory = new List<InventoryItem>();
+        
+        List<Item> items =inventory.ItemSlots.ToList().ConvertAll(slots => slots.Item);
+        foreach (var item in items)
+        {
+            if (item == null)
+            {
+                ;
+            }
+            else
+            {
+                currentUserInventory.Add(item.InventoryItem);
+            }
+        }
        //TODO:Finish this last method
+       StartCoroutine(DataManager.Instance.UpdateUserInventory(currentUserInventory.ToArray(), success =>
+       {
+           if (!success)
+           {
+               Debug.Log("Whoppsy");
+               return;
+           }
+       }));
     }
 }

@@ -102,11 +102,6 @@ public class StoreController : MonoBehaviour
 
     }
 
-    private void Update()
-    {
-        RefreshCurrency();
-    }
-
 
     //Called in editor on change, gathers all of the current buttons
     private void OnValidate()
@@ -243,7 +238,16 @@ public class StoreController : MonoBehaviour
 
         public void RefreshCurrency()
         {
-            UserCurrency.text = DataManager.Instance.CurrentUser.Currency.ToString();
+            StartCoroutine(DataManager.Instance.UpdateCurrentUser(success =>
+            {
+                if (!success)
+                {
+                    Debug.Log("No Currency");
+                    return;
+                }
+                UserCurrency.text = DataManager.Instance.CurrentUser.Currency.ToString();
+            }));
+
         }
 
         public void Buy()
