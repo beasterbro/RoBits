@@ -307,7 +307,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 214c1b4dfd7bf714ead1dd43a7fb2e26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 2.56, y: 0.75}
+  offset: {x: 2.56, y: 0.65}
   minimum: {x: 0, y: 0}
   boundary:
     transform: {fileID: 0}
