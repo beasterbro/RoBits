@@ -28,32 +28,30 @@ namespace TargetFunctions
 {
     internal class PriorityManager
     {
-        private static Dictionary<string, List<TargetPriority>> sensorTargets = new Dictionary<string, List<TargetPriority>>();
-        internal static Dictionary<TargetPriority, TargetFunction> targetFunctions = new Dictionary<TargetPriority, TargetFunction>();
+        private static Dictionary<string, List<Target>> sensorTargets = new Dictionary<string, List<Target>>();
+        internal static Dictionary<Target, PriorityFunction> targetFunctions = new Dictionary<Target, PriorityFunction>();
 
         static PriorityManager()
         {
-            // Add sensor specific target priorities here
+            // Add sensor specific target priorities here TODO: could use more
             {
-                AddTargets("ProximitySensor", TargetPriority.RANGE_SHORT, TargetPriority.RANGE_MEDIUM, TargetPriority.RANGE_LONG, TargetPriority.CLOSEST, TargetPriority.FARTHEST);
-                AddTargets("VisionSensor", TargetPriority.CLOSEST, TargetPriority.FARTHEST);
-                AddTargets("HealthSensor", TargetPriority.HEALTH_LOW, TargetPriority.HEALTH_HIGH);
-                AddTargets("ArmorSensor", TargetPriority.SHIELDS_LOW, TargetPriority.SHIELDS_HIGH, TargetPriority.SHIELDS_DOWN);
+                AddTargets("ProximitySensor", Target.CLOSEST, Target.FARTHEST);
+                AddTargets("VisionSensor", Target.CLOSEST, Target.FARTHEST);
             }
 
-            TargetFunctionHelper.AttachTargetFunctions();
+            PriorityFunctionHelper.AttachPriorityFunctions();
         }
 
-        private static void AddTargets(string sensor, params TargetPriority[] targets)
+        private static void AddTargets(string sensor, params Target[] targets)
         {
-            if (!sensorTargets.ContainsKey(sensor)) sensorTargets.Add(sensor, new List<TargetPriority>());
+            if (!sensorTargets.ContainsKey(sensor)) sensorTargets.Add(sensor, new List<Target>());
             sensorTargets[sensor].AddRange(targets);
         }
 
         internal static List<string> PrioritiesFrom(string sensor)
         {
             List<string> priorities = new List<string>();
-            foreach (TargetPriority priority in sensorTargets[sensor])
+            foreach (Target priority in sensorTargets[sensor])
             {
                 priorities.Add(TargetPriorityHelper.ToString(priority));
             }

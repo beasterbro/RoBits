@@ -6,51 +6,40 @@ using System;
 namespace TargetFunctions
 {
     // Enum + helper class to provide ease of managing priority functions
-    internal enum TargetPriority
+    internal enum Target
     {
         UNKNOWN, RANGE_SHORT, RANGE_MEDIUM, RANGE_LONG, CLOSEST, FARTHEST, HEALTH_LOW, HEALTH_HIGH, SHIELDS_LOW, SHIELDS_HIGH, SHIELDS_DOWN
     }
 
     internal class TargetPriorityHelper
     {
-        public static TargetPriority Parse(string priority)
+        public static Target Parse(string priority)
         {
-            foreach (TargetPriority targetPriority in Enum.GetValues(typeof(TargetPriority)))
+            foreach (Target targetPriority in Enum.GetValues(typeof(Target)))
             {
                 if (ToString(targetPriority).Equals(priority.ToLower())) return targetPriority;
             }
-            return TargetPriority.UNKNOWN;
+            return Target.UNKNOWN;
         }
 
-        internal static string ToString(TargetPriority targetPriority)
+        internal static string ToString(Target targetPriority)
         {
             return targetPriority.ToString().ToLower().Replace("_", string.Empty);
         }
     }
 
-    public delegate List<BotController> TargetFunction(BotController myself, List<BotController> them);
+    public delegate List<BotController> PriorityFunction(BotController myself, List<BotController> them);
 
     // Class to provide the implementations of each target priority function
-    internal class TargetFunctionHelper
+    internal class PriorityFunctionHelper
     {
-        internal static void AttachTargetFunctions()
+        internal static void AttachPriorityFunctions()
         {
-            AddFunction(TargetPriority.CLOSEST, Closest);
-            AddFunction(TargetPriority.FARTHEST, Farthest);
-
-            // TODO: AddFunction(TargetPriority.HEALTH_HIGH, null);
-            // TODO: AddFunction(TargetPriority.HEALTH_LOW, null);
-
-            // TODO: AddFunction(TargetPriority.RANGE_LONG, null);
-            // TODO: AddFunction(TargetPriority.RANGE_MEDIUM, null);
-            // TODO: AddFunction(TargetPriority.RANGE_SHORT, null);
-
-            // TODO: AddFunction(TargetPriority.SHIELDS_DOWN, null);
-            // TODO: AddFunction(TargetPriority.SHIELDS_HIGH, null);
-            // TODO: AddFunction(TargetPriority.SHIELDS_LOW, null);
+            AddFunction(Target.CLOSEST, Closest);
+            AddFunction(Target.FARTHEST, Farthest);
         }
 
-        private static void AddFunction(TargetPriority target, TargetFunction func)
+        private static void AddFunction(Target target, PriorityFunction func)
         {
             PriorityManager.targetFunctions.Add(target, func);
         }
