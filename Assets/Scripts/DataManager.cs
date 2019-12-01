@@ -100,7 +100,7 @@ public class DataManager
     public IEnumerator EstablishAuth(string googleToken, Action<bool> callback = null)
     {
         authEstablished = false;
-        
+
         var request = BasicPost("/verify?id_token=" + googleToken);
         yield return request.SendWebRequest();
 
@@ -311,7 +311,20 @@ public class DataManager
         var request = BasicPut("/teams/" + team.ID, updateBody);
         yield return request.SendWebRequest();
 
-        SimpleCallback(request, null, callback);
+        var botUpdateFailed = false;
+        if (!request.EncounteredError())
+        {
+            foreach (var bot in team.Bots)
+            {
+                yield return runner.StartCoroutine(UpdateBot(bot, success =>
+                {
+                    if (!success) botUpdateFailed = true;
+                }));
+            }
+        }
+
+        if (botUpdateFailed) callback?.Invoke(false);
+        else SimpleCallback(request, null, callback);
     }
 
     public IEnumerator GetOtherUserTeams(string uid, Action<bool, TeamInfo[]> callback)
