@@ -6,43 +6,73 @@ using UnityEngine.UI;
 public class OpponentSearchController : MonoBehaviour
 {
 
-    public InputField usernameInput;
-    public Button searchButton;
-    public Text notFoundLabel;
+    [SerializeField] private Text usernameInput;
+    [SerializeField] private Button searchButton;
+    [SerializeField] private Text resultText;
+    [SerializeField] private Button previewTeamsButton;
 
+    private UserInfo opponent;
     private void Start()
     {
-        notFoundLabel.gameObject.SetActive(false);
+        resultText.gameObject.SetActive(false);
         DataManager.Instance.Latch(this);
         if (!DataManager.Instance.AuthEstablished) DataManager.Instance.BypassAuth("DEV lucaspopp0@gmail.com");
     }
 
     public void UsernameChanged()
     {
-        searchButton.enabled = UsernameIsValid(usernameInput.text);
-        notFoundLabel.gameObject.SetActive(false);
+        searchButton.gameObject.SetActive(IsUsernameValid(usernameInput.text));
+        resultText.gameObject.SetActive(false);
     }
 
-    private bool UsernameIsValid(string username)
+    private bool IsUsernameValid(string username)
     {
         return !Regex.IsMatch(username, "\\W");
     }
 
+    private void ShowResult(bool result)
+    {
+        if (result)
+        {
+            resultText.text = "Opponent found!";
+        }
+        else
+        {
+            resultText.text = "Opponent not found :(";
+        }
+        
+        resultText.gameObject.SetActive(true);
+    }
+
+    private void HideResult()
+    {
+        resultText.gameObject.SetActive(false);
+    }
+    
     public void Search()
     {
-        searchButton.enabled = false;
-        notFoundLabel.gameObject.SetActive(false);
+        searchButton.gameObject.SetActive(false);
+        HideResult();
         StartCoroutine(DataManager.Instance.SearchUser(usernameInput.text.Trim(), (userExists, userInfo) =>
         {
             if (!userExists)
             {
-                notFoundLabel.gameObject.SetActive(true);
-                searchButton.enabled = false;
+                ShowResult(false);
+                searchButton.gameObject.SetActive(false);
+                var searchButtonSpriteState = searchButton.spriteState;
+                searchButtonSpriteState.pressedSprite = searchButton.spriteState.highlightedSprite;
+
             }
             else
             {
+                opponent = userInfo;
+                ShowResult(true);
+                
                 Debug.Log(userInfo.Email);
+                previewTeamsButton.gameObject.SetActive(true);
             }
+            
+            searchButton.gameObject.SetActive(true);
         }));
     }
 
