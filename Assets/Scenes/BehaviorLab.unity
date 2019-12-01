@@ -2263,10 +2263,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8547c8c93ed3fd549ab949c76e01fc1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sidebarTitle: {fileID: 0}
-  existingTriggersList: {fileID: 0}
-  newTriggersList: {fileID: 0}
-  addCancelButton: {fileID: 0}
+  sidebarTitle: {fileID: 1997476808}
+  existingTriggersList: {fileID: 1687570095}
+  newTriggersList: {fileID: 700137515}
+  addCancelButton: {fileID: 86898394}
   existingBlocks: []
   currentTriggerBlock: {fileID: 0}
 --- !u!1 &953877040
