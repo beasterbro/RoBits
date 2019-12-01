@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SelectOpposingMenu : MonoBehaviour
 {
@@ -11,6 +12,10 @@ public class SelectOpposingMenu : MonoBehaviour
     
     void Start()
     {
+        DataManager.Instance.Latch(this);
+        
+        if (enemy == null) return;
+        
         StartCoroutine(DataManager.Instance.GetOtherUserTeams(enemy.ID, ( success, opponentTeams ) =>
         {
             if (!success) return;
@@ -29,7 +34,6 @@ public class SelectOpposingMenu : MonoBehaviour
             }
         
             preview.Dispose();
-            
         }));
         
        
@@ -38,6 +42,7 @@ public class SelectOpposingMenu : MonoBehaviour
     public void SelectOpposingTeam(int team)
     {
         BattleController.opponentTeam = enemyTeams[team];
+        SceneManager.LoadScene(Scenes.Simulation);
     }
 
 }

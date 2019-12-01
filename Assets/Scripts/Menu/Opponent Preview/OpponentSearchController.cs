@@ -10,7 +10,8 @@ public class OpponentSearchController : MonoBehaviour
     [SerializeField] private Button searchButton;
     [SerializeField] private Text resultText;
     [SerializeField] private Button previewTeamsButton;
-    [SerializeField] private SelectOpposingMenu _selectOpposingMenu;
+    [SerializeField] private GameObject searchMenu;
+    [SerializeField] private SelectOpposingMenu selectOpposingMenu;
 
     private UserInfo opponent;
     private void Start()
@@ -58,11 +59,11 @@ public class OpponentSearchController : MonoBehaviour
         {
             if (!userExists)
             {
+                opponent = null;
                 ShowResult(false);
                 searchButton.gameObject.SetActive(false);
                 var searchButtonSpriteState = searchButton.spriteState;
                 searchButtonSpriteState.pressedSprite = searchButton.spriteState.highlightedSprite;
-
             }
             else
             {
@@ -77,9 +78,11 @@ public class OpponentSearchController : MonoBehaviour
         }));
     }
 
-    public void SendOpposingTeamInfo()
+    public void ShowEnemyTeamSelection()
     {
-        _selectOpposingMenu.enemy = opponent;
+        selectOpposingMenu.enemy = opponent;
+        searchMenu.SetActive(false);
+        selectOpposingMenu.gameObject.SetActive(true);
     }
 
 }

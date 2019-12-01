@@ -8,7 +8,7 @@ public class SelectTeamMenuController : MonoBehaviour
 
     public void SelectTeam(int teamIndex)
     {
-        if (DataManager.Instance.UserTeams.Length > teamIndex)
+        if (DataManager.Instance.UserTeams.Length <= teamIndex)
         {
             Debug.Log("Attempted to load nonexistent team");
         }
