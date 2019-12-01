@@ -244,15 +244,31 @@ public class TeamEditorController : MonoBehaviour
         
         TeamInfo[] userTeams = DataManager.Instance.UserTeams;
         TeamInfo currentTeam = userTeams[0];
-        currentTeam.Bots = team1.ConvertAll(teamBot => teamBot.BotInfo).ToArray();
-       StartCoroutine(DataManager.Instance.UpdateTeam(currentTeam, success =>
+        List<List<TeamBot>> allTeams =new List<List<TeamBot>>(){team1,team2,team3};
+
+        IEnumerator<List<TeamBot>> allTeamsEnum = allTeams.GetEnumerator();
+        allTeamsEnum.MoveNext();
+        
+        
+        foreach (var team in userTeams)
         {
-            if (!success)
-            {
-                Debug.Log("teams not updated");
-                return;
-            }
+            team.Bots = allTeamsEnum.Current.ConvertAll(teamBot => teamBot.BotInfo).ToArray();
             
-        }));
+            StartCoroutine(DataManager.Instance.UpdateTeam(team, success =>
+            {
+                if (!success)
+                {
+                    Debug.Log("teams not updated");
+                    return;
+                }
+
+               
+
+            }));
+            allTeamsEnum.MoveNext();
+            
+        }
+        allTeamsEnum.Dispose();
+        
     }
 }
