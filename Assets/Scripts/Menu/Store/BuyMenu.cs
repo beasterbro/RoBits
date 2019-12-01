@@ -28,7 +28,7 @@ public class BuyMenu : MonoBehaviour
         //TODO: Fix this callback
         StartCoroutine(DataManager.Instance.PurchasePart(DataManager.Instance.GetPart(PartID), delegate(bool obj)
         {
-            storeController.UpdateCurrency();
+            storeController.RefreshCurrency();
         }));
         gameObject.SetActive(false);
       

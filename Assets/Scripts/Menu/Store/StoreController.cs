@@ -10,7 +10,7 @@ using UnityEngine.UI;
 //A script to manage the store interface
 public class StoreController : MonoBehaviour
 {
-    
+
     [SerializeField] private PartDescHud partDesc;
     [SerializeField] private BuyMenu BuyOptionMenu;
     [SerializeField] private GameObject StoreButtonParent;
@@ -18,9 +18,9 @@ public class StoreController : MonoBehaviour
     private List<StoreButton> StoreButtons = new List<StoreButton>();
 
     private PartInfo[] allParts;
-    
+
     public PartInfo[] AllParts => allParts;
-    
+
     //Shows the tool tip for the part that was clicked on in the store
     public void ShowPartDesc(PartInfo partInfo)
     {
@@ -44,7 +44,7 @@ public class StoreController : MonoBehaviour
         v3 = Camera.main.ScreenToWorldPoint(v3);
         return v3;
     }
-    
+
     //Called when the Cancel Button is pressed and hides the buy menu and the part info
     public void CancelBuyMenu()
     {
@@ -53,21 +53,21 @@ public class StoreController : MonoBehaviour
     }
 
     //Shorts the parts by type and displays them in the store
-    
+
 
     //Hides the tool tip (part information)
     public void HidePartDesc()
     {
         partDesc.gameObject.SetActive(false);
         partDesc.HideToolTip();
-        
+
     }
 
     //Displays the the part information for the inputted partID
     public void ShowPartSpecs(StoreButton storeButton)
     {
         ShowPartDesc(storeButton.part);
-        
+
     }
 
     //Hides the specs for the previous part
@@ -80,33 +80,33 @@ public class StoreController : MonoBehaviour
     //Instantiates they parts and adds them to the store based on type
     private void Start()
     {
-   
-       //Needed for testing
-        DataManager.Instance.BypassAuth("DEV testUser@gmail.com");
-        StartCoroutine( DataManager.Instance.FetchInitialData(delegate(bool obj1)
-        {
+
+
+       if (!DataManager.Instance.AuthEstablished) DataManager.Instance.EstablishAuth("DEV testUser@gmail.com");
+       StartCoroutine(DataManager.Instance.FetchInitialDataIfNecessary(success =>
+       {
+           if (!success) return;
             //Acutally needed code
             StartCoroutine(DataManager.Instance.FetchAllParts(delegate(bool obj)
             {
                 allParts = DataManager.Instance.AllParts;
                 InstantiateStoreButtons();
-                UpdateCurrency();
+                RefreshCurrency();
             }));
-            StopCoroutine(DataManager.Instance.FetchAllParts());
+
         }));
-        StopCoroutine(DataManager.Instance.FetchInitialData());
-        
-        
-       
-       
-          
-        
+
+
         //Gives all buttons desired attributes and functionality
-       
+
 
     }
 
-    
+    private void Update()
+    {
+        RefreshCurrency();
+    }
+
 
     //Called in editor on change, gathers all of the current buttons
     private void OnValidate()
@@ -141,7 +141,7 @@ public class StoreController : MonoBehaviour
         AddPartsToButtons();
         AddImagesToButtons();
         ShowAvailableParts();
-        
+
 
     }
 
@@ -152,7 +152,7 @@ public class StoreController : MonoBehaviour
                    //On Click offer option to purchase item
                    StoreButtons[i].OnRightClickEvent+= ShowBuyMenu;
                    StoreButtons[i].OnLeftClickEvent += ShowBuyMenu;
-                   
+
                    //For hovering over an item, shows item info
                    StoreButtons[i].OnPointerEnterEvent += ShowPartSpecs;
                    StoreButtons[i].OnPointerExitEvent += HidePartSpecs;
@@ -171,12 +171,12 @@ public class StoreController : MonoBehaviour
             {
                 storeButton.gameObject.SetActive(false);
             }
-           
+
         }
     }
-    
-    
-    
+
+
+
 
     //Adds all parts in the store controller to a valid store button
     private void AddPartsToButtons()
@@ -213,7 +213,7 @@ public class StoreController : MonoBehaviour
                 if (!validUserLevel(storeButton))
                 {
                     var buttoncolor = storeButton.Image.color;
-                   
+
                    buttoncolor = new Color(buttoncolor.r,buttoncolor.g,buttoncolor.b,0.5f);
                    storeButton.Image.color = buttoncolor;
                 }
@@ -224,12 +224,12 @@ public class StoreController : MonoBehaviour
     //Collects all of the store buttons from their parent
         private void GatherAllButtons()
         {
-       
+
             foreach (var storeButton in StoreButtonParent.GetComponentsInChildren<StoreButton>())
             {
                 StoreButtons.Add(storeButton);
             }
-        
+
         }
 
         private void ClearButtons()
@@ -241,7 +241,7 @@ public class StoreController : MonoBehaviour
             }
         }
 
-        public void UpdateCurrency()
+        public void RefreshCurrency()
         {
             UserCurrency.text = DataManager.Instance.CurrentUser.Currency.ToString();
         }
@@ -249,7 +249,11 @@ public class StoreController : MonoBehaviour
         public void Buy()
         {
             BuyOptionMenu.Buy();
-            UpdateCurrency();
+            RefreshCurrency();
         }
 
-    }
+        private void OnDisable()
+        {
+            StopAllCoroutines();
+        }
+}
