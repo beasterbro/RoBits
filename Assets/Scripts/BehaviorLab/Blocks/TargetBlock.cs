@@ -9,6 +9,19 @@ public class TargetBlock : DropdownBlock
     [SerializeField] private string sensor;
     private int n = 1;
 
+    protected override Dictionary<string, string> TypeAttributes()
+    {
+        Dictionary<string, string> attr = base.TypeAttributes();
+        attr.Add("n", n.ToString());
+        return attr;
+    }
+
+    protected override void ApplyTypeAttributes()
+    {
+        base.ApplyTypeAttributes();
+        n = int.Parse(info.TypeAttrs["n"] ?? "1");
+    }
+
     public override bool IsValid()
     {
         return Supplier().Count > 0;
@@ -21,7 +34,7 @@ public class TargetBlock : DropdownBlock
 
     public BehaviorData GetTargetedBot(BotController myself)
     {
-        return new BehaviorData(TargetingManager.NthTarget(n, CurrentValue(), myself));
+        return new BehaviorData(TargetingManager.NthTarget(n, CurrentValue, myself));
     }
 
     protected override List<string> Supplier()
@@ -30,4 +43,5 @@ public class TargetBlock : DropdownBlock
     }
 
     protected override string Type() => "Target";
+    protected override string DropdownAttributeKey() => "priority";
 }

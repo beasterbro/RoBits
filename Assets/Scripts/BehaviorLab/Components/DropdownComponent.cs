@@ -33,5 +33,8 @@ public class DropdownComponent : BlockComponent
         dropdown.AddOptions(optionData);
     }
 
-    public string Current => dropdown.options.Count > 0 ? dropdown.options[dropdown.value].text : "";
+    public string Current {
+        get => dropdown.options.Count > 0 ? dropdown.options[dropdown.value].text : "";
+        set => dropdown.value = dropdown.options.FindIndex(opt => opt.text.Equals(value));
+    }
 }

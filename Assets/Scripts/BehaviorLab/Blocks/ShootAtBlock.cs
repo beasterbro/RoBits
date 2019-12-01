@@ -28,4 +28,5 @@ public class ShootAtBlock : DropdownBlock
     }
 
     protected override string Type() => "ShootAt";
+    protected override string DropdownAttributeKey() => "weapon";
 }

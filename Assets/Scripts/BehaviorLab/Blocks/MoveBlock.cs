@@ -15,4 +15,5 @@ public class MoveBlock : DropdownBlock
     }
 
     protected override string Type() => "Move";
+    protected override string DropdownAttributeKey() => "direction";
 }
