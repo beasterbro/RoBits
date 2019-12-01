@@ -34,7 +34,7 @@ public class MainMenu : MonoBehaviour
     void Start()
     {
         DataManager.Instance.Latch(this);
-        if (!DataManager.Instance.AuthEstablished) DataManager.Instance.BypassAuth("DEV lucaspopp0@gmail.com");
+        if (!DataManager.Instance.AuthEstablished) DataManager.Instance.BypassAuth("DEV axs1477@case.edu");
         StartCoroutine(DataManager.Instance.FetchInitialDataIfNecessary());
     }
 
