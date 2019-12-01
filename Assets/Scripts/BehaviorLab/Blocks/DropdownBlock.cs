@@ -19,5 +19,10 @@ public abstract class DropdownBlock : ActionBlock
         dropdown.SetSupplier(Supplier);
     }
 
+    protected string CurrentValue()
+    {
+        return dropdown.Current;
+    }
+
     protected abstract List<string> Supplier();
 }

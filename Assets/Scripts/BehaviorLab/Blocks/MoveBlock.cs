@@ -6,14 +6,7 @@ public class MoveBlock : DropdownBlock
 {
     public override bool IsValid()
     {
-        if (BehaviorLabController.GetShared().currentBot != null)
-        {
-            foreach (PartInfo part in BehaviorLabController.GetShared().currentBot.Equipment)
-            {
-                if (PartType.Transport == part.PartType) return true;
-            }
-        }
-        return false;
+        return BehaviorLabController.CurrentMatchingEquipmentAsResources(PartType.Transport).Count > 0;
     }
 
     protected override List<string> Supplier()

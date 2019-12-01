@@ -32,4 +32,6 @@ public class DropdownComponent : BlockComponent
         supplied.ForEach(option => optionData.Add(new Dropdown.OptionData(option)));
         dropdown.AddOptions(optionData);
     }
+
+    public string Current => dropdown.options.Count > 0 ? dropdown.options[dropdown.value].text : "";
 }
