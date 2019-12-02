@@ -15,12 +15,14 @@ public class TargetBlock : DropdownBlock
     {
         Dictionary<string, string> attr = base.TypeAttributes();
         attr.Add("n", nthPlaceInput.text);
+        attr.Add("sensor", sensor);
         return attr;
     }
 
     protected override void ApplyTypeAttributes()
     {
         base.ApplyTypeAttributes();
+        sensor = info.TypeAttrs["sensor"];
         nthPlaceInput.text = info.TypeAttrs["n"] ?? "1";
     }
 
@@ -45,6 +47,12 @@ public class TargetBlock : DropdownBlock
         return TargetingManager.TargetingPriorities(sensor);
     }
 
-    protected override string Type() => "Target";
+    protected override string Type()
+    {
+        if (sensor == "ProximitySensor") return "TargetProx";
+        if (sensor == "VisionSensor") return "TargetVision";
+        return "Target";
+    }
+    
     protected override string DropdownAttributeKey() => "priority";
 }

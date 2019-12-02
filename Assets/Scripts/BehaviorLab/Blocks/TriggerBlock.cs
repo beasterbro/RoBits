@@ -30,7 +30,7 @@ public class TriggerBlock : BodyBlock
         base.ApplyTypeAttributes();
         if (info != null && info.TypeAttrs != null && info.TypeAttrs.ContainsKey("triggerId"))
         {
-            triggerInfo = TriggerInfo.triggers[int.TryParse(info.TypeAttrs["triggerId"], out var ind) ? ind : 0];
+            triggerInfo = TriggerInfo.triggers[int.TryParse(info.TypeAttrs["triggerId"], out var ind) ? ind : 0].Item1;
             name.text = triggerInfo.Name;
         }
     }

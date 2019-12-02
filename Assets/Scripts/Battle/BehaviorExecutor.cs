@@ -14,6 +14,21 @@ public class BehaviorExecutor
         this.behavior = behavior;
     }
 
+    public bool IsApplicable()
+    {
+        if (behavior.Trigger.Sensor != null)
+        {
+            var sensor = bot.sensors.FirstOrDefault(botSensor => botSensor.info.ResourceName == behavior.Trigger.Sensor.ResourceName);
+            if (sensor != null) return TriggerInfo.triggers[behavior.TriggerId].Item2(bot, sensor);
+        }
+        else
+        {
+            return TriggerInfo.triggers[behavior.TriggerId].Item2(bot, null);
+        }
+
+        return false;
+    }
+
     // Execute a block in the behavior by ID, if it exists
     private object ExecuteBlock(int id)
     {
@@ -30,6 +45,15 @@ public class BehaviorExecutor
     // Static reference for all execution functions
     private static Dictionary<string, Func<BehaviorExecutor, BlockInfo, object>> executionFunctions = new Dictionary<string, Func<BehaviorExecutor, BlockInfo, object>>
     {
+        ["trigger"] = (executor, info) =>
+        {
+            foreach (var blockId in info.InputIDs)
+            {
+                executor.ExecuteBlock(blockId);
+            }
+
+            return null;
+        },
         ["if"] = (executor, info) =>
         {
             if (info.InputIDs.Length > 0)
@@ -65,7 +89,12 @@ public class BehaviorExecutor
 
             if (motionController != null && motionController is WheelsController wheels)
             {
-                switch (movementDirection) {
+                switch (movementDirection)
+                {
+                    case "stop":
+                        wheels.SetForward(0f);
+                        wheels.SetTurning(0f);
+                        break;
                     case "forward":
                         wheels.SetForward(1f);
                         break;
@@ -80,17 +109,34 @@ public class BehaviorExecutor
                         break;
                 }
             }
-            
+
             return null;
         },
         ["shootat"] = (executor, info) =>
         {
-            throw new NotImplementedException();
+            if (info.InputIDs.Length > 0 && executor.ExecuteBlock(info.InputIDs[0]) is BotController enemy && enemy != null)
+            {
+                executor.bot.guns.ForEach(gun =>
+                {
+                    if (info.TypeAttrs["weapon"] == null || info.TypeAttrs["weapon"] == gun.info.ResourceName)
+                    {
+                        gun.FocusOn(enemy.gameObject.transform);
+                        gun.Fire();
+                    }
+                });
+            }
+
             return null;
         },
-        ["target"] = (executor, info) =>
+        ["targetprox"] = (executor, info) =>
         {
-            throw new NotImplementedException();
+            var proxSensor = (ProximitySensor) executor.bot.parts.FirstOrDefault(part => part is ProximitySensor);
+            if (proxSensor != null)
+            {
+                var n = int.Parse(info.TypeAttrs["n"] ?? "0");
+                return proxSensor.GetNthOpponent(n);
+            }
+
             return null;
         }
     };

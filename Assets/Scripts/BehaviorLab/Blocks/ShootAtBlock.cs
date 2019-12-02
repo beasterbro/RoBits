@@ -50,4 +50,21 @@ public class ShootAtBlock : DropdownBlock
         children.Add(target.Peek());
         return children;
     }
+
+    public override void PositionConnections()
+    {
+        SetupScaleControllers();
+
+        if (info.InputIDs.Length > 0)
+        {
+            var input = BehaviorLabController.GetShared().GetBlockById(info.InputIDs[0]);
+            if (input != null)
+            {
+                target.Push(input);
+            }
+        }
+        
+        Redraw();
+    }
+
 }

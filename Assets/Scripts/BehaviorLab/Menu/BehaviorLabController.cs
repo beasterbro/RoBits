@@ -101,8 +101,10 @@ public class BehaviorLabController : MonoBehaviour
     private Dictionary<object, IEnumerable<object>> GenerateNewTriggersData()
     {
         var triggersData = new Dictionary<string, List<TriggerInfo>>();
-        foreach (var trigger in TriggerInfo.triggers.Values)
+        TriggerInfo trigger;
+        foreach (var triggerTuple in TriggerInfo.triggers.Values)
         {
+            trigger = triggerTuple.Item1;
             if (currentBot.Behaviors.Exists(behavior => behavior.Trigger.Equals(trigger))) continue;
 
             var heading = trigger.Sensor == null ? "Basic" : trigger.Sensor.Name;

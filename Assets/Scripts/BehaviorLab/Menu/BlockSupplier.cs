@@ -19,7 +19,7 @@ public class BlockSupplier : BlockTerminator
 
     protected virtual void UpdateActive()
     {
-        cover.gameObject.SetActive(!IsActive());
+        if (cover != null) cover.gameObject.SetActive(!IsActive());
     }
 
     protected override void Start()
