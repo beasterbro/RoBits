@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity WebGL Player | RoBits</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
+    <script src="TemplateData/UnityProgress.js"></script>
+    <script src="Build/UnityLoader.js"></script>
+    <style>
+      #gameContainer {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      .g-signin2 {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10;
+        display: none;
+      }
+    </style>
+    <script>
+      var gameInstance = UnityLoader.instantiate("gameContainer", "Build/Login-Test-Dev.json", {onProgress: UnityProgress});
+
+      function onSignIn(googleUser) {
+          gameInstance.SendMessage("LoginController", "OnSignIn", googleUser.getAuthResponse().id_token);
+      }
+    </script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="892450567426-fc853glj3ccc23r8e879ubr3nsauj4pf.apps.googleusercontent.com">
+  </head>
+  <body>
+    <div class="webgl-content">
+        <div class="g-signin2" data-onsuccess="onSignIn"></div>
+      <div id="gameContainer" style="width: 1260px; height: 708px"></div>
+      <div class="footer">
+        <div class="webgl-logo"></div>
+        <div class="fullscreen" onclick="gameInstance.SetFullscreen(1)"></div>
+        <div class="title">RoBits</div>
+      </div>
+    </div>
+  </body>
+</html>

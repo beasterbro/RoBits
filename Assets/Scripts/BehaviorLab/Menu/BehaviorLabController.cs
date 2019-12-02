@@ -35,18 +35,28 @@ public class BehaviorLabController : MonoBehaviour
     void Start()
     {
         DataManager.Instance.Latch(this);
-        if (!DataManager.Instance.InitialFetchPerformed) DataManager.Instance.EstablishAuth("DEV lucaspopp0@gmail.com");
+        if (!DataManager.Instance.AuthEstablished) DataManager.Instance.BypassAuth("DEV lucaspopp0@gmail.com");
         StartCoroutine(DataManager.Instance.FetchInitialDataIfNecessary(success =>
         {
             if (!success) return;
 
             currentBot = DataManager.Instance.AllBots[0];
+            UpdateBotSpecificBlocks();
+
             if (currentBot.Behaviors.Count > 0) DisplayBehaviorForTrigger(currentBot.Behaviors[0].Trigger);
 
             UpdateTriggerLists();
             existingTriggersList.gameObject.SetActive(true);
             newTriggersList.gameObject.SetActive(false);
         }));
+    }
+
+    private void UpdateBotSpecificBlocks()
+    {
+        // Update which blocks are active based on what parts the current bot has
+        BlockSupplier.UpdateActivity();
+        // Update shootAt dropdown items
+        ShootAtBlock.UpdateDropdownItems();
     }
 
     public void ToggleBehaviors()
@@ -193,6 +203,24 @@ public class BehaviorLabController : MonoBehaviour
         }
     }
 
+    public static ICollection<string> CurrentMatchingEquipmentAsResources(PartType type)
+    {
+        return CurrentMatchingEquipmentAsResources(type, false);
+    }
+
+    public static ICollection<string> CurrentMatchingEquipmentAsResources(PartType type, bool uniqueEquipmentOnly)
+    {
+        ICollection<string> result = uniqueEquipmentOnly ? new HashSet<string>() : new List<string>() as ICollection<string>;
+        if (GetShared().currentBot != null)
+        {
+            foreach (PartInfo part in GetShared().currentBot.Equipment)
+            {
+                if (type == part.PartType) result.Add(part.ResourceName);
+            }
+        }
+        return result;
+    }
+
     public int NextBlockID()
     {
         if (existingBlocks.Count == 0) return 0;
@@ -207,7 +235,7 @@ public class BehaviorLabController : MonoBehaviour
 
     public void BackToCustomizeMenu()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(Scenes.Menu);
     }
 
     private IEnumerator LetStartThen(Action takeAction)
