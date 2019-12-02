@@ -32,12 +32,13 @@ public class ConditionBlock : DropdownBlock
 
     public override bool IsValid()
     {
-        throw new System.NotImplementedException();
+        return target != null && target.GetExpectedOutputType() == ReturnType.BOT
+            && target.IsValid();
     }
 
     protected override List<string> Supplier()
     {
-        throw new System.NotImplementedException(); // TODO: TargetingManager.ConditionalFunctions();
+        return TargetingManager.TargetingConditionals();
     }
 
     protected override string Type() => "Condition";
