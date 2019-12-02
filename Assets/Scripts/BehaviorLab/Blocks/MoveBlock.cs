@@ -11,7 +11,7 @@ public class MoveBlock : DropdownBlock
 
     protected override List<string> Supplier()
     {
-        return new List<string>{ "forward", "backward", "up", "down" }; // Forward/backward as opposed to left/right since teams could be on either side
+        return new List<string>{ "stop", "forward", "backward", "left", "right" }; // left/right indicate a rotation of the bot
     }
 
     protected override string Type() => "Move";
