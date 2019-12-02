@@ -1119,7 +1119,6 @@ GameObject:
   - component: {fileID: 3937975500788259041}
   - component: {fileID: 8401406192112804590}
   - component: {fileID: 8401406192112804591}
-  - component: {fileID: 8318010358657308497}
   m_Layer: 0
   m_Name: ConditionBlock
   m_TagString: Untagged
@@ -1135,7 +1134,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8401406192112804584}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.2892542, y: -1.75, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 8401406192441705236}
@@ -1210,26 +1209,6 @@ MonoBehaviour:
     width: 0
     height: 0
   onScale: {fileID: 8401406192441705238}
---- !u!114 &8318010358657308497
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8401406192112804584}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3ee5b9335127cd64cb94fe39328005dd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  container: {fileID: 0}
-  isMovable: 0
-  isDeletable: 0
-  prev: {fileID: 0}
-  next: {fileID: 0}
-  containing: {fileID: 0}
-  dropdown: {fileID: 0}
-  target: {fileID: 0}
 --- !u!1 &8401406192130326872
 GameObject:
   m_ObjectHideFlags: 0
