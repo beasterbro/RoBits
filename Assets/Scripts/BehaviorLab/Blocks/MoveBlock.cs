@@ -6,20 +6,14 @@ public class MoveBlock : DropdownBlock
 {
     public override bool IsValid()
     {
-        if (BehaviorLabController.GetShared().currentBot != null)
-        {
-            foreach (PartInfo part in BehaviorLabController.GetShared().currentBot.Equipment)
-            {
-                if (PartType.Transport == part.PartType) return true;
-            }
-        }
-        return false;
+        return BehaviorLabController.CurrentMatchingEquipmentAsResources(PartType.Transport).Count > 0;
     }
 
     protected override List<string> Supplier()
     {
-        return new List<string>{ "forward", "backward", "up", "down" }; // Forward/backward as opposed to left/right since teams could be on either side
+        return new List<string>{ "stop", "forward", "backward", "left", "right" }; // left/right indicate a rotation of the bot
     }
 
     protected override string Type() => "Move";
+    protected override string DropdownAttributeKey() => "direction";
 }

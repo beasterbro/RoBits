@@ -203,6 +203,24 @@ public class BehaviorLabController : MonoBehaviour
         }
     }
 
+    public static ICollection<string> CurrentMatchingEquipmentAsResources(PartType type)
+    {
+        return CurrentMatchingEquipmentAsResources(type, false);
+    }
+
+    public static ICollection<string> CurrentMatchingEquipmentAsResources(PartType type, bool uniqueEquipmentOnly)
+    {
+        ICollection<string> result = uniqueEquipmentOnly ? new HashSet<string>() : new List<string>() as ICollection<string>;
+        if (GetShared().currentBot != null)
+        {
+            foreach (PartInfo part in GetShared().currentBot.Equipment)
+            {
+                if (type == part.PartType) result.Add(part.ResourceName);
+            }
+        }
+        return result;
+    }
+
     public int NextBlockID()
     {
         if (existingBlocks.Count == 0) return 0;

@@ -56,7 +56,7 @@ public abstract class Block : InterfaceObject
     public BehaviorData Evaluate()
     {
         BehaviorData result = InnerEvaluate();
-        if (result.GetType() != OutputType())
+        if (result.GetReturnType() != OutputType())
         {
             throw new SystemException("Unexpected return type.");
         }

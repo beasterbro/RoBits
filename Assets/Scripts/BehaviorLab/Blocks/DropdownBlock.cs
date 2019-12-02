@@ -19,5 +19,21 @@ public abstract class DropdownBlock : ActionBlock
         dropdown.SetSupplier(Supplier);
     }
 
+    protected string CurrentValue => dropdown.Current;
+
+    protected override Dictionary<string, string> TypeAttributes()
+    {
+        Dictionary<string, string> attr = base.TypeAttributes();
+        attr.Add(DropdownAttributeKey(), CurrentValue);
+        return attr;
+    }
+
+    protected override void ApplyTypeAttributes()
+    {
+        base.ApplyTypeAttributes();
+        dropdown.Current = info.TypeAttrs[DropdownAttributeKey()] ?? "";
+    }
+
     protected abstract List<string> Supplier();
+    protected abstract string DropdownAttributeKey();
 }

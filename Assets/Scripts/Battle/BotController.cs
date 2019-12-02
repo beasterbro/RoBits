@@ -292,4 +292,9 @@ public class BotController : MonoBehaviour
         return newObj;
     }
 
+    public List<BotController> TargetableBots()
+    {
+        return new List<BotController>(); // TODO: Implement way of tracking which bots are "visible" to this bot's sensors
+    }
+
 }
