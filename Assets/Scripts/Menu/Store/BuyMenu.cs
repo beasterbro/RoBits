@@ -40,7 +40,7 @@ public class BuyMenu : MonoBehaviour
     }
 
     //Hides the buy menu when the cancel button is clicked
-     public void CancelBuyMenu()
+    public void CancelBuyMenu()
     {
         gameObject.SetActive(false);
         PartID = 0;

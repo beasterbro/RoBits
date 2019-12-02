@@ -19,7 +19,8 @@ public class StoreController : MonoBehaviour
     [SerializeField] private InventoryController InventoryController;
 
     private PartInfo[] allParts;
-
+    private int currencyAmount;
+    
     public PartInfo[] AllParts => allParts;
 
     //Shows the tool tip for the part that was clicked on in the store
@@ -240,16 +241,30 @@ public class StoreController : MonoBehaviour
 
         public void RefreshCurrency()
         {
-            StartCoroutine(DataManager.Instance.UpdateCurrentUser(success =>
+            StartCoroutine(DataManager.Instance.FetchCurrentUser(success =>
             {
+                UserCurrency.gameObject.SetActive(false);
                 if (!success)
                 {
                     Debug.Log("No Currency");
                     return;
                 }
+                
                 UserCurrency.text = DataManager.Instance.CurrentUser.Currency.ToString();
+                UserCurrency.gameObject.SetActive(true);
             }));
 
+        }
+
+        private void OnEnable()
+        {
+            RefreshCurrency();
+        }
+
+        public void RefCurr(int amount)
+        {
+            currencyAmount += amount;
+            UserCurrency.text = currencyAmount.ToString();
         }
 
         public void Buy()

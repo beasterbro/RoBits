@@ -16,7 +16,7 @@ public class SelectOpposingMenu : MonoBehaviour
 
         if (enemy == null)
         {
-            StartCoroutine(DataManager.Instance.SearchUser("trainingUser0", (userExists, userInfo) =>
+            StartCoroutine(DataManager.Instance.SearchUser("trainingUser1", (userExists, userInfo) =>
             {
                 if (!userExists)
                 {
