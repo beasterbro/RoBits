@@ -17,7 +17,17 @@ public class MainMenu : MonoBehaviour
 
     public void LoadMainMenu()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(Scenes.Menu);
+    }
+
+    public void LoadOpponentPreview()
+    {
+        SceneManager.LoadScene(5);
+    }
+    
+    public void LoadTraining()
+    {
+        SceneManager.LoadScene(6);
     }
 
     public void QuitGame()
@@ -29,7 +39,7 @@ public class MainMenu : MonoBehaviour
     void Start()
     {
         DataManager.Instance.Latch(this);
-        if (!DataManager.Instance.AuthEstablished) DataManager.Instance.BypassAuth("DEV lucaspopp0@gmail.com");
+        if (!DataManager.Instance.AuthEstablished) DataManager.Instance.BypassAuth("DEV testUser@gmail.com");
         StartCoroutine(DataManager.Instance.FetchInitialDataIfNecessary());
     }
 
