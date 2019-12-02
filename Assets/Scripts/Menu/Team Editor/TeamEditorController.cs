@@ -34,9 +34,10 @@ public class TeamEditorController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (!DataManager.Instance.AuthEstablished) DataManager.Instance.EstablishAuth("DEV testUser@gmail.com");
+        DataManager.Instance.Latch(this);
+        if (!DataManager.Instance.AuthEstablished) DataManager.Instance.BypassAuth("DEV testUser@gmail.com");
         
-           
+        
         StartCoroutine(DataManager.Instance.FetchInitialData(success =>
         {
             if (!success) return;
@@ -61,8 +62,7 @@ public class TeamEditorController : MonoBehaviour
             defaultBotInfo = new BotInfo(0,"default",0,new List<PartInfo>(),defaultBody,new List<BehaviorInfo>() );
             InstantiateTeams();
         }));
-        StopCoroutine(DataManager.Instance.FetchInitialData());     
-   
+        
     }
 
 
@@ -79,7 +79,16 @@ public class TeamEditorController : MonoBehaviour
         var teamBots = team1.Concat(team2).Concat(team3).ToList();
         foreach (var teamBot in teamBots)
         {
-            BotPreviewGenerator.CreateBotImage(teamBot.BotInfo,teamBot.gameObject);
+            if (teamBot.BotInfo != null)
+            {
+                BotPreviewGenerator.CreateBotImage(teamBot.BotInfo,teamBot.gameObject);
+            }
+
+            else
+            {
+                BotPreviewGenerator.CreateBotImage(defaultBotInfo,teamBot.gameObject);
+            }
+            
         }
     }
 
@@ -114,8 +123,6 @@ public class TeamEditorController : MonoBehaviour
 
     public void AddToTeam(int teamSlot)
     {
-        //TODO: Make method to update backend info with frontend info
-        // DataManager.Instance.UserTeams[team].Bots[teamSlot] = AddMenu.BotInfo;
         if (AddSubMenu.Team == 1)
         {
             team1[teamSlot].BotInfo = AddMenu.BotInfo;
@@ -234,14 +241,34 @@ public class TeamEditorController : MonoBehaviour
 
     public void UpdateUserTeams()
     {
+        
         TeamInfo[] userTeams = DataManager.Instance.UserTeams;
         TeamInfo currentTeam = userTeams[0];
-        TeamInfo teamInfo = new TeamInfo(currentTeam.ID,currentTeam.Name,currentTeam.DateLastMaintained,
-            team1.ConvertAll(teamBot => teamBot.BotInfo).ToArray(),currentTeam.Rank,currentTeam.Tier,currentTeam.UserID);
-        DataManager.Instance.UpdateTeam(teamInfo, success =>
+        List<List<TeamBot>> allTeams =new List<List<TeamBot>>(){team1,team2,team3};
+
+        IEnumerator<List<TeamBot>> allTeamsEnum = allTeams.GetEnumerator();
+        allTeamsEnum.MoveNext();
+        
+        
+        foreach (var team in userTeams)
         {
-            if (!success) return;
+            team.Bots = allTeamsEnum.Current.ConvertAll(teamBot => teamBot.BotInfo).ToArray();
             
-        });
+            StartCoroutine(DataManager.Instance.UpdateTeam(team, success =>
+            {
+                if (!success)
+                {
+                    Debug.Log("teams not updated");
+                    return;
+                }
+
+               
+
+            }));
+            allTeamsEnum.MoveNext();
+            
+        }
+        allTeamsEnum.Dispose();
+        
     }
 }

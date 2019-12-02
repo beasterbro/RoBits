@@ -109,6 +109,7 @@ public class Inventory : MonoBehaviour
             if (itemSlots[i].Item == item)
             {
                 itemSlots[i].Amount--;
+                itemSlots[i].Item.InventoryItem.DecreaseCount();
                 if (itemSlots[i].Amount==0)
                 {
                 itemSlots[i].Item = null;
@@ -177,9 +178,8 @@ public class Inventory : MonoBehaviour
     {
         foreach (var slot in itemSlots)
         {
-           
+            slot.Amount = 0;
             slot.Item = null;
-           // slot.Amount = 0;
-        }
+           }
     }
 }

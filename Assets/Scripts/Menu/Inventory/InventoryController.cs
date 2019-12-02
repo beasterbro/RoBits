@@ -160,7 +160,7 @@ public class InventoryController : MonoBehaviour
     private void Drop(ItemSlot dropItemSlot)
     {
         if (dropItemSlot == null) return;
-        //TODO: Fix Dupe with dropping item out and then swapping bots and getting new item
+       
         if (dropItemSlot.CanReceiveItem(draggedItemSlot.Item) && draggedItemSlot.CanReceiveItem(dropItemSlot.Item))
         {
             Item dragItem = draggedItemSlot.Item;
@@ -359,10 +359,6 @@ public class InventoryController : MonoBehaviour
     }
 
 
-    private void Update()
-    {
-        RefreshCurrency();
-    }
 
 
     //Called First when entering playmode, before the first frame
@@ -385,6 +381,14 @@ public class InventoryController : MonoBehaviour
             RefreshBotInfo();
         }));
     }
+    
+    private void OnEnable()
+    {
+        RefreshInventory();
+        RefreshCurrency();
+          
+           
+    }
 
     //Generates all of the bot images for the current user's bots
     private void CreateAllBotImages()
@@ -395,30 +399,56 @@ public class InventoryController : MonoBehaviour
 
     //Called on start to add all of the items in the user's inventory to the inventory panel
     public void RefreshInventory()
-    {
-        ClearInventory();
-        StartCoroutine(DataManager.Instance.FetchUserInventory(delegate(bool obj)
+    {//TODO: Here is where the user info is not updated so the inventory does not show accurate stuff from BE
+        StartCoroutine(DataManager.Instance.FetchCurrentUser(success =>
         {
+            if (!success)
+            {
+                Debug.Log("Refresh Fail");
+                return;
+            }
+           
+         
+        StartCoroutine(DataManager.Instance.FetchUserInventory(success1 =>
+        {
+            if (!success1)
+            {
+                Debug.Log("Inventory Refresh Failed");
+                return;
+            }
+            ClearInventory();
+            userInventory = DataManager.Instance.UserInventory;
             foreach (var inventoryItem in userInventory)
             {
                 inventory.AddItem((UserItemToItem(inventoryItem).GetCopy()));
             }
         }));
+           
+           
+        }));
+       
+        
 
     }
 
-    private void ClearInventory()
+    public void ClearInventory()
     {
         inventory.Clear();
     }
 
     //Updates the shown currency value to the actual currency value
-    private void RefreshCurrency()
+    public void RefreshCurrency()
     {
-        StartCoroutine(DataManager.Instance.FetchInitialDataIfNecessary(success =>
+        StartCoroutine(DataManager.Instance.FetchCurrentUser(success =>
         {
+            if (!success)
+            {
+                Debug.Log("No Currency");
+                return;
+            }
             Currency.text = DataManager.Instance.CurrentUser.Currency.ToString();
         }));
+
     }
 
     public void ChangeBotName()
@@ -447,18 +477,14 @@ public class InventoryController : MonoBehaviour
 
     }
 
-    private void OnApplicationQuit()
-    {
-        UpdateUserBots();
-    }
+    /*  private void OnApplicationQuit()
+      {
+        UpdateUserInformation();
+      }*/
 
-    private void OnDisable()
-    {
-       // UpdateUserBots();
-        StopAllCoroutines();
-    }
 
-    private void UpdateUserInformation()
+
+    public void UpdateUserInformation()
     {
         UpdateUserBots();
         UpdateUserInventory();
@@ -467,6 +493,29 @@ public class InventoryController : MonoBehaviour
 
     private void UpdateUserInventory()
     {
-       //TODO:Finish this last method
+        List<InventoryItem> currentUserInventory = new List<InventoryItem>();
+        
+        List<Item> items =inventory.ItemSlots.ToList().ConvertAll(slots => slots.Item);
+        foreach (var item in items)
+        {
+            if (item == null)
+            {
+                ;
+            }
+            else
+            {
+                currentUserInventory.Add(item.InventoryItem);
+            }
+        }
+        //TODO:Finish this last method
+        StartCoroutine(DataManager.Instance.UpdateUserInventory(currentUserInventory.ToArray(), success =>
+        {
+            if (!success)
+            {
+                Debug.Log("Whoppsy");
+                return;
+            }
+           
+        }));
     }
 }
