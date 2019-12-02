@@ -5,10 +5,12 @@ using System.Linq;
 public class BehaviorExecutor
 {
 
-    private readonly BehaviorInfo behavior;
+    public readonly BotController bot;
+    public readonly BehaviorInfo behavior;
 
-    public BehaviorExecutor(BehaviorInfo behavior)
+    public BehaviorExecutor(BotController bot, BehaviorInfo behavior)
     {
+        this.bot = bot;
         this.behavior = behavior;
     }
 
@@ -17,8 +19,8 @@ public class BehaviorExecutor
     {
         var block = behavior.Blocks.FirstOrDefault(bi => bi.ID == id);
 
-        if (block != null && executionFunctions.ContainsKey(block.Type))
-            return executionFunctions[block.Type].Invoke(this, block);
+        if (block != null && executionFunctions.ContainsKey(block.Type.ToLower()))
+            return executionFunctions[block.Type.ToLower()].Invoke(this, block);
 
         return null;
     }
@@ -54,6 +56,41 @@ public class BehaviorExecutor
                 return !logicalInput;
             }
 
+            return null;
+        },
+        ["move"] = (executor, info) =>
+        {
+            var movementDirection = info.TypeAttrs["direction"];
+            var motionController = executor.bot.parts.FirstOrDefault(part => part is MovementController);
+
+            if (motionController != null && motionController is WheelsController wheels)
+            {
+                switch (movementDirection) {
+                    case "forward":
+                        wheels.SetForward(1f);
+                        break;
+                    case "backward":
+                        wheels.SetForward(-1f);
+                        break;
+                    case "left":
+                        wheels.SetTurning(-20f);
+                        break;
+                    case "right":
+                        wheels.SetTurning(20f);
+                        break;
+                }
+            }
+            
+            return null;
+        },
+        ["shootat"] = (executor, info) =>
+        {
+            throw new NotImplementedException();
+            return null;
+        },
+        ["target"] = (executor, info) =>
+        {
+            throw new NotImplementedException();
             return null;
         }
     };
