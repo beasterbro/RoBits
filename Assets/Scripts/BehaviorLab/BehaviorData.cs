@@ -8,15 +8,17 @@ public class BehaviorData
 {
     public static readonly BehaviorData EMPTY = new BehaviorData();
 
-    private ReturnType type;
-    private bool logical;
-    private float number;
+    private readonly ReturnType type;
+    private readonly bool logical;
+    private readonly float number;
+    private readonly BotController bot;
 
     private BehaviorData()
     {
         this.type = ReturnType.EMPTY;
         this.logical = false;
         this.number = 0;
+        this.bot = null;
     }
 
     public BehaviorData(bool logical)
@@ -24,6 +26,7 @@ public class BehaviorData
         this.type = ReturnType.LOGICAL;
         this.logical = logical;
         this.number = this.logical ? 1 : 0;
+        this.bot = null;
     }
 
     public BehaviorData(float number)
@@ -31,9 +34,18 @@ public class BehaviorData
         this.type = ReturnType.NUMBER;
         this.number = number;
         this.logical = this.number != 0;
+        this.bot = null;
     }
 
-    public ReturnType GetType()
+    public BehaviorData(BotController bot)
+    {
+        this.type = ReturnType.BOT;
+        this.bot = bot;
+        this.logical = this.bot != null;
+        this.number = 0;
+    }
+
+    public ReturnType GetReturnType()
     {
         return type;
     }
@@ -51,6 +63,11 @@ public class BehaviorData
     public bool IsNumber()
     {
         return IsEqualType(ReturnType.NUMBER);
+    }
+
+    public bool IsBot()
+    {
+        return IsEqualType(ReturnType.BOT);
     }
 
     public bool IsBlank()
@@ -76,5 +93,11 @@ public class BehaviorData
     {
         VerifyContent();
         return this.number;
+    }
+
+    public BotController GetBot()
+    {
+        VerifyContent();
+        return this.bot;
     }
 }

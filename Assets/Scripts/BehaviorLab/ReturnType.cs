@@ -4,5 +4,5 @@ using UnityEngine;
 
 public enum ReturnType
 {
-    EMPTY, LOGICAL, NUMBER
+    EMPTY, LOGICAL, NUMBER, BOT
 }

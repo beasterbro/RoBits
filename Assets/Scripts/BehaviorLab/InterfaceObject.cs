@@ -56,7 +56,7 @@ public class InterfaceObject : MonoBehaviour
 
     protected void OnMouseOver()
     {
-        DragAndDropController.Instance().HoverOn(this);
+        DragAndDropController.Instance()?.HoverOn(this);
         this.OnOver();
     }
 

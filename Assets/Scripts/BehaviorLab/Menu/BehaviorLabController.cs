@@ -41,12 +41,22 @@ public class BehaviorLabController : MonoBehaviour
             if (!success) return;
 
             currentBot = DataManager.Instance.AllBots[0];
+            UpdateBotSpecificBlocks();
+
             if (currentBot.Behaviors.Count > 0) DisplayBehaviorForTrigger(currentBot.Behaviors[0].Trigger);
 
             UpdateTriggerLists();
             existingTriggersList.gameObject.SetActive(true);
             newTriggersList.gameObject.SetActive(false);
         }));
+    }
+
+    private void UpdateBotSpecificBlocks()
+    {
+        // Update which blocks are active based on what parts the current bot has
+        BlockSupplier.UpdateActivity();
+        // Update shootAt dropdown items
+        ShootAtBlock.UpdateDropdownItems();
     }
 
     public void ToggleBehaviors()
@@ -91,8 +101,10 @@ public class BehaviorLabController : MonoBehaviour
     private Dictionary<object, IEnumerable<object>> GenerateNewTriggersData()
     {
         var triggersData = new Dictionary<string, List<TriggerInfo>>();
-        foreach (var trigger in TriggerInfo.triggers.Values)
+        TriggerInfo trigger;
+        foreach (var triggerTuple in TriggerInfo.triggers.Values)
         {
+            trigger = triggerTuple.Item1;
             if (currentBot.Behaviors.Exists(behavior => behavior.Trigger.Equals(trigger))) continue;
 
             var heading = trigger.Sensor == null ? "Basic" : trigger.Sensor.Name;
@@ -191,6 +203,24 @@ public class BehaviorLabController : MonoBehaviour
         {
             Debug.Log(JsonUtils.SerializeObject(currentTriggerBlock.BehaviorState()));
         }
+    }
+
+    public static ICollection<string> CurrentMatchingEquipmentAsResources(PartType type)
+    {
+        return CurrentMatchingEquipmentAsResources(type, false);
+    }
+
+    public static ICollection<string> CurrentMatchingEquipmentAsResources(PartType type, bool uniqueEquipmentOnly)
+    {
+        ICollection<string> result = uniqueEquipmentOnly ? new HashSet<string>() : new List<string>() as ICollection<string>;
+        if (GetShared().currentBot != null)
+        {
+            foreach (PartInfo part in GetShared().currentBot.Equipment)
+            {
+                if (type == part.PartType) result.Add(part.ResourceName);
+            }
+        }
+        return result;
     }
 
     public int NextBlockID()
