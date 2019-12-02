@@ -23,4 +23,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/OpponentSelection.unity
     guid: 1741e523e560d2e4696881360fd288f2
+  - enabled: 1
+    path: Assets/Scenes/Training.unity
+    guid: 48d24baf9d05d884baa6e563f3337ada
   m_configObjects: {}

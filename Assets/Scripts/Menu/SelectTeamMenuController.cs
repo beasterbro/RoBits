@@ -15,15 +15,32 @@ public class SelectTeamMenuController : MonoBehaviour
         else
         {
             BattleController.playerTeam = DataManager.Instance.UserTeams[teamIndex];
-            
-            if (battleType == 2) GoToOpponentSearch();
+            if (battleType == 4)
+            {
+                GoToTraining();
+            }
+            else if (battleType == 2)
+            {
+                GoToOpponentSearch();
+            }
             else GoToBattle();
+              
+            
+                
+            
+            
+            
         }
     }
 
     private void GoToBattle()
     {
         SceneManager.LoadScene(Scenes.Simulation);
+    }
+
+    private void GoToTraining()
+    {
+        SceneManager.LoadScene(6);
     }
 
     private void GoToOpponentSearch()

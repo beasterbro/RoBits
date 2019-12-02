@@ -13,30 +13,71 @@ public class SelectOpposingMenu : MonoBehaviour
     void Start()
     {
         DataManager.Instance.Latch(this);
-        
-        if (enemy == null) return;
-        
-        StartCoroutine(DataManager.Instance.GetOtherUserTeams(enemy.ID, ( success, opponentTeams ) =>
+
+        if (enemy == null)
         {
-            if (!success) return;
-            
-            enemyTeams = opponentTeams;
-            
-            IEnumerator<GameObject> preview = BotPreviews.GetEnumerator();
-            preview.MoveNext();
-            foreach (var team in enemyTeams)
+            StartCoroutine(DataManager.Instance.SearchUser("trainingUser0", (userExists, userInfo) =>
             {
-                foreach (var bot in team.Bots)
+                if (!userExists)
                 {
-                    BotPreviewGenerator.CreateBotImage(bot,preview.Current);
-                    preview.MoveNext();
+                    Debug.Log("No Find Trainer");
                 }
-            }
-        
-            preview.Dispose();
-        }));
-        
-       
+                else
+                {
+                    enemy = userInfo;              
+                    Debug.Log(userInfo.Email);
+                    
+                }
+                
+                StartCoroutine(DataManager.Instance.GetOtherUserTeams(enemy.ID, (success, opponentTeams) =>
+                {
+                    if (!success) return;
+
+                    enemyTeams = opponentTeams;
+
+                    IEnumerator<GameObject> preview = BotPreviews.GetEnumerator();
+                    preview.MoveNext();
+                    foreach (var team in enemyTeams)
+                    {
+                        foreach (var bot in team.Bots)
+                        {
+                            BotPreviewGenerator.CreateBotImage(bot, preview.Current);
+                            preview.MoveNext();
+                        }
+                    }
+
+                    preview.Dispose();
+                }));
+                
+            }));
+            return;
+        }
+        else
+        {
+            StartCoroutine(DataManager.Instance.GetOtherUserTeams(enemy.ID, (success, opponentTeams) =>
+            {
+                if (!success) return;
+
+                enemyTeams = opponentTeams;
+
+                IEnumerator<GameObject> preview = BotPreviews.GetEnumerator();
+                preview.MoveNext();
+                foreach (var team in enemyTeams)
+                {
+                    foreach (var bot in team.Bots)
+                    {
+                        BotPreviewGenerator.CreateBotImage(bot, preview.Current);
+                        preview.MoveNext();
+                    }
+                }
+
+                preview.Dispose();
+            }));
+        }
+
+
+
+
     }
 
     public void SelectOpposingTeam(int team)
