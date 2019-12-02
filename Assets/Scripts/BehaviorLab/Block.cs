@@ -34,8 +34,11 @@ public abstract class Block : InterfaceObject
     public static Block FromInfo(BlockInfo info)
     {
         var block = Block.FromType(info.Type);
-        if (block != null) block.info = info;
-        block.ApplyTypeAttributes();
+        if (block != null)
+        {
+            block.info = info;
+            block.ApplyTypeAttributes();
+        }
 
         return block;
     }

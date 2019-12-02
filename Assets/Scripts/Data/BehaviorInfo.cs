@@ -34,6 +34,6 @@ public class BehaviorInfo
         return string.Format("ID = {0} (EntryID = {1}): [{2}]({3})", TriggerId, EntryBlockId, string.Join(",", (IEnumerable<BlockInfo>)Blocks), Blocks.Length);
     }
 
-    public TriggerInfo Trigger => TriggerInfo.triggers[triggerId];
+    public TriggerInfo Trigger => TriggerInfo.triggers[triggerId].Item1;
 
 }

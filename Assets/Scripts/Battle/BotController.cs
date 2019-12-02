@@ -17,11 +17,16 @@ public class BotController : MonoBehaviour
     private bool actionsEnabled;
 
     [HideInInspector] public List<PartController> parts = new List<PartController>();
-    private readonly List<SensorPartController> sensors = new List<SensorPartController>();
-    private BodyTypeController body;
+    public readonly List<SensorPartController> sensors = new List<SensorPartController>();
+    public BodyTypeController body;
+
+    public readonly List<GunController> guns = new List<GunController>();
 
     private readonly List<Behavior> behaviors = new List<Behavior>();
-    private Behavior activeBehavior;
+    private readonly List<BehaviorExecutor> behaviorExecutors = new List<BehaviorExecutor>();
+    private BehaviorExecutor activeBehavior;
+    private Behavior activeDemoBehavior;
+    private bool usesDemoBehaviors = false;
 
     public void LoadInfoForPreview(BotInfo botInfo)
     {
@@ -38,17 +43,15 @@ public class BotController : MonoBehaviour
                     info.BodyType.Attributes.GetOrDefault("health", 0f);
 
         LoadParts();
-        AddDemoBehaviors();
+
+        usesDemoBehaviors = info.Behaviors.Count == 0;
+
+        if (usesDemoBehaviors) AddDemoBehaviors();
+        else LoadBehaviors();
     }
 
     private void AddDemoBehaviors()
     {
-        var guns = new List<GunController>();
-        parts.ForEach(part =>
-        {
-            if (part is GunController gun) guns.Add(gun);
-        });
-
         var proxSensor = sensors.Find(part => part is ProximitySensor) as ProximitySensor;
         var visSensor = sensors.Find(part => part is VisionSensor) as VisionSensor;
         var wheels = parts.Find(part => part is WheelsController) as WheelsController;
@@ -177,10 +180,20 @@ public class BotController : MonoBehaviour
                 parts.Add(partController);
 
                 if (partController is SensorPartController sensor) sensors.Add(sensor);
+                else if (partController is GunController gun) guns.Add(gun);
             }
         }
 
         body?.PositionWeapons();
+    }
+
+    private void LoadBehaviors()
+    {
+        for (var i = info.Behaviors.Count - 1; i >= 0; i--)
+        {
+            var executor = new BehaviorExecutor(this, info.Behaviors[i]);
+            behaviorExecutors.Add(executor);
+        }
     }
 
     private void Start()
@@ -196,7 +209,14 @@ public class BotController : MonoBehaviour
 
     private void PickActiveBehavior()
     {
-        activeBehavior = behaviors.Find(behavior => behavior.IsApplicable());
+        if (usesDemoBehaviors)
+        {
+            activeDemoBehavior = behaviors.FirstOrDefault(behavior => behavior.IsApplicable());
+        }
+        else
+        {
+            activeBehavior = behaviorExecutors.FirstOrDefault(behavior => behavior.IsApplicable());
+        }
     }
 
     private void Update()
@@ -211,7 +231,9 @@ public class BotController : MonoBehaviour
     private void FixedUpdate()
     {
         if (!actionsEnabled) return;
-        activeBehavior?.Execute();
+        
+        if (usesDemoBehaviors) activeDemoBehavior?.Execute();
+        else activeBehavior?.Execute();
     }
 
     public void TakeDamage(float amount)
