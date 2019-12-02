@@ -409,10 +409,6 @@ public class InventoryController : MonoBehaviour
             }
            
          
-           
-           
-        }));
-       
         StartCoroutine(DataManager.Instance.FetchUserInventory(success1 =>
         {
             if (!success1)
@@ -427,6 +423,10 @@ public class InventoryController : MonoBehaviour
                 inventory.AddItem((UserItemToItem(inventoryItem).GetCopy()));
             }
         }));
+           
+           
+        }));
+       
         
 
     }
