@@ -15,52 +15,103 @@ public class TargetingManager
 
     public static List<BotController> Targets(string targetingPriority, BotController myself)
     {
-        return TargetFunctions.PriorityManager.ApplyTargetPriority(targetingPriority, myself, myself.TargetableBots());
+        return TargetFunctions.TargetFunctionManager.ApplyTargetPriority(targetingPriority, myself, myself.TargetableBots());
+    }
+
+    public static bool TargetSatisfiesCondition(string targetingConditional, BotController myself, BotController target)
+    {
+        return TargetFunctions.TargetFunctionManager.ApplyTargetConditional(targetingConditional, myself, target);
     }
 
     public static List<string> TargetingPriorities(string sensor)
     {
-        return TargetFunctions.PriorityManager.PrioritiesFrom(sensor);
+        return TargetFunctions.TargetFunctionManager.PrioritiesFrom(sensor);
+    }
+
+    public static List<string> TargetingConditionals()
+    {
+        return TargetFunctions.TargetFunctionManager.ConditionalsFrom(BehaviorLabController.CurrentMatchingEquipmentAsResources(PartType.Sensor, true));
     }
 }
 
 namespace TargetFunctions
 {
-    internal class PriorityManager
+    internal class TargetFunctionManager
     {
-        private static Dictionary<string, List<Target>> sensorTargets = new Dictionary<string, List<Target>>();
-        internal static Dictionary<Target, PriorityFunction> targetFunctions = new Dictionary<Target, PriorityFunction>();
+        private static Dictionary<string, List<Target>> sensorPriorities = new Dictionary<string, List<Target>>();
+        internal static Dictionary<Target, PriorityFunction> priorityFunctions = new Dictionary<Target, PriorityFunction>();
 
-        static PriorityManager()
+        private static Dictionary<string, List<Target>> sensorConditionals = new Dictionary<string, List<Target>>();
+        internal static Dictionary<Target, ConditionalFunction> conditionalFunctions = new Dictionary<Target, ConditionalFunction>();
+
+        static TargetFunctionManager()
         {
             // Add sensor specific target priorities here TODO: could use more
             {
-                AddTargets("ProximitySensor", Target.CLOSEST, Target.FARTHEST);
-                AddTargets("VisionSensor", Target.CLOSEST, Target.FARTHEST);
+                AddPriorities("ProximitySensor", Target.CLOSEST, Target.FARTHEST);
+                AddPriorities("VisionSensor", Target.CLOSEST, Target.FARTHEST, Target.LOWEST_HEALTH, Target.HIGHEST_HEALTH);
             }
 
-            PriorityFunctionHelper.AttachPriorityFunctions();
+            PriorityFunctionHelper.AttachFunctions();
+
+            // Add sensor specific target conditionals here TODO: could use more
+            {
+                AddConditionals("ProximitySensor", Target.IS_TOO_CLOSE, Target.IN_SHORT_RANGE, Target.IN_MEDIUM_RANGE, Target.IN_LONG_RANGE);
+                AddConditionals("VisionSensor", Target.SHIELDS_ARE_DOWN);
+            }
+
+            ConditionalFunctionHelper.AttachFunctions();
         }
 
-        private static void AddTargets(string sensor, params Target[] targets)
+        private static void AddPriorities(string sensor, params Target[] targets)
         {
-            if (!sensorTargets.ContainsKey(sensor)) sensorTargets.Add(sensor, new List<Target>());
-            sensorTargets[sensor].AddRange(targets);
+            AddTargets(sensorPriorities, sensor, targets);
+        }
+
+        private static void AddConditionals(string sensor, params Target[] targets)
+        {
+            AddTargets(sensorConditionals, sensor, targets);
+        }
+
+        private static void AddTargets(Dictionary<string, List<Target>> map, string sensor, params Target[] targets)
+        {
+            if (!map.ContainsKey(sensor)) map.Add(sensor, new List<Target>());
+            map[sensor].AddRange(targets);
+        }
+
+        private static List<string> FromAsResources(Dictionary<string, List<Target>> map, string sensor)
+        {
+            List<string> resources = new List<string>();
+            foreach (Target target in map[sensor])
+            {
+                resources.Add(TargetHelper.AsResource(target));
+            }
+            return resources;
         }
 
         internal static List<string> PrioritiesFrom(string sensor)
         {
-            List<string> priorities = new List<string>();
-            foreach (Target priority in sensorTargets[sensor])
+            return FromAsResources(sensorPriorities, sensor);
+        }
+
+        internal static List<string> ConditionalsFrom(ICollection<string> sensors)
+        {
+            List<string> conditionals = new List<string>();
+            foreach (string sensor in sensors)
             {
-                priorities.Add(TargetPriorityHelper.ToString(priority));
+                conditionals.AddRange(FromAsResources(sensorConditionals, sensor));
             }
-            return priorities;
+            return conditionals;
         }
 
         internal static List<BotController> ApplyTargetPriority(string targetPriority, BotController myself, List<BotController> them)
         {
-            return targetFunctions[TargetPriorityHelper.Parse(targetPriority)](myself, them);
+            return priorityFunctions[TargetHelper.Parse(targetPriority)](myself, them);
+        }
+
+        internal static bool ApplyTargetConditional(string targetConditional, BotController myself, BotController target)
+        {
+            return conditionalFunctions[TargetHelper.Parse(targetConditional)](myself, target);
         }
     }
 }
