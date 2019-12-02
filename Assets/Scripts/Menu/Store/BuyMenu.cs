@@ -25,9 +25,14 @@ public class BuyMenu : MonoBehaviour
     //Buys the part via a backend call
     public void Buy()
     {
-        //TODO: Fix this callback
-        StartCoroutine(DataManager.Instance.PurchasePart(DataManager.Instance.GetPart(PartID), delegate(bool obj)
+        PartInfo part = DataManager.Instance.GetPart(PartID);
+        StartCoroutine(DataManager.Instance.PurchasePart(part, success =>
         {
+            if (!success)
+            {
+                Debug.Log("Store No Buy");
+                return;
+            }
             storeController.RefreshCurrency();
         }));
         gameObject.SetActive(false);

@@ -178,9 +178,8 @@ public class Inventory : MonoBehaviour
     {
         foreach (var slot in itemSlots)
         {
-           
+            slot.Amount = 0;
             slot.Item = null;
-           // slot.Amount = 0;
-        }
+           }
     }
 }

@@ -16,6 +16,7 @@ public class StoreController : MonoBehaviour
     [SerializeField] private GameObject StoreButtonParent;
     [SerializeField] private Text UserCurrency;
     private List<StoreButton> StoreButtons = new List<StoreButton>();
+    [SerializeField] private InventoryController InventoryController;
 
     private PartInfo[] allParts;
 
@@ -99,8 +100,9 @@ public class StoreController : MonoBehaviour
 
         //Gives all buttons desired attributes and functionality
 
-
     }
+    
+    
 
 
     //Called in editor on change, gathers all of the current buttons

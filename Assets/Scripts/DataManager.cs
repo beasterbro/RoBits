@@ -147,7 +147,7 @@ public class DataManager
         else callback?.Invoke(false);
     }
 
-    private IEnumerator FetchCurrentUser(Action<bool> callback = null)
+    public IEnumerator FetchCurrentUser(Action<bool> callback = null)
     {
         var request = BasicGet("/user");
         yield return request.SendWebRequest();
