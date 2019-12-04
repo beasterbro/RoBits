@@ -524,7 +524,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 1034565388}
   m_TextComponent: {fileID: 1229621335}
   m_Placeholder: {fileID: 848056896}
   m_ContentType: 0
@@ -1068,7 +1068,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1991808468
 RectTransform:
   m_ObjectHideFlags: 0
