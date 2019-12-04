@@ -35,12 +35,4 @@ public class MainMenu : MonoBehaviour
         Application.Quit();
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        DataManager.Instance.Latch(this);
-        if (!DataManager.Instance.AuthEstablished) DataManager.Instance.BypassAuth("DEV testUser@gmail.com");
-        StartCoroutine(DataManager.Instance.FetchInitialDataIfNecessary());
-    }
-
 }

@@ -1,7 +1,10 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MenuController : MonoBehaviour
 {
+
+    public Text usernameLabel;
 
     public MainMenu mainMenu;
     public GameObject battleTypeSelectionMenu;
@@ -23,13 +26,23 @@ public class MenuController : MonoBehaviour
             mainMenu.gameObject, battleTypeSelectionMenu, manageMenu, selectTeamBattleMenu.gameObject,
             selectTeamTrainingMenu, inventoryMenu, storeMenu, teamEditor
         };
-        
-        ShowMainMenu();
+
+        usernameLabel.gameObject.SetActive(false);
+        DataManager.Instance.Latch(this);
+        if (!DataManager.Instance.AuthEstablished) DataManager.Instance.BypassAuth("DEV lucaspopp0@gmail.com");
+        StartCoroutine(DataManager.Instance.FetchInitialDataIfNecessary(success =>
+        {
+            if (!success) return;
+            ShowMainMenu();
+            usernameLabel.text = DataManager.Instance.CurrentUser.Username + "\nLevel: " + DataManager.Instance.CurrentUser.Level;
+            usernameLabel.gameObject.SetActive(true);
+        }));
     }
 
     private void HideAll()
     {
-        foreach (var menu in allMenus) 
+        usernameLabel.gameObject.SetActive(false);
+        foreach (var menu in allMenus)
             menu.SetActive(false);
     }
 
@@ -37,6 +50,7 @@ public class MenuController : MonoBehaviour
     {
         HideAll();
         mainMenu.gameObject.SetActive(true);
+        usernameLabel.gameObject.SetActive(true);
     }
 
     public void ShowBattleTypeSelection()
