@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -46,7 +47,7 @@ public class LoginController : MonoBehaviour
 
     private void Update()
     {
-        #if false && UNITY_EDITOR
+        #if UNITY_EDITOR
         if (!isEstablishingAuth)
         {
             isEstablishingAuth = true;
@@ -63,8 +64,9 @@ public class LoginController : MonoBehaviour
             {
                 if (success)
                 {
-                    StartCoroutine(DataManager.Instance.EmailIsTaken(email, isExistingUser =>
+                    StartCoroutine(DataManager.Instance.EmailIsTaken(email, (emailSuccess, isExistingUser) =>
                     {
+                        if (!emailSuccess) return;
                         if (isExistingUser) SceneManager.LoadScene(Scenes.Menu);
                         else
                         {
@@ -109,7 +111,12 @@ public class LoginController : MonoBehaviour
                 {
                     StartCoroutine(DataManager.Instance.CreateUser(username, newUserEmail, success =>
                     {
-                        if (!success) return;
+                        if (!success)
+                        {
+                            Debug.Log("User creation failed");
+                            return;
+                        }
+
                         SceneManager.LoadScene(Scenes.Menu);
                     }));
                 }
