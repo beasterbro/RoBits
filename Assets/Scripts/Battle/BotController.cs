@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Extensions;
@@ -264,6 +264,13 @@ public class BotController : MonoBehaviour
 
         body.Dim();
         parts.ForEach(part => part.Dim());
+        
+        // Disable all colliders
+        foreach (var collider in GetComponents<Collider2D>())
+            collider.enabled = false;
+        
+        foreach (var collider in GetComponentsInChildren<Collider2D>())
+            collider.enabled = false;
     }
 
     public bool OtherIsEnemey(BotController other)
