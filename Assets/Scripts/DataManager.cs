@@ -97,19 +97,24 @@ public class DataManager
     }
 
     // Exchange a Google ID token for a bearer token
-    public IEnumerator EstablishAuth(string googleToken, Action<bool> callback = null)
+    public IEnumerator EstablishAuth(string googleToken, Action<bool, string> callback = null)
     {
         authEstablished = false;
 
         var request = BasicPost("/verify?id_token=" + googleToken);
         yield return request.SendWebRequest();
 
+        string email = null;
         SimpleCallback(request, () =>
         {
             var response = JsonUtils.DeserializeObject<AuthResponse>(request.downloadHandler.text);
             bearerToken = response.token;
+            email = response.email;
             authEstablished = true;
-        }, callback);
+        }, success =>
+        {
+            callback?.Invoke(success, email);
+        });
     }
 
     // Adds the auth header to the HTTP client
@@ -117,6 +122,50 @@ public class DataManager
     {
         bearerToken = token;
         authEstablished = true;
+    }
+
+    public IEnumerator EmailIsTaken(string email, Action<bool> callback)
+    {
+        var request = BasicGet("/user/exists?email=" + email);
+        yield return request.SendWebRequest();
+
+        bool taken = false;
+        SimpleCallback(request, () =>
+        {
+            taken = JsonUtils.DeserializeObject<bool>(request.downloadHandler.text);
+        }, success =>
+        {
+            callback.Invoke(!success || taken);
+        });
+    }
+
+    public IEnumerator UsernameIsTaken(string username, Action<bool> callback)
+    {
+        var request = BasicGet("/user/exists?username=" + username);
+        yield return request.SendWebRequest();
+
+        bool taken = false;
+        SimpleCallback(request, () =>
+        {
+            taken = JsonUtils.DeserializeObject<bool>(request.downloadHandler.text);
+        }, success =>
+        {
+            callback.Invoke(!success || taken);
+        });
+    }
+
+    public IEnumerator CreateUser(string username, string email, Action<bool> callback)
+    {
+        var userCreateRequest = new Dictionary<string, string>
+        {
+            {"uid", username},
+            {"username", username},
+            {"email", email}
+        };
+        
+        var request = BasicPost("/user", JsonUtils.SerializeObject(userCreateRequest));
+        yield return request.SendWebRequest();
+        SimpleCallback(request, null, callback);
     }
 
     public IEnumerator FetchInitialDataIfNecessary(Action<bool> callback = null)
