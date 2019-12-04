@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Extensions;
@@ -13,6 +13,7 @@ public class BotController : MonoBehaviour
     [HideInInspector] public float maxHealth;
     [HideInInspector] public float currentHealth;
     [HideInInspector] public bool isDead;
+    private float weight = 100f;
 
     private bool actionsEnabled;
 
@@ -41,6 +42,8 @@ public class BotController : MonoBehaviour
 
         maxHealth = info.Equipment.Sum(part => part.Attributes.GetOrDefault("health", 0f)) +
                     info.BodyType.Attributes.GetOrDefault("health", 0f);
+        weight = info.Equipment.Sum(part => part.Attributes.GetOrDefault("weight", 0f)) +
+                 info.BodyType.Attributes.GetOrDefault("weight", 0f);
 
         LoadParts();
 
@@ -48,6 +51,9 @@ public class BotController : MonoBehaviour
 
         if (usesDemoBehaviors) AddDemoBehaviors();
         else LoadBehaviors();
+
+        var rigidbodyComponent = gameObject.GetComponent<Rigidbody2D>();
+        if (rigidbodyComponent != null) rigidbodyComponent.mass = weight / 100f;
     }
 
     private void AddDemoBehaviors()
@@ -231,7 +237,7 @@ public class BotController : MonoBehaviour
     private void FixedUpdate()
     {
         if (!actionsEnabled) return;
-        
+
         if (usesDemoBehaviors) activeDemoBehavior?.Execute();
         else activeBehavior?.Execute();
     }
