@@ -386,7 +386,7 @@ public class InventoryController : MonoBehaviour
     {
         RefreshInventory();
         RefreshCurrency();
-          
+        CreateAllBotImages();
            
     }
 
