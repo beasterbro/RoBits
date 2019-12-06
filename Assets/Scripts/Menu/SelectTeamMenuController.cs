@@ -35,7 +35,7 @@ public class SelectTeamMenuController : MonoBehaviour
 
     private void GoToBattle()
     {
-        SceneManager.LoadScene(Scenes.Simulation);
+        SceneManager.LoadScene(7);
     }
 
     private void GoToTraining()

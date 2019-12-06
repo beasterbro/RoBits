@@ -26,4 +26,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Training.unity
     guid: 48d24baf9d05d884baa6e563f3337ada
+  - enabled: 1
+    path: Assets/Scenes/OpponentPreview.unity
+    guid: 5b27f445156d5a14a97d063a3e0f03bf
   m_configObjects: {}

@@ -384,9 +384,22 @@ public class InventoryController : MonoBehaviour
     
     private void OnEnable()
     {
-        RefreshInventory();
-        RefreshCurrency();
-          
+        DataManager.Instance.Latch(this);
+        if (!DataManager.Instance.AuthEstablished) DataManager.Instance.BypassAuth("DEV testUser@gmail.com");
+        StartCoroutine(DataManager.Instance.FetchInitialDataIfNecessary(success =>
+        {
+            if (!success) return;
+
+            userInventory = DataManager.Instance.UserInventory;
+            userBots = new List<BotInfo>(DataManager.Instance.AllBots);
+            SetActiveBot(0);
+            CreateAllBotImages();
+
+            RefreshCurrency();
+            RefreshInventory();
+            RefreshEquipment();
+            RefreshBotInfo();
+        }));
            
     }
 
