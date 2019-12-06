@@ -20,14 +20,19 @@ public class MainMenu : MonoBehaviour
         SceneManager.LoadScene(Scenes.Menu);
     }
 
+    public void LoadMiniGame()
+    {
+        SceneManager.LoadScene(Scenes.Minigame);
+    }
+
     public void LoadOpponentPreview()
     {
-        SceneManager.LoadScene(5);
+        SceneManager.LoadScene(Scenes.OpponentSelection);
     }
     
     public void LoadTraining()
     {
-        SceneManager.LoadScene(6);
+        SceneManager.LoadScene(Scenes.Training);
     }
 
     public void QuitGame()
