@@ -40,7 +40,7 @@ public class OpponentSearchController : MonoBehaviour
         }
         else
         {
-            resultText.text = "Opponent not found :(";
+            resultText.text = "Opponent not found or you searched for yourself";
         }
         
         resultText.gameObject.SetActive(true);
@@ -68,10 +68,18 @@ public class OpponentSearchController : MonoBehaviour
             else
             {
                 opponent = userInfo;
-                ShowResult(true);
-                
-                Debug.Log(userInfo.Email);
-                previewTeamsButton.gameObject.SetActive(true);
+                if (opponent.ID == DataManager.Instance.CurrentUser.ID)
+                {
+                    ShowResult(false);
+                }
+                else
+                {
+
+                    ShowResult(true);
+
+                    Debug.Log(userInfo.Email);
+                    previewTeamsButton.gameObject.SetActive(true);
+                }
             }
             
             searchButton.gameObject.SetActive(true);

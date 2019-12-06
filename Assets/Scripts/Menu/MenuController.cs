@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MenuController : MonoBehaviour
 {
@@ -15,6 +16,8 @@ public class MenuController : MonoBehaviour
     private GameObject[] allMenus;
 
     private int battleType;
+    private bool created;
+    [SerializeField] private GameObject Menus;
 
     private void Start()
     {
@@ -80,5 +83,37 @@ public class MenuController : MonoBehaviour
         HideAll();
         teamEditor.SetActive(true);
     }
+    
+    private void OnEnable()
+    {
+                
+       Menus.SetActive(true);
+    }
 
+    
+    private void OnDestroy()
+    {
+        
+        Menus.SetActive(false);
+    }
+
+    
+    public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "Menu")
+        {
+            ;
+        }
+        else
+        {
+            
+        Menus.SetActive(false);
+        }
+    }
+
+    private void Awake()
+    {
+        DontDestroyOnLoad(Menus);
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Extensions;
 using JsonData;
 using UnityEngine;
@@ -49,19 +50,33 @@ public class DataManager
     public void Latch(MonoBehaviour coroutineRunner) => runner = coroutineRunner;
 
     // Adds the necessary headers to the request
-    private UnityWebRequest WrapRequest(UnityWebRequest request)
+    private UnityWebRequest WrapRequest(UnityWebRequest request, bool ignoreAuth = false)
     {
-        if (authEstablished && bearerToken != null) request.SetRequestHeader("Authorization", "Bearer " + bearerToken);
+        if (!ignoreAuth && authEstablished && bearerToken != null) request.SetRequestHeader("Authorization", "Bearer " + bearerToken);
         request.SetRequestHeader("Content-Type", "application/json");
         request.SetRequestHeader("Accept", "application/json");
         return request;
     }
 
     // Convenience methods for building requests to the API
-    private UnityWebRequest BasicGet(string endpt) => WrapRequest(UnityWebRequest.Get(baseUrl + endpt));
-    private UnityWebRequest BasicPost(string endpt, string content = "") => WrapRequest(UnityWebRequest.Post(baseUrl + endpt, content));
-    private UnityWebRequest BasicPut(string endpt, string content = "") => WrapRequest(UnityWebRequest.Put(baseUrl + endpt, content));
-    private UnityWebRequest BasicDelete(string endpt) => WrapRequest(UnityWebRequest.Delete(baseUrl + endpt));
+    private UnityWebRequest BasicGet(string endpt, bool ignoreAuth = false)
+        => WrapRequest(UnityWebRequest.Get(baseUrl + endpt), ignoreAuth);
+    
+    private UnityWebRequest BasicPost(string endpt, string content = "", bool ignoreAuth = false)
+    {
+        var request = UnityWebRequest.Post(baseUrl + endpt, content);
+        
+        if (!string.IsNullOrEmpty(content))
+        {
+            request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(content));
+            request.uploadHandler.contentType = "application/json";
+        }
+        
+        return WrapRequest(request, ignoreAuth);
+    }
+
+    private UnityWebRequest BasicPut(string endpt, string content = "", bool ignoreAuth = false)
+        => WrapRequest(UnityWebRequest.Put(baseUrl + endpt, content), ignoreAuth);
 
     // Provides a simple callback handler, passing a boolean representing success/failure
     private static void SimpleCallback(UnityWebRequest request, Action action, Action<bool> callback = null)
@@ -97,19 +112,24 @@ public class DataManager
     }
 
     // Exchange a Google ID token for a bearer token
-    public IEnumerator EstablishAuth(string googleToken, Action<bool> callback = null)
+    public IEnumerator EstablishAuth(string googleToken, Action<bool, string> callback = null)
     {
         authEstablished = false;
 
         var request = BasicPost("/verify?id_token=" + googleToken);
         yield return request.SendWebRequest();
 
+        string email = null;
         SimpleCallback(request, () =>
         {
             var response = JsonUtils.DeserializeObject<AuthResponse>(request.downloadHandler.text);
             bearerToken = response.token;
+            email = response.email;
             authEstablished = true;
-        }, callback);
+        }, success =>
+        {
+            callback?.Invoke(success, email);
+        });
     }
 
     // Adds the auth header to the HTTP client
@@ -117,6 +137,51 @@ public class DataManager
     {
         bearerToken = token;
         authEstablished = true;
+    }
+
+    public IEnumerator EmailIsTaken(string email, Action<bool, bool> callback)
+    {
+        var request = BasicGet("/user/exists?email=" + email, ignoreAuth: true);
+        yield return request.SendWebRequest();
+
+        bool taken = false;
+        SimpleCallback(request, () =>
+        {
+            taken = JsonUtils.DeserializeObject<bool>(request.downloadHandler.text);
+        }, success =>
+        {
+            callback.Invoke(success, taken);
+        });
+    }
+
+    public IEnumerator UsernameIsTaken(string username, Action<bool> callback)
+    {
+        var request = BasicGet("/user/exists?username=" + username, ignoreAuth: true);
+        yield return request.SendWebRequest();
+
+        bool taken = false;
+        SimpleCallback(request, () =>
+        {
+            taken = JsonUtils.DeserializeObject<bool>(request.downloadHandler.text);
+        }, success =>
+        {
+            callback.Invoke(!success || taken);
+        });
+    }
+
+    public IEnumerator CreateUser(string username, string email, Action<bool> callback)
+    {
+        var userCreateRequest = new Dictionary<string, string>
+        {
+            {"uid", username},
+            {"username", username},
+            {"email", email}
+        };
+        var createContent = JsonUtils.SerializeObject(userCreateRequest);
+        
+        var request = BasicPost("/user", createContent, ignoreAuth: true);
+        yield return request.SendWebRequest();
+        SimpleCallback(request, null, callback);
     }
 
     public IEnumerator FetchInitialDataIfNecessary(Action<bool> callback = null)
