@@ -35,7 +35,7 @@ public class BehaviorLabController : MonoBehaviour
     void Start()
     {
         DataManager.Instance.Latch(this);
-        if (!DataManager.Instance.AuthEstablished) DataManager.Instance.BypassAuth("DEV lucaspopp0@gmail.com");
+        if (!DataManager.Instance.AuthEstablished) DataManager.Instance.BypassAuth("DEV tu0@robits.com");
         StartCoroutine(DataManager.Instance.FetchInitialDataIfNecessary(success =>
         {
             if (!success) return;
@@ -98,10 +98,11 @@ public class BehaviorLabController : MonoBehaviour
         existingTriggersList.LoadData(currentBot.Behaviors.Select(behavior => behavior.Trigger));
         existingTriggersList.GenerateItems();
 
-        foreach (var item in existingTriggersList.Items)
+        foreach (TriggerListItem item in existingTriggersList.Items)
         {
-            var button = item.GetComponent<Button>();
-            if (button != null) button.onClick.AddListener(UpdateActiveBehavior);
+            item.onSelect = UpdateActiveBehavior;
+            item.onDelete = DeleteBehavior;
+            item.onShift = ShiftBehaviorDown;
         }
 
         newTriggersList.LoadData(GenerateNewTriggersData());
@@ -157,11 +158,39 @@ public class BehaviorLabController : MonoBehaviour
         }
     }
 
-    private void UpdateActiveBehavior()
+    private void DeleteBehavior(TriggerListItem item)
     {
-        var selectedItem = EventSystem.current.currentSelectedGameObject.GetComponent<TriggerListItem>();
+        if (item != null && existingTriggersList.Items.Contains(item) && item.data is TriggerInfo trigger)
+        {
+            currentBot.Behaviors.RemoveAll(behavior => behavior.TriggerId == trigger.ID);
+            UpdateTriggerLists();
+            if (currentBehavior.TriggerId == trigger.ID)
+            {
+                ClearExistingBlocks();
+                if (currentBot.Behaviors.Count > 0) DisplayBehaviorForTrigger(currentBot.Behaviors[0].Trigger);
+            }
+        }
+    }
 
-        if (selectedItem != null && selectedItem.data is TriggerInfo trigger)
+    private void ShiftBehaviorDown(TriggerListItem item)
+    {
+        if (item != null && item.data is TriggerInfo trigger)
+        {
+            int index = existingTriggersList.Items.IndexOf(item);
+            if (0 <= index && index < existingTriggersList.Items.Count - 1) // Note: count-1 because don't bother shifting last item down
+            {
+                var behavior = currentBot.Behaviors[index];
+                currentBot.Behaviors.RemoveAt(index);
+                currentBot.Behaviors.Insert(index + 1, behavior);
+
+                UpdateTriggerLists();
+            }
+        }
+    }
+
+    private void UpdateActiveBehavior(TriggerListItem item)
+    {
+        if (item != null && item.data is TriggerInfo trigger)
         {
             SaveCurrentBehavior();
             ClearExistingBlocks();

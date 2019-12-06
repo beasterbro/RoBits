@@ -5218,7 +5218,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   headerPrefab: {fileID: 5773001690574334608, guid: 5aeb7a10812814532b072f1f90717b0b,
     type: 3}
-  itemPrefab: {fileID: 1885127600393180400, guid: c2f6ae09676d44b9b803a2a680613d41,
+  itemPrefab: {fileID: 2418481155197768336, guid: a5080545295e189448072a99c52ff88b,
     type: 3}
 --- !u!114 &1687570096
 MonoBehaviour:

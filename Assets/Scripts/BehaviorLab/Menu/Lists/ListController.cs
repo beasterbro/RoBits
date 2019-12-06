@@ -38,15 +38,11 @@ public class ListController : MonoBehaviour
         {
             foreach (var group in dictData)
             {
-                var header = Instantiate(headerPrefab, gameObject.transform, false);
-                header.LoadData(group.Key);
-                items.Add(header);
+                AddNewItem(headerPrefab, group.Key);
 
                 foreach (var el in group.Value)
                 {
-                    var item = Instantiate(itemPrefab, gameObject.transform, false);
-                    item.LoadData(el);
-                    items.Add(item);
+                    AddNewItem(itemPrefab, el);
                 }
             }
         }
@@ -54,11 +50,16 @@ public class ListController : MonoBehaviour
         {
             foreach (var el in listData)
             {
-                var item = Instantiate(itemPrefab, gameObject.transform, false);
-                item.LoadData(el);
-                items.Add(item);
+                AddNewItem(itemPrefab, el);
             }
         }
+    }
+
+    private void AddNewItem(ListItem prefab, object element)
+    {
+        var item = Instantiate(prefab, gameObject.transform, false);
+        item.LoadData(element);
+        items.Add(item);
     }
 
     public List<ListItem> Items => items;
