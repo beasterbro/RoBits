@@ -7,7 +7,7 @@
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
     <script src="TemplateData/UnityProgress.js"></script>
-    <script src="Build/UnityLoader.js"></script>
+    <script src="%UNITY_WEBGL_LOADER_URL%"></script>
     <style>
       #gameContainer {
         position: absolute;
@@ -25,7 +25,7 @@
       }
     </style>
     <script>
-      var gameInstance = UnityLoader.instantiate("gameContainer", "Build/Login-Test-Dev.json", {onProgress: UnityProgress});
+      var gameInstance = UnityLoader.instantiate("gameContainer", "%UNITY_WEBGL_BUILD_URL%", { onProgress: UnityProgress });
 
       function onSignIn(googleUser) {
           gameInstance.SendMessage("LoginController", "OnSignIn", googleUser.getAuthResponse().id_token);
