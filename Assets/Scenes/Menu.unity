@@ -584,6 +584,7 @@ MonoBehaviour:
   inventoryMenu: {fileID: 354803273}
   storeMenu: {fileID: 846546368}
   teamEditor: {fileID: 1967725736}
+  Menus: {fileID: 27715503}
 --- !u!223 &27715506
 Canvas:
   m_ObjectHideFlags: 0
