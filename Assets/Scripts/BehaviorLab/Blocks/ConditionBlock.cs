@@ -54,6 +54,7 @@ public class ConditionBlock : DropdownBlock
             if (input != null)
             {
                 target.Push(input);
+                input.PositionConnections();
             }
         }
 
