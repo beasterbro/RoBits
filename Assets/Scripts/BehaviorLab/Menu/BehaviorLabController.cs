@@ -51,6 +51,12 @@ public class BehaviorLabController : MonoBehaviour
 
     public void UpdateCurrentBot(int id)
     {
+        if (currentBot != null)
+        {
+            SaveCurrentBehavior();
+            ClearExistingBlocks();
+        }
+
         currentBot = DataManager.Instance.AllBots[id];
         BotPreviewController.UpdateCurrentPreview(currentBot);
 
@@ -145,6 +151,8 @@ public class BehaviorLabController : MonoBehaviour
             ToggleBehaviors();
             UpdateTriggerLists();
 
+            SaveCurrentBehavior();
+            ClearExistingBlocks();
             DisplayBehaviorForTrigger(trigger);
         }
     }
@@ -155,6 +163,8 @@ public class BehaviorLabController : MonoBehaviour
 
         if (selectedItem != null && selectedItem.data is TriggerInfo trigger)
         {
+            SaveCurrentBehavior();
+            ClearExistingBlocks();
             DisplayBehaviorForTrigger(trigger);
         }
     }
@@ -173,7 +183,7 @@ public class BehaviorLabController : MonoBehaviour
 
     private void ClearExistingBlocks()
     {
-        existingBlocks.ForEach(block => Destroy(block.gameObject));
+        existingBlocks.ForEach(block => { if (block != null) Destroy(block.gameObject); });
         existingBlocks.Clear();
     }
 
@@ -182,13 +192,13 @@ public class BehaviorLabController : MonoBehaviour
         if (currentBehavior == null) return;
 
         var currentIndex = currentBot.Behaviors.FindIndex(behavior => behavior.TriggerId == currentBehavior.TriggerId);
+
+        if (currentIndex == -1) return;
         currentBot.Behaviors[currentIndex] = currentTriggerBlock.BehaviorState();
     }
 
     private void DisplayBehaviorForTrigger(TriggerInfo trigger)
     {
-        SaveCurrentBehavior();
-        ClearExistingBlocks();
         currentBehavior = currentBot.Behaviors.FirstOrDefault(behaviorInfo => behaviorInfo.TriggerId == trigger.ID);
 
         if (currentBehavior != null)
