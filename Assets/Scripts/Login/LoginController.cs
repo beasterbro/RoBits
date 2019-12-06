@@ -1,14 +1,23 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class LoginController : MonoBehaviour
 {
+
+    public GameObject userCreationPanel;
+    public InputField usernameInput;
+    public Text errorLabel;
 
     private bool userLoggedIn;
     private string googleToken;
     private bool isEstablishingAuth;
 
+    private string newUserEmail;
+    
     #if UNITY_WEBGL && !UNITY_EDITOR
     [DllImport("__Internal")]
     private static extern void ShowLoginButton();
@@ -31,6 +40,7 @@ public class LoginController : MonoBehaviour
 
     private void Start()
     {
+        userCreationPanel.SetActive(false);
         ShowLoginButton();
         DataManager.Instance.Latch(this);
     }
@@ -49,11 +59,22 @@ public class LoginController : MonoBehaviour
         {
             HideLoginButton();
             isEstablishingAuth = true;
-            StartCoroutine(DataManager.Instance.EstablishAuth(googleToken, success =>
+            
+            StartCoroutine(DataManager.Instance.EstablishAuth(googleToken, (success, email) =>
             {
                 if (success)
                 {
-                    SceneManager.LoadScene(Scenes.Menu);
+                    StartCoroutine(DataManager.Instance.EmailIsTaken(email, (emailSuccess, isExistingUser) =>
+                    {
+                        if (!emailSuccess) return;
+                        if (isExistingUser) SceneManager.LoadScene(Scenes.Menu);
+                        else
+                        {
+                            newUserEmail = email;
+                            errorLabel.gameObject.SetActive(false);
+                            userCreationPanel.SetActive(true);
+                        }
+                    }));
                 }
                 else
                 {
@@ -65,6 +86,42 @@ public class LoginController : MonoBehaviour
             }));
         }
         #endif
+    }
+
+    public void AttemptJoin()
+    {
+        var username = usernameInput.text.Trim();
+
+        if (username.Length == 0 || Regex.IsMatch(username, "\\W"))
+        {
+            errorLabel.gameObject.SetActive(true);
+            errorLabel.text = "Invalid username";
+        }
+        else
+        {
+            errorLabel.gameObject.SetActive(false);
+            StartCoroutine(DataManager.Instance.UsernameIsTaken(username, isTaken =>
+            {
+                if (isTaken)
+                {
+                    errorLabel.gameObject.SetActive(true);
+                    errorLabel.text = "Username taken";
+                }
+                else
+                {
+                    StartCoroutine(DataManager.Instance.CreateUser(username, newUserEmail, success =>
+                    {
+                        if (!success)
+                        {
+                            Debug.Log("User creation failed");
+                            return;
+                        }
+
+                        SceneManager.LoadScene(Scenes.Menu);
+                    }));
+                }
+            }));
+        }
     }
 
 }
