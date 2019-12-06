@@ -28,7 +28,7 @@ public class TargetBlock : DropdownBlock
 
     public override bool IsValid()
     {
-        return Supplier().Count > 0;
+        return BehaviorLabController.CurrentMatchingEquipmentAsResources(PartType.Sensor).Contains(sensor);
     }
 
     public override ReturnType OutputType()

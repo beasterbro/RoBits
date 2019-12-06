@@ -30,6 +30,37 @@ public class ConditionBlock : DropdownBlock
         return ReturnType.LOGICAL;
     }
 
+    protected override int[] InputIDs()
+    {
+        var ids = new List<int>();
+        ids.Add(target.IsFull() ? target.Peek().info.ID : -1);
+        return ids.ToArray();
+    }
+
+    protected override List<Block> Children()
+    {
+        List<Block> children = new List<Block>();
+        children.Add(target.Peek());
+        return children;
+    }
+
+    public override void PositionConnections()
+    {
+        SetupScaleControllers();
+
+        if (info.InputIDs.Length > 0)
+        {
+            var input = BehaviorLabController.GetShared().GetBlockById(info.InputIDs[0]);
+            if (input != null)
+            {
+                target.Push(input);
+                input.PositionConnections();
+            }
+        }
+
+        Redraw();
+    }
+
     public override bool IsValid()
     {
         return target != null && target.GetExpectedOutputType() == ReturnType.BOT

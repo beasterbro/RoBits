@@ -82,4 +82,21 @@ public abstract class LogicBlock : Block
         return ids;
     }
 
+    public override void PositionConnections()
+    {
+        SetupScaleControllers();
+
+        for (var i = 0; i < info.InputIDs.Length; i++)
+        {
+            var input = BehaviorLabController.GetShared().GetBlockById(info.InputIDs[i]);
+            if (input != null)
+            {
+                conditions[i].Push(input);
+                input.PositionConnections();
+            }
+        }
+
+        Redraw();
+    }
+
 }

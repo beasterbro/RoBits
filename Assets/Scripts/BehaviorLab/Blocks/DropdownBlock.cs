@@ -31,6 +31,12 @@ public abstract class DropdownBlock : ActionBlock
     protected override void ApplyTypeAttributes()
     {
         base.ApplyTypeAttributes();
+        StartCoroutine(UpdateCurrent());
+    }
+
+    private IEnumerator UpdateCurrent()
+    {
+        yield return null;
         dropdown.Current = info.TypeAttrs[DropdownAttributeKey()] ?? "";
     }
 
