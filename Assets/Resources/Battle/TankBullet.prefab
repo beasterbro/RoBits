@@ -94,11 +94,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a396099ff6b34915aa73fb471accfa42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  botsMask:
-    serializedVersion: 2
-    m_Bits: 256
   damage: 30
-  maxLifetime: 2
+  maxLifetime: 5
   firedBy: {fileID: 0}
 --- !u!50 &5945574208673946467
 Rigidbody2D:

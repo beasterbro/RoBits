@@ -40,8 +40,11 @@ public class TriggerInfo
             return false;
         });
         
-        // TODO: Implement
-        triggers[3] = (new TriggerInfo(3, visionSensor, "Enemy in sight"), (bot, sensor) => false);
+        triggers[3] = (new TriggerInfo(3, visionSensor, "Enemy in sight"), (bot, sensor) =>
+        {
+            if (sensor is VisionSensor vision) return vision.TargetableOpponents().Count > 0;
+            return false;
+        });
     }
     
 }

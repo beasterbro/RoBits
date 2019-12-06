@@ -54,7 +54,6 @@ public class GunController : PartController
         if (bc != null) bc.firedBy = bot;
 
         bulletInstance.velocity = VectorHelper.MakeVector(launchSpeed, bulletInstance.rotation);
-        Destroy(bulletInstance.gameObject, 2f);
     }
 
     public void FocusOn(Transform target)
