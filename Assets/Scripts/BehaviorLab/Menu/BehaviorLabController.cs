@@ -40,15 +40,25 @@ public class BehaviorLabController : MonoBehaviour
         {
             if (!success) return;
 
-            currentBot = DataManager.Instance.AllBots[0];
-            UpdateBotSpecificBlocks();
+            BotPreviewController.CreateBotPreviews();
 
-            if (currentBot.Behaviors.Count > 0) DisplayBehaviorForTrigger(currentBot.Behaviors[0].Trigger);
+            UpdateCurrentBot(0);
 
-            UpdateTriggerLists();
             existingTriggersList.gameObject.SetActive(true);
             newTriggersList.gameObject.SetActive(false);
         }));
+    }
+
+    public void UpdateCurrentBot(int id)
+    {
+        currentBot = DataManager.Instance.AllBots[id];
+        BotPreviewController.UpdateCurrentPreview(currentBot);
+
+        UpdateBotSpecificBlocks();
+
+        if (currentBot.Behaviors.Count > 0) DisplayBehaviorForTrigger(currentBot.Behaviors[0].Trigger);
+
+        UpdateTriggerLists();
     }
 
     private void UpdateBotSpecificBlocks()

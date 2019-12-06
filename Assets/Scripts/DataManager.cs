@@ -121,7 +121,11 @@ public class DataManager
 
     public IEnumerator FetchInitialDataIfNecessary(Action<bool> callback = null)
     {
-        if (initialDataFetched) callback?.Invoke(true);
+        if (initialDataFetched)
+        {
+            yield return null;
+            callback?.Invoke(true);
+        }
         else yield return runner.StartCoroutine(FetchInitialData(callback));
     }
 

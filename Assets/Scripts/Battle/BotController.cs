@@ -168,19 +168,19 @@ public class BotController : MonoBehaviour
 
     private void LoadParts()
     {
-        body = PartController.ControllerForPart(info.BodyType) as BodyTypeController;
+        body = PartController.ControllerForPart(info.BodyType, transform) as BodyTypeController;
         body.bot = this;
-        body.gameObject.transform.parent = transform;
+        //body.gameObject.transform.parent = transform;
         body.Setup();
         body.Position();
 
         foreach (var partInfo in info.Equipment)
         {
-            var partController = PartController.ControllerForPart(partInfo);
+            var partController = PartController.ControllerForPart(partInfo, transform);
             if (partController != null)
             {
                 partController.bot = this;
-                partController.gameObject.transform.parent = transform;
+                //partController.gameObject.transform.parent = transform;
                 partController.Setup();
                 partController.Position();
                 parts.Add(partController);

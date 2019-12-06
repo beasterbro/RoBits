@@ -8,11 +8,11 @@ public abstract class PartController : MonoBehaviour
     [HideInInspector] public PartInfo info;
     private SpriteRenderer spriteRenderer;
 
-    public static PartController ControllerForPart(PartInfo info)
+    public static PartController ControllerForPart(PartInfo info, Transform parent)
     {
         try
         {
-            var obj = Instantiate(Resources.Load<GameObject>("Battle/" + info.ResourceName));
+            var obj = Instantiate(Resources.Load<GameObject>("Battle/" + info.ResourceName), parent);
             var controller = obj.GetComponent<PartController>();
             controller.info = info;
             return controller;
