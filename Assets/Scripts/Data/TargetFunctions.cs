@@ -17,14 +17,24 @@ namespace TargetFunctions
         {
             foreach (Target target in Enum.GetValues(typeof(Target)))
             {
-                if (AsResource(target).Replace(" ", string.Empty).Equals(targetString.ToLower())) return target;
+                if (Ignorable(target.ToString()).Equals(Ignorable(targetString))) return target;
             }
             return Target.UNKNOWN;
         }
 
+        internal static string Ignorable(string str)
+        {
+            return AsResource(str).Replace(" ", string.Empty);
+        }
+
+        private static string AsResource(string str)
+        {
+            return str.ToLower().Replace("_", " ");
+        }
+
         internal static string AsResource(Target target)
         {
-            return target.ToString().ToLower().Replace("_", " ");
+            return AsResource(target.ToString());
         }
 
         internal static float Distance(BotController from, BotController to)

@@ -162,7 +162,7 @@ public class BehaviorExecutor
                 return TargetingManager.TargetSatisfiesCondition(info.TypeAttrs["check"], executor.bot, target);
             }
 
-            return null;
+            return false;
         }
     };
 
