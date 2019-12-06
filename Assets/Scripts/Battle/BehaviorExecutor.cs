@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 public class BehaviorExecutor
 {
@@ -133,8 +134,32 @@ public class BehaviorExecutor
             var proxSensor = (ProximitySensor) executor.bot.parts.FirstOrDefault(part => part is ProximitySensor);
             if (proxSensor != null)
             {
-                var n = int.Parse(info.TypeAttrs["n"] ?? "0");
-                return proxSensor.GetNthOpponent(n);
+                var n = int.Parse(info.TypeAttrs["n"] ?? "1");
+                BotController target = TargetingManager.NthTarget(n, info.TypeAttrs["priority"], executor.bot);
+                return target;
+            }
+            return null;
+        },
+        ["targetvision"] = (executor, info) =>
+        {
+            var proxSensor = (VisionSensor) executor.bot.parts.FirstOrDefault(part => part is VisionSensor);
+            if (proxSensor != null)
+            {
+                var n = int.Parse(info.TypeAttrs["n"] ?? "1");
+                return TargetingManager.NthTarget(n, info.TypeAttrs["priority"], executor.bot);
+            }
+
+            return null;
+        },
+        ["target"] = (executor, info) => {
+            var n = int.Parse(info.TypeAttrs["n"] ?? "1");
+            return TargetingManager.NthTarget(n, info.TypeAttrs["priority"], executor.bot);
+        },
+        ["condition"] = (executor, info) =>
+        {
+            if (executor.ExecuteBlock(info.InputIDs[0]) is BotController target && target != null)
+            {
+                return TargetingManager.TargetSatisfiesCondition(info.TypeAttrs["check"], executor.bot, target);
             }
 
             return null;

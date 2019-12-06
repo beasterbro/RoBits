@@ -329,7 +329,12 @@ public class BotController : MonoBehaviour
 
     public List<BotController> TargetableBots()
     {
-        return new List<BotController>(); // TODO: Implement way of tracking which bots are "visible" to this bot's sensors
+        HashSet<BotController> bots = new HashSet<BotController>();
+        foreach (SensorPartController sensor in sensors)
+        {
+            sensor.TargetableOpponents().ForEach(opponent => bots.Add(opponent));
+        }
+        return new List<BotController>(bots);
     }
 
 }
