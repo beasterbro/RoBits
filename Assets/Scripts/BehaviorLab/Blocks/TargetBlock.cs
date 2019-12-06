@@ -47,7 +47,12 @@ public class TargetBlock : DropdownBlock
         return TargetingManager.TargetingPriorities(sensor);
     }
 
-    protected override string Type() => "Target";
-    
+    protected override string Type()
+    {
+        if (sensor == "ProximitySensor") return "TargetProx";
+        if (sensor == "VisionSensor") return "TargetVision";
+        return "Target";
+    }
+
     protected override string DropdownAttributeKey() => "priority";
 }
