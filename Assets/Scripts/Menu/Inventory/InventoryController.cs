@@ -308,7 +308,7 @@ public class InventoryController : MonoBehaviour
         StringBuilder sb = new StringBuilder();
         foreach (var part in currentBot.Equipment)
         {
-            sb.Append(part.Name + ": ");
+            sb.Append(part.Name + " ");
             sb.Append(part.Description);
             sb.AppendLine();
         }
