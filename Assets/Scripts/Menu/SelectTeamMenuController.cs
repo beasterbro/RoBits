@@ -1,9 +1,11 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Random = System.Random;
 
 public class SelectTeamMenuController : MonoBehaviour
 {
 
+    private static Random random = new Random();
     public int battleType;
 
     public void SelectTeam(int teamIndex)
@@ -15,21 +17,28 @@ public class SelectTeamMenuController : MonoBehaviour
         else
         {
             BattleController.playerTeam = DataManager.Instance.UserTeams[teamIndex];
-            if (battleType == 4)
+
+            if (battleType == 0 || battleType == 1)
             {
-                GoToTraining();
+                StartCoroutine(DataManager.Instance.FetchRandomOpponent((success, opponent) =>
+                {
+                    if (!success) return;
+                    StartCoroutine(DataManager.Instance.GetOtherUserTeams(opponent.ID, (success2, enemyTeams) =>
+                    {
+                        if (!success2) return;
+                        BattleController.opponentTeam = enemyTeams[random.Next(enemyTeams.Length)];
+                        GoToBattle();
+                    }));
+                }));
             }
             else if (battleType == 2)
             {
                 GoToOpponentSearch();
             }
-            else GoToBattle();
-              
-            
-                
-            
-            
-            
+            else if (battleType == 4)
+            {
+                GoToTraining();
+            }
         }
     }
 
