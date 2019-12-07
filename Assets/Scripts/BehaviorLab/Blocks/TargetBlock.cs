@@ -53,6 +53,6 @@ public class TargetBlock : DropdownBlock
         if (sensor == "VisionSensor") return "TargetVision";
         return "Target";
     }
-    
+
     protected override string DropdownAttributeKey() => "priority";
 }

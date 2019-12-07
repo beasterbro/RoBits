@@ -50,4 +50,9 @@ public abstract class SensorPartController : PartController
         return opponents;
     }
 
+    public List<BotController> TargetableOpponents()
+    {
+        return new List<BotController>(OpponentsWithinRange().Select(opponent => opponent.bot));
+    }
+
 }
