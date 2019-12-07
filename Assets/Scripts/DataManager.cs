@@ -306,6 +306,19 @@ public class DataManager
         }
     }
 
+    public IEnumerator FetchRandomOpponent(Action<bool, UserInfo> callback)
+    {
+        var request = BasicGet("/opponent");
+        yield return request.SendWebRequest();
+        
+        UserInfo userResponse = null;
+
+        SimpleCallback(request, () =>
+        {
+            userResponse = JsonUtils.DeserializeObject<UserInfo>(request.downloadHandler.text);
+        }, success => callback.Invoke(success, userResponse));
+    }
+
     public IEnumerator SearchUser(string username, Action<bool, UserInfo> callback)
     {
         if (currentUser != null && username == currentUser.Username) callback.Invoke(true, currentUser);
