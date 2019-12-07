@@ -241,18 +241,10 @@ public class StoreController : MonoBehaviour
 
         public void RefreshCurrency()
         {
-            StartCoroutine(DataManager.Instance.FetchCurrentUser(success =>
-            {
-                UserCurrency.gameObject.SetActive(false);
-                if (!success)
-                {
-                    Debug.Log("No Currency");
-                    return;
-                }
-                
+           
                 UserCurrency.text = DataManager.Instance.CurrentUser.Currency.ToString();
                 UserCurrency.gameObject.SetActive(true);
-            }));
+
 
         }
 

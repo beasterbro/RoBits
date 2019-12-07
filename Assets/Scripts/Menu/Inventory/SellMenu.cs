@@ -15,7 +15,8 @@ public class SellMenu : MonoBehaviour
     //Buys the part via a backend call
     public void Sell()
     {
-        StartCoroutine(DataManager.Instance.SellPart(PartInfo, delegate(bool obj) { }));
+        DataManager.Instance.CurrentUser.Currency += (int)(PartInfo.Price * 0.5);
+       
         gameObject.SetActive(false);
         
 
