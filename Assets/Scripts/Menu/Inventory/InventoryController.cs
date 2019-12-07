@@ -15,6 +15,7 @@ public class InventoryController : MonoBehaviour
     //For integration with BE
     private List<BotInfo> userBots;
     private  List<InventoryItem> userInventory;
+    private Item itemToSell;
     [SerializeField] private MonoBehaviour latch;
 
     public BotInfo currentBot ;
@@ -100,14 +101,17 @@ public class InventoryController : MonoBehaviour
     {
         SellOptionMenu.transform.position = MousePosition();
 
+        itemToSell = itemSlot.Item;
         SellOptionMenu.ShowSellMenu(itemSlot.Item.Part);
     }
 
     public void Sell()
     {
         SellOptionMenu.Sell();
+        inventory.RemoveItem(itemToSell);
+        itemToSell = null;
         RefreshCurrency();
-        RefreshInventory();
+       // RefreshInventory();
     }
     public void HideSellMenu()
     {
@@ -292,6 +296,7 @@ public class InventoryController : MonoBehaviour
         }
     }
 
+
     //Sets the currently active bot
     public void SetActiveBot(int botValue)
     {
@@ -384,7 +389,9 @@ public class InventoryController : MonoBehaviour
     
     private void OnEnable()
     {
-        DataManager.Instance.Latch(this);
+        BotPreviewGenerator.BotGenerators = BotGenerators;
+        CreateAllBotImages();
+        /*DataManager.Instance.Latch(this);
         if (!DataManager.Instance.AuthEstablished) DataManager.Instance.BypassAuth("DEV testUser@gmail.com");
         StartCoroutine(DataManager.Instance.FetchInitialDataIfNecessary(success =>
         {
@@ -399,16 +406,18 @@ public class InventoryController : MonoBehaviour
             RefreshInventory();
             RefreshEquipment();
             RefreshBotInfo();
-        }));
-           
+        }));*/
+
     }
 
     //Generates all of the bot images for the current user's bots
     private void CreateAllBotImages()
     {
         BotPreviewGenerator.BotGenerators = BotGenerators;
+        BotGenerators.ForEach(BotPreviewGenerator.ClearBotImage);
         BotPreviewGenerator.CreateAllBotImages();
     }
+    
 
     //Called on start to add all of the items in the user's inventory to the inventory panel
     public void RefreshInventory()
@@ -452,15 +461,8 @@ public class InventoryController : MonoBehaviour
     //Updates the shown currency value to the actual currency value
     public void RefreshCurrency()
     {
-        StartCoroutine(DataManager.Instance.FetchCurrentUser(success =>
-        {
-            if (!success)
-            {
-                Debug.Log("No Currency");
-                return;
-            }
+
             Currency.text = DataManager.Instance.CurrentUser.Currency.ToString();
-        }));
 
     }
 
@@ -501,7 +503,20 @@ public class InventoryController : MonoBehaviour
     {
         UpdateUserBots();
         UpdateUserInventory();
+        UpdateUserCurrency();
 
+
+    }
+
+    private void UpdateUserCurrency()
+    {
+        StartCoroutine(DataManager.Instance.UpdateCurrentUser(success =>
+        {
+            if (!success)
+            {
+                Debug.Log("User is still the same");
+            }
+        }));
     }
 
     private void UpdateUserInventory()
